@@ -24,17 +24,17 @@ namespace Target
 
         public Game1()
         {
-            Game1.quit = false;
-            Game1.gameState = GameState.Menu;
-            this.graphics = new GraphicsDeviceManager((Game)this);
-            this.Content.RootDirectory = "Content";
-            this.graphics.IsFullScreen = false;
-            this.graphics.PreferredBackBufferWidth = 1024;
-            this.graphics.PreferredBackBufferHeight = 768;
-            this.graphics.ApplyChanges();
-            this.graphics.SynchronizeWithVerticalRetrace = false;
-            this.IsFixedTimeStep = true;
-            this.TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0);
+            quit = false;
+            gameState = GameState.Menu;
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1024;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.ApplyChanges();
+            graphics.SynchronizeWithVerticalRetrace = false;
+            IsFixedTimeStep = true;
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0);
         }
 
         /// <summary>
@@ -45,10 +45,10 @@ namespace Target
         /// </summary>
         protected override void Initialize()
         {
-            Game1.screenWidth = this.Window.ClientBounds.Width;
-            Game1.screenHeight = this.Window.ClientBounds.Height;
-            this.gameMain = new GameMain(ref this.graphics);
-            this.gameMenu = new GameMenu();
+            Game1.screenWidth = Window.ClientBounds.Width;
+            Game1.screenHeight = Window.ClientBounds.Height;
+            gameMain = new GameMain(ref graphics);
+            gameMenu = new GameMenu();
             base.Initialize();
         }
 
@@ -58,8 +58,8 @@ namespace Target
         /// </summary>
         protected override void LoadContent()
         {
-            this.spriteBatch = new SpriteBatch(this.GraphicsDevice);
-            Resources.LoadContent(this.Content);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            Resources.LoadContent(Content);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Target
         /// </summary>
         protected override void UnloadContent()
         {
-            this.Content.Unload();
+            Content.Unload();
         }
 
 
@@ -96,27 +96,27 @@ namespace Target
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Game1.quit)
-                this.Exit();
+                Exit();
             if (GameMain.gameQuit)
             {
                 Game1.gameState = GameState.Menu;
-                this.gameMenu.resetGame(false);
-                this.gameMain = new GameMain(ref this.graphics);
+                gameMenu.resetGame(false);
+                gameMain = new GameMain(ref graphics);
             }
             switch (Game1.gameState)
             {
                 case GameState.Menu:
-                    this.IsMouseVisible = true;
-                    this.gameMenu.Update(gameTime, this.graphics, Keyboard.GetState(), this.oldKeyboard, Mouse.GetState(), GamePad.GetState(PlayerIndex.One), this.oldGamePad);
+                    IsMouseVisible = true;
+                    gameMenu.Update(gameTime, graphics, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
                 case GameState.Playing:
-                    this.IsMouseVisible = false;
-                    this.gameMain.Update(gameTime, Keyboard.GetState(), this.oldKeyboard, Mouse.GetState(), this.oldMouse, GamePad.GetState(PlayerIndex.One), this.oldGamePad);
+                    IsMouseVisible = false;
+                    gameMain.Update(gameTime, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
             }
-            this.oldKeyboard = Keyboard.GetState();
-            this.oldMouse = Mouse.GetState();
-            this.oldGamePad = GamePad.GetState(PlayerIndex.One);
+            oldKeyboard = Keyboard.GetState();
+            oldMouse = Mouse.GetState();
+            oldGamePad = GamePad.GetState(PlayerIndex.One);
             base.Update(gameTime);
         }
 
@@ -126,20 +126,20 @@ namespace Target
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            this.GraphicsDevice.Clear(Color.DarkSlateGray);
-            this.spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.DarkSlateGray);
+            spriteBatch.Begin();
             switch (Game1.gameState)
             {
                 case GameState.Menu:
-                    if (this.gameMenu.getActivity())
-                        this.gameMain.Draw(this.spriteBatch);
-                    this.gameMenu.Draw(this.spriteBatch);
+                    if (gameMenu.getActivity())
+                        gameMain.Draw(spriteBatch);
+                    gameMenu.Draw(spriteBatch);
                     break;
                 case GameState.Playing:
-                    this.gameMain.Draw(this.spriteBatch);
+                    gameMain.Draw(spriteBatch);
                     break;
             }
-            this.spriteBatch.End();
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
