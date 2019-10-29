@@ -11,5 +11,6 @@ namespace Target
     Health,
     FastReload,
     Death,
+    SpawnReducer,
   }
 }

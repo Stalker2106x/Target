@@ -40,8 +40,12 @@ namespace Target
 
     public void checkCollision()
     {
-      if (!_sprite.Contains((int) HUD._target.X, (int) HUD._target.Y))
+      if (!_sprite.Contains((int)HUD._target.X, (int)HUD._target.Y))
         return;
+      Color[] hitColor = new Color[1];
+      Resources.target.GetData<Color>(0, new Rectangle((int)HUD._target.X - _sprite.X, (int)HUD._target.Y - _sprite.Y, 1, 1), hitColor, 0, 1);
+      
+      if (hitColor[0].A == 0) return; //Transparent, no hit
       GameMain._player.setScore(20);
       GameMain._player.setBulletsHit(1);
       _isActive = false;
@@ -59,7 +63,7 @@ namespace Target
         Resources.pain1.Play();
       else
         Resources.pain2.Play();
-      player.setHealth(-20);
+      player.setHealth(-10);
     }
 
     public void Update(ref Player player, GameTime gameTime, MouseState mouse)

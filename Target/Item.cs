@@ -28,7 +28,7 @@ namespace Target
       _draw = false;
       _position = new Vector2((float) randomX.Next(0, Game1.screenWidth - 100), 0.0f);
       _sprite = new Rectangle((int) _position.X, 0, 100, 100);
-      switch (randomType.Next(1, 4))
+      switch (randomType.Next(1, 5))
       {
         case 1:
           _type = ItemType.Health;
@@ -41,6 +41,10 @@ namespace Target
         case 3:
           _type = ItemType.Death;
           _gfx = Resources.itemDeath;
+          break;
+        case 4:
+          _type = ItemType.SpawnReducer;
+          _gfx = Resources.itemSpawnReducer;
           break;
       }
     }
@@ -83,6 +87,9 @@ namespace Target
           break;
         case ItemType.Death:
           GameMain.gameOver = true;
+          break;
+        case ItemType.SpawnReducer:
+          GameMain.spawnDelay += 0.1f;
           break;
       }
     }

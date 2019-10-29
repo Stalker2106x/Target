@@ -116,8 +116,11 @@ namespace Target
         if ((double) breathTimer <= 2500.0)
         {
           breathTimer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-          if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder))
+          if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
+          {
+            breathTimer += 250f;
             Resources.breath.Play();
+          }
           _breath = false;
         }
         else

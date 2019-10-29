@@ -21,8 +21,8 @@ namespace Target
     public static List<Item> _items;
     public static bool gameOver;
     public static bool gameQuit;
-    private float spawnTimer;
-    private float spawnDelay;
+    public static float spawnTimer;
+    public static float spawnDelay;
     private Random randomSpawn;
 
     public GameMain(ref GraphicsDeviceManager graphics)
@@ -45,7 +45,7 @@ namespace Target
         return;
       spawnTimer = 0.0f;
       if ((double) spawnDelay > 0.75)
-        spawnDelay -= 0.1f;
+        spawnDelay -= 0.05f;
       if (randomSpawn.Next(1, 100) <= 90)
         _targets.Add(new Target(1));
       else

@@ -32,8 +32,8 @@ namespace Target
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
-            Game1.screenWidth = Window.ClientBounds.Width;
-            Game1.screenHeight = Window.ClientBounds.Height;
+            screenWidth = graphics.PreferredBackBufferWidth;
+            screenHeight = graphics.PreferredBackBufferHeight;
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0);

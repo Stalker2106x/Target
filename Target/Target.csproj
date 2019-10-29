@@ -42,7 +42,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameMain.cs" />
     <Compile Include="GameMenu.cs" />

@@ -24,6 +24,7 @@ namespace Target
     public static Texture2D itemHealth;
     public static Texture2D itemFastReload;
     public static Texture2D itemDeath;
+    public static Texture2D itemSpawnReducer;
     public static Texture2D mapWoods;
     public static Texture2D gamepadKeys;
     public static Texture2D keyboardKeys;
@@ -48,6 +49,7 @@ namespace Target
       Resources.itemHealth = content.Load<Texture2D>("GFX/Entity/health");
       Resources.itemFastReload = content.Load<Texture2D>("GFX/Entity/fastReload");
       Resources.itemDeath = content.Load<Texture2D>("GFX/Entity/death");
+      Resources.itemSpawnReducer = content.Load<Texture2D>("GFX/Entity/time");
       Resources.mapWoods = content.Load<Texture2D>("GFX/Maps/woods");
       Resources.gamepadKeys = content.Load<Texture2D>("GFX/GUI/gamepadKeys");
       Resources.keyboardKeys = content.Load<Texture2D>("GFX/GUI/keyboardKeys");

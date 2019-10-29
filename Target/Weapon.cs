@@ -24,80 +24,80 @@ namespace Target
 
     public Weapon(string name, int maxMagazine)
     {
-      this._activeBonus = false;
-      this._name = name;
-      this._maxMagazine = maxMagazine;
-      this._magazine = this._maxMagazine;
-      this._weaponState = WeaponState.Available;
-      this.timer = 0.0f;
-      this.reloadDelay = 1500f;
-      this.fireDelay = 250f;
+      _activeBonus = false;
+      _name = name;
+      _maxMagazine = maxMagazine;
+      _magazine = _maxMagazine;
+      _weaponState = WeaponState.Available;
+      timer = 0.0f;
+      reloadDelay = 1500f;
+      fireDelay = 250f;
     }
 
     public int getMagazine()
     {
-      return this._magazine;
+      return _magazine;
     }
 
     public int getMaxMagazine()
     {
-      return this._maxMagazine;
+      return _maxMagazine;
     }
 
     public void setMagazine(int bullets)
     {
-      this._magazine += bullets;
+      _magazine += bullets;
     }
 
     public WeaponState getState()
     {
-      return this._weaponState;
+      return _weaponState;
     }
 
     public float getReloadDelay()
     {
-      return this.reloadDelay;
+      return reloadDelay;
     }
 
     public void setReloadDelay(float delay)
     {
-      this.reloadDelay += delay;
+      reloadDelay += delay;
     }
 
     public float getTimer()
     {
-      return this.timer;
+      return timer;
     }
 
     public void updateBonusTimer(GameTime gameTime)
     {
-      if (!this._activeBonus)
+      if (!_activeBonus)
         return;
-      this.bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if ((double) this.bonusTimer < 20.0)
+      bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
+      if ((double) bonusTimer < 20.0)
         return;
-      this.bonusTimer = 0.0f;
-      this._activeBonus = false;
+      bonusTimer = 0.0f;
+      _activeBonus = false;
     }
 
     public void updateBonus(GameTime gameTime)
     {
-      if (!this._activeBonus)
+      if (!_activeBonus)
         return;
-      this.bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if ((double) this.bonusTimer < 20.0)
+      bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
+      if ((double) bonusTimer < 20.0)
         return;
-      this.bonusTimer = 0.0f;
-      this._activeBonus = false;
+      bonusTimer = 0.0f;
+      _activeBonus = false;
     }
 
     public void fire(GameTime gameTime, MouseState mouse)
     {
-      if (this._magazine <= 0 || this._weaponState != WeaponState.Available)
+      if (_magazine <= 0 || _weaponState != WeaponState.Available)
         return;
-      --this._magazine;
+      _magazine--;
       GameMain._player.setBulletsFired(1);
-      this._weaponState = WeaponState.Firing;
+      _weaponState = WeaponState.Firing;
       GameMain._hud.setRecoil();
       Resources.fire.Play(0.5f, 0.0f, 0.0f);
       for (int index = 0; index < GameMain._targets.Count; ++index)
@@ -108,38 +108,38 @@ namespace Target
 
     public void reload()
     {
-      if (this._magazine >= this._maxMagazine || this._weaponState != WeaponState.Available)
+      if (_magazine >= _maxMagazine || _weaponState != WeaponState.Available)
         return;
       Resources.reload.Play();
-      this._magazine = this._maxMagazine;
-      this._weaponState = WeaponState.Reloading;
+      _magazine = _maxMagazine;
+      _weaponState = WeaponState.Reloading;
     }
 
     public void updateState(GameTime gameTime)
     {
-      if (this._weaponState != WeaponState.Available)
-        this.timer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-      if (this._weaponState == WeaponState.Reloading)
+      if (_weaponState != WeaponState.Available)
+        timer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
+      if (_weaponState == WeaponState.Reloading)
       {
-        if ((double) this.timer < (double) this.reloadDelay)
+        if ((double) timer < (double) reloadDelay)
           return;
-        this.timer = 0.0f;
-        this._weaponState = WeaponState.Available;
+        timer = 0.0f;
+        _weaponState = WeaponState.Available;
       }
       else
       {
-        if (this._weaponState != WeaponState.Firing || (double) this.timer < (double) this.fireDelay)
+        if (_weaponState != WeaponState.Firing || (double) timer < (double) fireDelay)
           return;
-        this.timer = 0.0f;
-        this._weaponState = WeaponState.Available;
+        timer = 0.0f;
+        _weaponState = WeaponState.Available;
       }
     }
 
     public void Update(GameTime gameTime)
     {
-      this.updateBonusTimer(gameTime);
-      this.updateBonus(gameTime);
-      this.updateState(gameTime);
+      updateBonusTimer(gameTime);
+      updateBonus(gameTime);
+      updateState(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
