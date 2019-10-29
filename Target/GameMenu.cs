@@ -13,38 +13,38 @@ namespace Target
 {
   internal class GameMenu
   {
-    private MenuState m_menu;
-    private Menu m_main;
-    private Menu m_pause;
-    private Menu m_options;
-    private Menu m_infoKeys;
+    private MenuState _menu;
+    private Menu _main;
+    private Menu _pause;
+    private Menu _options;
+    private Menu _infoKeys;
     private bool activeGame;
 
     public GameMenu()
     {
-      this.activeGame = false;
-      this.m_menu = MenuState.Main;
-      this.m_main = new Menu(MenuState.Main, "Target", 3, new List<string>()
+      activeGame = false;
+      _menu = MenuState.Main;
+      _main = new Menu(MenuState.Main, "Target", 3, new List<string>()
       {
         "Jouer",
         "Options",
         "Quitter"
       });
-      this.m_pause = new Menu(MenuState.Pause, "Target", 4, new List<string>()
+      _pause = new Menu(MenuState.Pause, "Target", 4, new List<string>()
       {
         "Reprendre",
         "Options",
         "Terminer Partie",
         "Quitter"
       });
-      this.m_options = new Menu(MenuState.Options, "Options", 4, new List<string>()
+      _options = new Menu(MenuState.Options, "Options", 4, new List<string>()
       {
         "Liste Contrôles",
         "Plein Ecran",
         "V-Sync",
         "Retour"
       });
-      this.m_infoKeys = new Menu(MenuState.InfoKeys, "Info Contrôles", 3, new List<string>()
+      _infoKeys = new Menu(MenuState.InfoKeys, "Info Contrôles", 3, new List<string>()
       {
         "Clavier / Souris",
         "Gamepad",
@@ -54,13 +54,13 @@ namespace Target
 
     public void resetGame(bool active)
     {
-      this.m_menu = MenuState.Main;
-      this.activeGame = active;
+      _menu = MenuState.Main;
+      activeGame = active;
     }
 
     public bool getActivity()
     {
-      return this.activeGame;
+      return activeGame;
     }
 
     public void Update(
@@ -72,37 +72,37 @@ namespace Target
       GamePadState gamePad,
       GamePadState oldGamePad)
     {
-      if (this.m_menu == MenuState.Main)
-        this.m_main.Update(ref this.m_menu, ref this.activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
-      else if (this.m_menu == MenuState.Pause)
-        this.m_pause.Update(ref this.m_menu, ref this.activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
-      else if (this.m_menu == MenuState.Options)
+      if (_menu == MenuState.Main)
+        _main.Update(ref _menu, ref activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
+      else if (_menu == MenuState.Pause)
+        _pause.Update(ref _menu, ref activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
+      else if (_menu == MenuState.Options)
       {
-        this.m_options.Update(ref this.m_menu, ref this.activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
+        _options.Update(ref _menu, ref activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
       }
       else
       {
-        if (this.m_menu != MenuState.InfoKeys)
+        if (_menu != MenuState.InfoKeys)
           return;
-        this.m_infoKeys.Update(ref this.m_menu, ref this.activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
+        _infoKeys.Update(ref _menu, ref activeGame, gameTime, graphics, keyboard, oldKeyboard, mouse, gamePad, oldGamePad);
       }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      if (this.m_menu == MenuState.Main)
-        this.m_main.Draw(spriteBatch);
-      else if (this.m_menu == MenuState.Pause)
-        this.m_pause.Draw(spriteBatch);
-      else if (this.m_menu == MenuState.Options)
+      if (_menu == MenuState.Main)
+        _main.Draw(spriteBatch);
+      else if (_menu == MenuState.Pause)
+        _pause.Draw(spriteBatch);
+      else if (_menu == MenuState.Options)
       {
-        this.m_options.Draw(spriteBatch);
+        _options.Draw(spriteBatch);
       }
       else
       {
-        if (this.m_menu != MenuState.InfoKeys)
+        if (_menu != MenuState.InfoKeys)
           return;
-        this.m_infoKeys.Draw(spriteBatch);
+        _infoKeys.Draw(spriteBatch);
       }
     }
   }

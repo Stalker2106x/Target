@@ -14,11 +14,11 @@ namespace Target
 {
   internal class GameMain
   {
-    private GraphicsDeviceManager m_graphics;
-    public static Player m_player;
-    public static HUD m_hud;
-    public static List<Target> m_targets;
-    public static List<Item> m_items;
+    private GraphicsDeviceManager _graphics;
+    public static Player _player;
+    public static HUD _hud;
+    public static List<Target> _targets;
+    public static List<Item> _items;
     public static bool gameOver;
     public static bool gameQuit;
     private float spawnTimer;
@@ -27,47 +27,47 @@ namespace Target
 
     public GameMain(ref GraphicsDeviceManager graphics)
     {
-      this.m_graphics = graphics;
-      GameMain.gameOver = false;
-      GameMain.gameQuit = false;
-      this.randomSpawn = new Random();
-      this.spawnTimer = 0.0f;
-      this.spawnDelay = 3f;
-      GameMain.m_targets = new List<Target>();
-      GameMain.m_items = new List<Item>();
-      GameMain.m_player = new Player();
-      GameMain.m_hud = new HUD(ref graphics);
+      _graphics = graphics;
+      gameOver = false;
+      gameQuit = false;
+      randomSpawn = new Random();
+      spawnTimer = 0.0f;
+      spawnDelay = 3f;
+      _targets = new List<Target>();
+      _items = new List<Item>();
+      _player = new Player();
+      _hud = new HUD(ref graphics);
     }
 
     public void spawnTarget()
     {
-      if ((double) this.spawnTimer < (double) this.spawnDelay)
+      if ((double) spawnTimer < (double) spawnDelay)
         return;
-      this.spawnTimer = 0.0f;
-      if ((double) this.spawnDelay > 0.75)
-        this.spawnDelay -= 0.1f;
-      if (this.randomSpawn.Next(1, 100) <= 90)
-        GameMain.m_targets.Add(new Target(1));
+      spawnTimer = 0.0f;
+      if ((double) spawnDelay > 0.75)
+        spawnDelay -= 0.1f;
+      if (randomSpawn.Next(1, 100) <= 90)
+        _targets.Add(new Target(1));
       else
-        GameMain.m_items.Add(new Item());
+        _items.Add(new Item());
     }
 
     public void destroyTargets()
     {
-      for (int index = 0; index < GameMain.m_targets.Count; ++index)
+      for (int index = 0; index < _targets.Count; ++index)
       {
-        if (!GameMain.m_targets[index].getActivity())
+        if (!_targets[index].getActivity())
         {
-          GameMain.m_targets.RemoveAt(index);
-          GameMain.m_hud.setHitmarker();
+          _targets.RemoveAt(index);
+          _hud.setHitmarker();
         }
       }
-      for (int index = 0; index < GameMain.m_items.Count; ++index)
+      for (int index = 0; index < _items.Count; ++index)
       {
-        if (!GameMain.m_items[index].getActivity())
+        if (!_items[index].getActivity())
         {
-          GameMain.m_items.RemoveAt(index);
-          GameMain.m_hud.setHitmarker();
+          _items.RemoveAt(index);
+          _hud.setHitmarker();
         }
       }
     }
@@ -83,55 +83,55 @@ namespace Target
     {
       if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
       {
-        if (!GameMain.gameOver)
+        if (!gameOver)
           Game1.gameState = GameState.Menu;
       }
-      else if (GameMain.m_player.getHealth() <= 0)
-        GameMain.gameOver = true;
-      if (!GameMain.gameOver)
+      else if (_player.getHealth() <= 0)
+        gameOver = true;
+      if (!gameOver)
       {
-        this.spawnTarget();
-        this.destroyTargets();
+        spawnTarget();
+        destroyTargets();
         if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I))
-          GameMain.m_items.Add(new Item());
-        for (int index = 0; index < GameMain.m_targets.Count; ++index)
-          GameMain.m_targets[index].Update(ref GameMain.m_player, gameTime, mouse);
-        for (int index = 0; index < GameMain.m_items.Count; ++index)
-          GameMain.m_items[index].Update(gameTime);
-        GameMain.m_player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
-        GameMain.m_hud.Update(ref GameMain.m_player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
-        this.spawnTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
+          _items.Add(new Item());
+        for (int index = 0; index < _targets.Count; ++index)
+          _targets[index].Update(ref _player, gameTime, mouse);
+        for (int index = 0; index < _items.Count; ++index)
+          _items[index].Update(gameTime);
+        _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
+        _hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
+        spawnTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
       }
       else
       {
         if ((!keyboard.IsKeyDown(Keys.Escape) || !oldKeyboard.IsKeyUp(Keys.Escape)) && (!keyboard.IsKeyDown(Keys.Enter) || !oldKeyboard.IsKeyUp(Keys.Enter)) && (!gamePad.IsButtonDown(Buttons.A) || !oldGamePad.IsButtonUp(Buttons.A)))
           return;
-        GameMain.gameQuit = true;
+        gameQuit = true;
       }
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      if (GameMain.gameOver)
+      if (gameOver)
       {
-        if (GameMain.gameQuit)
+        if (gameQuit)
           return;
         spriteBatch.Draw(Resources.menuBackground, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.DimGray);
         spriteBatch.DrawString(Resources.title, "Game Over", new Vector2((float) Game1.centerX(Resources.title, "Game Over"), (float) (Game1.screenHeight / 2 - 60)), Color.White);
         spriteBatch.DrawString(Resources.normal, "Appuyez sur A / Entree", new Vector2((float) Game1.centerX(Resources.normal, "Appuyez sur A / Entree"), (float) (Game1.screenHeight / 2 - 15)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Score: " + GameMain.m_player.getScore().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Score: " + GameMain.m_player.getScore().ToString()), (float) (Game1.screenHeight / 2 + 60)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Tirs: " + GameMain.m_player.getBulletsFired().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Tirs: " + GameMain.m_player.getBulletsFired().ToString()), (float) (Game1.screenHeight / 2 + 90)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Precision: " + Math.Round((double) GameMain.m_player.getAccuracy(), 2).ToString() + " %", new Vector2((float) Game1.centerX(Resources.normal, "Precision: " + Math.Round((double) GameMain.m_player.getAccuracy(), 2).ToString() + " %"), (float) (Game1.screenHeight / 2 + 120)), Color.White);
+        spriteBatch.DrawString(Resources.normal, "Score: " + _player.getScore().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Score: " + _player.getScore().ToString()), (float) (Game1.screenHeight / 2 + 60)), Color.White);
+        spriteBatch.DrawString(Resources.normal, "Tirs: " + _player.getBulletsFired().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Tirs: " + _player.getBulletsFired().ToString()), (float) (Game1.screenHeight / 2 + 90)), Color.White);
+        spriteBatch.DrawString(Resources.normal, "Precision: " + Math.Round((double) _player.getAccuracy(), 2).ToString() + " %", new Vector2((float) Game1.centerX(Resources.normal, "Precision: " + Math.Round((double) _player.getAccuracy(), 2).ToString() + " %"), (float) (Game1.screenHeight / 2 + 120)), Color.White);
       }
       else
       {
         spriteBatch.Draw(Resources.mapWoods, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.White);
-        foreach (Target target in GameMain.m_targets)
+        foreach (Target target in _targets)
           target.Draw(spriteBatch);
-        foreach (Item obj in GameMain.m_items)
+        foreach (Item obj in _items)
           obj.Draw(spriteBatch);
-        GameMain.m_player.Draw(spriteBatch);
-        GameMain.m_hud.Draw(spriteBatch);
+        _player.Draw(spriteBatch);
+        _hud.Draw(spriteBatch);
       }
     }
   }

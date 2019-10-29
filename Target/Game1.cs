@@ -32,6 +32,8 @@ namespace Target
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
+            Game1.screenWidth = Window.ClientBounds.Width;
+            Game1.screenHeight = Window.ClientBounds.Height;
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0);
@@ -45,8 +47,6 @@ namespace Target
         /// </summary>
         protected override void Initialize()
         {
-            Game1.screenWidth = Window.ClientBounds.Width;
-            Game1.screenHeight = Window.ClientBounds.Height;
             gameMain = new GameMain(ref graphics);
             gameMenu = new GameMenu();
             base.Initialize();
@@ -77,7 +77,7 @@ namespace Target
             Texture2D texture2D = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
             texture2D.SetData<Color>(new Color[1]
             {
-        Color.White
+                Color.White
             });
             return texture2D;
         }
