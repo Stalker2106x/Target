@@ -10,7 +10,15 @@ using System;
 
 namespace Target
 {
-  internal class Item
+  public enum ItemType
+  {
+    Health,
+    FastReload,
+    Death,
+    SpawnReducer,
+  }
+
+  class Item
   {
     private Random randomX = new Random();
     private Random randomType = new Random();

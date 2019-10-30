@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using GameMain;
 
 namespace Target
 {
@@ -19,7 +20,6 @@ namespace Target
         public static int screenHeight;
         public static bool quit;
         public static GameState gameState;
-        private GameMain gameMain;
         private GameMenu gameMenu;
 
         public Game1()
@@ -47,7 +47,7 @@ namespace Target
         /// </summary>
         protected override void Initialize()
         {
-            gameMain = new GameMain(ref graphics);
+            GameMain.graphics = graphics;
             gameMenu = new GameMenu();
             base.Initialize();
         }
@@ -101,7 +101,6 @@ namespace Target
             {
                 Game1.gameState = GameState.Menu;
                 gameMenu.resetGame(false);
-                gameMain = new GameMain(ref graphics);
             }
             switch (Game1.gameState)
             {
@@ -111,7 +110,7 @@ namespace Target
                     break;
                 case GameState.Playing:
                     IsMouseVisible = false;
-                    gameMain.Update(gameTime, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
+                    GameMain.Update(gameTime, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
             }
             oldKeyboard = Keyboard.GetState();
@@ -132,11 +131,11 @@ namespace Target
             {
                 case GameState.Menu:
                     if (gameMenu.getActivity())
-                        gameMain.Draw(spriteBatch);
+                        GameMain.Draw(spriteBatch);
                     gameMenu.Draw(spriteBatch);
                     break;
                 case GameState.Playing:
-                    gameMain.Draw(spriteBatch);
+                    GameMain.Draw(spriteBatch);
                     break;
             }
             spriteBatch.End();

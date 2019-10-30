@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Target
 {
-  internal class Menu
+  class Menu
   {
     private MenuState _menuState;
     private int _selectedOption;

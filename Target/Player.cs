@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Target
 {
-  internal class Player
+  class Player
   {
     private int _hp;
     private int _maxHp;

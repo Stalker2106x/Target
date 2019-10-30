@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Target
 {
-  internal class GameMenu
+  class GameMenu
   {
     private MenuState _menu;
     private Menu _main;

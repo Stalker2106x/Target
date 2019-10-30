@@ -12,34 +12,23 @@ using System.Collections.Generic;
 
 namespace Target
 {
-  internal class GameMain
+  public static class GameMain
   {
-    private GraphicsDeviceManager _graphics;
-    public static Player _player;
-    public static HUD _hud;
-    public static List<Target> _targets;
-    public static List<Item> _items;
-    public static bool gameOver;
-    public static bool gameQuit;
-    public static float spawnTimer;
-    public static float spawnDelay;
-    private Random randomSpawn;
+    //Handles
+    private static GraphicsDeviceManager Graphics;
+    public static Player _player = new Player();
+    public static HUD _hud = new HUD(ref graphics);
+    //Data
+    public static List<Target> _targets = new List<Target>();
+    public static List<Item> _items = new List<Item>();
+    public static bool gameOver = false;
+    public static bool gameQuit = false;
+    public static float spawnTimer = 0.0f;
+    public static float spawnDelay = 3f;
 
-    public GameMain(ref GraphicsDeviceManager graphics)
-    {
-      _graphics = graphics;
-      gameOver = false;
-      gameQuit = false;
-      randomSpawn = new Random();
-      spawnTimer = 0.0f;
-      spawnDelay = 3f;
-      _targets = new List<Target>();
-      _items = new List<Item>();
-      _player = new Player();
-      _hud = new HUD(ref graphics);
-    }
+    private static Random randomSpawn = new Random();
 
-    public void spawnTarget()
+    public static void spawnTarget()
     {
       if ((double) spawnTimer < (double) spawnDelay)
         return;
@@ -52,7 +41,7 @@ namespace Target
         _items.Add(new Item());
     }
 
-    public void destroyTargets()
+    public static void destroyTargets()
     {
       for (int index = 0; index < _targets.Count; ++index)
       {
@@ -72,7 +61,7 @@ namespace Target
       }
     }
 
-    public void Update(
+    public static void Update(
       GameTime gameTime,
       KeyboardState keyboard,
       KeyboardState oldKeyboard,
@@ -110,7 +99,7 @@ namespace Target
       }
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public static void Draw(SpriteBatch spriteBatch)
     {
       if (gameOver)
       {

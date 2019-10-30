@@ -11,7 +11,7 @@ using System;
 
 namespace Target
 {
-  internal class HUD
+  class HUD
   {
     private const int BarHeight = 25;
     private const int BarWidth = 25;

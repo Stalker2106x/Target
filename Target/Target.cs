@@ -11,7 +11,14 @@ using System;
 
 namespace Target
 {
-  internal class Target
+  public enum TargetType
+  {
+    Recruit,
+    Terrorist,
+    Hostage,
+  }
+  
+  class Target
   {
     private MouseState mouseState;
     private int _hp;

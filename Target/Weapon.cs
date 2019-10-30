@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Target
 {
-  internal class Weapon
+  class Weapon
   {
     private string _name;
     private int _magazine;

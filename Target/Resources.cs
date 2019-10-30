@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Target
 {
-  internal class Resources
+  class Resources
   {
     public static SpriteFont title;
     public static SpriteFont normal;
