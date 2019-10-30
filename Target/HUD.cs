@@ -11,12 +11,11 @@ using System;
 
 namespace Target
 {
-  class HUD
+  public class HUD
   {
     private const int BarHeight = 25;
     private const int BarWidth = 25;
 
-        private GraphicsDeviceManager _graphics;
     private MouseState mouseState;
     private Rectangle _healthBar;
     private Rectangle _healthBarBG;
@@ -45,9 +44,8 @@ namespace Target
     private Rectangle bloodsplatPos;
     private float bloodsplatDelay;
 
-    public HUD(ref GraphicsDeviceManager graphics)
+    public HUD()
     {
-      _graphics = graphics;
       _gamePadSensivity = 10f;
       _hitmarkerOpacity = (float) byte.MaxValue;
       _hitmarker = false;
@@ -270,15 +268,15 @@ namespace Target
       checkBloodsplat(gameTime);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(Resources.crosshair, new Rectangle((int) HUD._target.X - Resources.crosshair.Width / 2, (int) HUD._target.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height), Color.White);
-      spriteBatch.Draw(Game1.createTexture2D(_graphics), _healthBarBG, new Color(105, 105, 105, 180));
-      spriteBatch.Draw(Game1.createTexture2D(_graphics), _healthBar, new Color(255, 0, 0, 180));
-      spriteBatch.Draw(Game1.createTexture2D(_graphics), _breathBarBG, new Color(105, 105, 105, 180));
-      spriteBatch.Draw(Game1.createTexture2D(_graphics), _breathBar, new Color(0, 0, 150, 180));
+      spriteBatch.Draw(Game1.createTexture2D(graphics), _healthBarBG, new Color(105, 105, 105, 180));
+      spriteBatch.Draw(Game1.createTexture2D(graphics), _healthBar, new Color(255, 0, 0, 180));
+      spriteBatch.Draw(Game1.createTexture2D(graphics), _breathBarBG, new Color(105, 105, 105, 180));
+      spriteBatch.Draw(Game1.createTexture2D(graphics), _breathBar, new Color(0, 0, 150, 180));
       if (_reloadi)
-        spriteBatch.Draw(Game1.createTexture2D(_graphics), _reloadBar, Color.LimeGreen);
+        spriteBatch.Draw(Game1.createTexture2D(graphics), _reloadBar, Color.LimeGreen);
       spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(22f, 79f), Color.Black);
       spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(20f, 80f), Color.White);
       for (int ammo = _ammo; ammo >= 1; --ammo)

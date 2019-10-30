@@ -18,7 +18,7 @@ namespace Target
     SpawnReducer,
   }
 
-  class Item
+  public class Item
   {
     private Random randomX = new Random();
     private Random randomType = new Random();

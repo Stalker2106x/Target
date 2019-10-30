@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Target
 {
-  class Weapon
+  public class Weapon
   {
     private string _name;
     private int _magazine;
@@ -98,7 +98,7 @@ namespace Target
       _magazine--;
       GameMain._player.setBulletsFired(1);
       _weaponState = WeaponState.Firing;
-      GameMain._hud.setRecoil();
+      GameMain.hud.setRecoil();
       Resources.fire.Play(0.5f, 0.0f, 0.0f);
       for (int index = 0; index < GameMain._targets.Count; ++index)
         GameMain._targets[index].checkCollision();

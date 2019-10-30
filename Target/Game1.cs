@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using GameMain;
 
 namespace Target
 {
@@ -47,7 +46,6 @@ namespace Target
         /// </summary>
         protected override void Initialize()
         {
-            GameMain.graphics = graphics;
             gameMenu = new GameMenu();
             base.Initialize();
         }
@@ -131,11 +129,11 @@ namespace Target
             {
                 case GameState.Menu:
                     if (gameMenu.getActivity())
-                        GameMain.Draw(spriteBatch);
+                        GameMain.Draw(graphics, spriteBatch);
                     gameMenu.Draw(spriteBatch);
                     break;
                 case GameState.Playing:
-                    GameMain.Draw(spriteBatch);
+                    GameMain.Draw(graphics, spriteBatch);
                     break;
             }
             spriteBatch.End();

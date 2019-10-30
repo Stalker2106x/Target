@@ -18,7 +18,7 @@ namespace Target
     Hostage,
   }
   
-  class Target
+  public class Target
   {
     private MouseState mouseState;
     private int _hp;
@@ -65,7 +65,7 @@ namespace Target
         return;
       _lifetime = 0.0f;
       Resources.fire.Play(0.5f, 0.0f, 0.0f);
-      GameMain._hud.setBloodsplat();
+      GameMain.hud.setBloodsplat();
       if (_randomX.Next(1, 3) == 1)
         Resources.pain1.Play();
       else

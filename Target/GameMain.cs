@@ -12,12 +12,18 @@ using System.Collections.Generic;
 
 namespace Target
 {
+
+  public enum GameState
+  {
+      Menu,
+      Playing,
+  }
+
   public static class GameMain
   {
     //Handles
-    private static GraphicsDeviceManager Graphics;
     public static Player _player = new Player();
-    public static HUD _hud = new HUD(ref graphics);
+    public static HUD hud = new HUD();
     //Data
     public static List<Target> _targets = new List<Target>();
     public static List<Item> _items = new List<Item>();
@@ -48,7 +54,7 @@ namespace Target
         if (!_targets[index].getActivity())
         {
           _targets.RemoveAt(index);
-          _hud.setHitmarker();
+          hud.setHitmarker();
         }
       }
       for (int index = 0; index < _items.Count; ++index)
@@ -56,7 +62,7 @@ namespace Target
         if (!_items[index].getActivity())
         {
           _items.RemoveAt(index);
-          _hud.setHitmarker();
+          hud.setHitmarker();
         }
       }
     }
@@ -88,7 +94,7 @@ namespace Target
         for (int index = 0; index < _items.Count; ++index)
           _items[index].Update(gameTime);
         _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
-        _hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
+        hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
         spawnTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
       }
       else
@@ -99,7 +105,7 @@ namespace Target
       }
     }
 
-    public static void Draw(SpriteBatch spriteBatch)
+    public static void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
       if (gameOver)
       {
@@ -120,7 +126,7 @@ namespace Target
         foreach (Item obj in _items)
           obj.Draw(spriteBatch);
         _player.Draw(spriteBatch);
-        _hud.Draw(spriteBatch);
+        hud.Draw(graphics, spriteBatch);
       }
     }
   }
