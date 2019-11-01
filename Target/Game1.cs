@@ -49,7 +49,6 @@ namespace Target
         {
             MyraEnvironment.Game = this;
             gameState = GameState.Menu;
-            Menu.MainMenu(_desktop);
             base.Initialize();
         }
 
@@ -62,6 +61,7 @@ namespace Target
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.LoadContent(Content);
             Menu.LoadContent(Content);
+            Menu.MainMenu(_desktop);
         }
 
         /// <summary>

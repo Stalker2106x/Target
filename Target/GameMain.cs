@@ -90,13 +90,13 @@ namespace Target
       if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
       {
         Menu.GameMenu(host);
+        Game1.gameState = GameState.Menu;
       }
       if (_player.getHealth() <= 0)
       {
         gameOver = true;
         Game1.gameState = GameState.Menu;
-        Menu.GameOverMenu(host, "Game Over\n"
-                              + "Score: " + _player.getScore().ToString() + "\n"
+        Menu.GameOverMenu(host, "Score: " + _player.getScore().ToString() + "\n"
                               + "Tirs: " + _player.getBulletsFired().ToString() + "\n"
                               + "Precision: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
       }

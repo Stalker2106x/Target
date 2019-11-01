@@ -18,8 +18,9 @@ namespace Target
         {
             /*SpriteFont font = content.Load<SpriteFont>("font/general");
             Stylesheet.Current.TextBoxStyle.Font = font;*/
-            Stylesheet.Current.ButtonStyle.Width = 100;
+            Stylesheet.Current.ButtonStyle.Width = 250;
             Stylesheet.Current.ComboBoxStyle.Width = 100;
+            Stylesheet.Current.LabelStyle.Font = Resources.title;
             //Stylesheet.Current.TextFieldStyle.Width = 100;
         }
 
@@ -29,6 +30,7 @@ namespace Target
             Grid grid = new Grid();
 
             grid.RowSpacing = 8;
+            grid.HorizontalAlignment = HorizontalAlignment.Center;
 
             grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
             grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
@@ -40,11 +42,16 @@ namespace Target
             grid.RowsProportions.Add(new Proportion());
             grid.RowsProportions.Add(new Proportion(ProportionType.Part));
 
+            Label title = new Label();
+            title.Text = "Target";
+            title.GridColumn = 1;
+            title.GridRow = 1;
+            grid.Widgets.Add(title);
+
             TextButton hostBtn = new TextButton();
             hostBtn.Text = "Play";
             hostBtn.GridColumn = 1;
-            hostBtn.GridRow = 1;
-            hostBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            hostBtn.GridRow = 3;
             hostBtn.Click += (s, a) =>
             {
                 GameMain.resetGame();
@@ -55,8 +62,7 @@ namespace Target
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Options";
             optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 3;
-            optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            optionsBtn.GridRow = 4;
             optionsBtn.Click += (s, a) =>
             {
                 OptionsMenu(host, MainMenu);
@@ -66,8 +72,7 @@ namespace Target
             TextButton quitBtn = new TextButton();
             quitBtn.Text = "Quit";
             quitBtn.GridColumn = 1;
-            quitBtn.GridRow = 4;
-            quitBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            quitBtn.GridRow = 5;
             quitBtn.Click += (s, a) =>
             {
                 Game1.quit = true;
@@ -271,17 +276,24 @@ namespace Target
             grid.RowsProportions.Add(new Proportion());
             grid.RowsProportions.Add(new Proportion(ProportionType.Part));
 
-            TextBox detailsText = new TextBox();
+            Label titleText = new Label();
+            titleText.Text = "Game Over";
+            titleText.GridColumn = 1;
+            titleText.GridRow = 1;
+            titleText.HorizontalAlignment = HorizontalAlignment.Stretch;
+            grid.Widgets.Add(titleText);
+
+            Label detailsText = new Label();
             detailsText.Text = content;
             detailsText.GridColumn = 1;
-            detailsText.GridRow = 1;
+            detailsText.GridRow = 2;
             detailsText.HorizontalAlignment = HorizontalAlignment.Stretch;
             grid.Widgets.Add(detailsText);
 
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Continue";
             optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 2;
+            optionsBtn.GridRow = 3;
             optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
             optionsBtn.Click += (s, a) =>
             {
