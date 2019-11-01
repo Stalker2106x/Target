@@ -66,8 +66,8 @@ namespace Target
       _healthBarBG = new Rectangle(10, 30, 204, 27);
       _breathBar = new Rectangle(12, 62, 200, 25);
       _breathBarBG = new Rectangle(10, 60, 204, 29);
-      _reloadBar = new Rectangle(Game1.screenWidth - 225, Game1.screenHeight - 15, 0, 10);
-      _reloadBar = new Rectangle(Game1.screenWidth - 225, Game1.screenHeight - 15, 0, 10);
+      _reloadBar = new Rectangle(Options.Config.Width - 225, Options.Config.Height - 15, 0, 10);
+      _reloadBar = new Rectangle(Options.Config.Width - 225, Options.Config.Height - 15, 0, 10);
       randomX = new Random();
       randomY = new Random();
     }
@@ -81,8 +81,8 @@ namespace Target
     public void setBloodsplat()
     {
       _bloodsplat = true;
-      bloodsplatPos = new Rectangle(randomX.Next(0, (Game1.screenWidth < Resources.bloodsplat.Width ? Game1.screenWidth - Resources.bloodsplat.Width : Game1.screenWidth)),
-                                         randomY.Next(0, (Game1.screenHeight < Resources.bloodsplat.Height ? Game1.screenWidth - Resources.bloodsplat.Width: Game1.screenWidth)),
+      bloodsplatPos = new Rectangle(randomX.Next(0, (Options.Config.Width < Resources.bloodsplat.Width ? Options.Config.Width - Resources.bloodsplat.Width : Options.Config.Width)),
+                                         randomY.Next(0, (Options.Config.Height < Resources.bloodsplat.Height ? Options.Config.Width - Resources.bloodsplat.Width: Options.Config.Width)),
                                          Resources.bloodsplat.Width, Resources.bloodsplat.Height);
       bloodsplatTimer = 0.0f;
     }
@@ -175,7 +175,7 @@ namespace Target
       if (player.getWeapon().getState() == WeaponState.Reloading)
       {
         _reloadi = true;
-        _reloadBar.X = (int) ((double) Game1.screenWidth - ((double) player.getWeapon().getReloadDelay() / 10.0 + 30.0));
+        _reloadBar.X = (int) ((double) Options.Config.Width - ((double) player.getWeapon().getReloadDelay() / 10.0 + 30.0));
         _reloadBar.Width = (int) ((double) player.getWeapon().getTimer() / 10.0);
       }
       else
@@ -193,7 +193,7 @@ namespace Target
       GamePadState gamePad,
       GamePadState oldGamePad)
     {
-      if ((double) HUD._target.X >= 0.0 && (double) HUD._target.X <= (double) Game1.screenWidth && ((double) HUD._target.Y >= 0.0 && (double) HUD._target.Y <= (double) Game1.screenHeight))
+      if ((double) HUD._target.X >= 0.0 && (double) HUD._target.X <= (double) Options.Config.Width && ((double) HUD._target.Y >= 0.0 && (double) HUD._target.Y <= (double) Options.Config.Height))
       {
         if (oldMouse.X != mouse.X || oldMouse.Y != mouse.Y)
         {
@@ -228,20 +228,20 @@ namespace Target
         else
           _breathTimer = 0.0f;
       }
-      Mouse.SetPosition(Game1.screenWidth / 2, Game1.screenHeight / 2);
+      Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
       if ((double) HUD._target.X <= 0.0)
         HUD._target.X = 1f;
-      else if ((double) HUD._target.X >= (double) Game1.screenWidth)
-        HUD._target.X = (float) (Game1.screenWidth - 1);
+      else if ((double) HUD._target.X >= (double) Options.Config.Width)
+        HUD._target.X = (float) (Options.Config.Width - 1);
       else if ((double) HUD._target.Y <= 0.0)
       {
         HUD._target.Y = 1f;
       }
       else
       {
-        if ((double) HUD._target.Y < (double) Game1.screenHeight)
+        if ((double) HUD._target.Y < (double) Options.Config.Height)
           return;
-        HUD._target.Y = (float) (Game1.screenHeight - 1);
+        HUD._target.Y = (float) (Options.Config.Height - 1);
       }
     }
 
@@ -280,7 +280,7 @@ namespace Target
       spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(22f, 79f), Color.Black);
       spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(20f, 80f), Color.White);
       for (int ammo = _ammo; ammo >= 1; --ammo)
-        spriteBatch.Draw(Resources.bullet, new Rectangle(Game1.screenWidth - (32 + ammo * 16), Game1.screenHeight - 52, 32, 32), Color.DimGray);
+        spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_hitmarker)
         spriteBatch.Draw(Resources.hitmarker, new Rectangle((int) HUD._target.X - Resources.hitmarker.Width / 2, (int) HUD._target.Y - Resources.hitmarker.Height / 2, Resources.hitmarker.Width, Resources.hitmarker.Height), Color.Lerp(Color.White, Color.Transparent, _hitmarkerOpacity));
       if (_bloodsplat)

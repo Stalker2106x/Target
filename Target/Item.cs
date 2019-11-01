@@ -34,7 +34,7 @@ namespace Target
       randomX = new Random();
       _isActive = true;
       _draw = false;
-      _position = new Vector2((float) randomX.Next(0, Game1.screenWidth - 100), 0.0f);
+      _position = new Vector2((float) randomX.Next(0, Options.Config.Width - 100), 0.0f);
       _sprite = new Rectangle((int) _position.X, 0, 100, 100);
       switch (randomType.Next(1, 5))
       {
@@ -104,7 +104,7 @@ namespace Target
 
     public void checkOnScreen()
     {
-      if ((double) _position.Y <= (double) Game1.screenWidth)
+      if ((double) _position.Y <= (double)Options.Config.Width)
         return;
       _isActive = false;
     }

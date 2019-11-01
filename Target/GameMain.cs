@@ -7,6 +7,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myra.Graphics2D.UI;
 using System;
 using System.Collections.Generic;
 
@@ -16,23 +17,32 @@ namespace Target
   public enum GameState
   {
       Menu,
-      Playing,
+      Playing
   }
 
   public static class GameMain
   {
     //Handles
-    public static Player _player = new Player();
-    public static HUD hud = new HUD();
+    public static Player _player;
+    public static HUD hud;
     //Data
-    public static List<Target> _targets = new List<Target>();
-    public static List<Item> _items = new List<Item>();
-    public static bool gameOver = false;
-    public static bool gameQuit = false;
+    public static List<Target> _targets;
+    public static List<Item> _items;
+    public static bool gameOver;
     public static float spawnTimer = 0.0f;
-    public static float spawnDelay = 3f;
+    public static float spawnDelay;
 
     private static Random randomSpawn = new Random();
+    
+    public static void resetGame()
+    {
+        gameOver = false;
+        _player = new Player();
+        hud = new HUD();
+        _targets = new List<Target>();
+        _items = new List<Item>();
+        spawnDelay = 3f;
+    }
 
     public static void spawnTarget()
     {
@@ -69,6 +79,7 @@ namespace Target
 
     public static void Update(
       GameTime gameTime,
+      Desktop host,
       KeyboardState keyboard,
       KeyboardState oldKeyboard,
       MouseState mouse,
@@ -78,11 +89,17 @@ namespace Target
     {
       if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
       {
-        if (!gameOver)
-          Game1.gameState = GameState.Menu;
+        Menu.GameMenu(host);
       }
-      else if (_player.getHealth() <= 0)
+      if (_player.getHealth() <= 0)
+      {
         gameOver = true;
+        Game1.gameState = GameState.Menu;
+        Menu.GameOverMenu(host, "Game Over\n"
+                              + "Score: " + _player.getScore().ToString() + "\n"
+                              + "Tirs: " + _player.getBulletsFired().ToString() + "\n"
+                              + "Precision: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
+      }
       if (!gameOver)
       {
         spawnTarget();
@@ -97,30 +114,13 @@ namespace Target
         hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
         spawnTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
       }
-      else
-      {
-        if ((!keyboard.IsKeyDown(Keys.Escape) || !oldKeyboard.IsKeyUp(Keys.Escape)) && (!keyboard.IsKeyDown(Keys.Enter) || !oldKeyboard.IsKeyUp(Keys.Enter)) && (!gamePad.IsButtonDown(Buttons.A) || !oldGamePad.IsButtonUp(Buttons.A)))
-          return;
-        gameQuit = true;
-      }
     }
 
     public static void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
-      if (gameOver)
+      if (!gameOver)
       {
-        if (gameQuit)
-          return;
-        spriteBatch.Draw(Resources.menuBackground, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.DimGray);
-        spriteBatch.DrawString(Resources.title, "Game Over", new Vector2((float) Game1.centerX(Resources.title, "Game Over"), (float) (Game1.screenHeight / 2 - 60)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Appuyez sur A / Entree", new Vector2((float) Game1.centerX(Resources.normal, "Appuyez sur A / Entree"), (float) (Game1.screenHeight / 2 - 15)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Score: " + _player.getScore().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Score: " + _player.getScore().ToString()), (float) (Game1.screenHeight / 2 + 60)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Tirs: " + _player.getBulletsFired().ToString(), new Vector2((float) Game1.centerX(Resources.normal, "Tirs: " + _player.getBulletsFired().ToString()), (float) (Game1.screenHeight / 2 + 90)), Color.White);
-        spriteBatch.DrawString(Resources.normal, "Precision: " + Math.Round((double) _player.getAccuracy(), 2).ToString() + " %", new Vector2((float) Game1.centerX(Resources.normal, "Precision: " + Math.Round((double) _player.getAccuracy(), 2).ToString() + " %"), (float) (Game1.screenHeight / 2 + 120)), Color.White);
-      }
-      else
-      {
-        spriteBatch.Draw(Resources.mapWoods, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.White);
+        spriteBatch.Draw(Resources.mapWoods, new Rectangle(0, 0, Options.Config.Width, Options.Config.Height), Color.White);
         foreach (Target target in _targets)
           target.Draw(spriteBatch);
         foreach (Item obj in _items)

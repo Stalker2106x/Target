@@ -1,224 +1,295 @@
 ﻿// Decompiled with JetBrains decompiler
-// Type: Target.Menu
+// Type: Target.GameMenu
 // Assembly: Target, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
 // MVID: 210E06DD-6036-47D0-ADB5-DBEC4EDD925B
 // Assembly location: D:\Projets\Target\Target.exe
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Myra.Graphics2D.UI;
+using Myra.Graphics2D.UI.Styles;
+using Microsoft.Xna.Framework.Content;
+using System;
 
 namespace Target
 {
-  class Menu
-  {
-    private MenuState _menuState;
-    private int _selectedOption;
-    private int _oldOption;
-    private string _title;
-    private int _nbOptions;
-    private List<string> _options;
-    private List<Color> _optionsColors;
-    private bool drawGamePadKeys;
-    private bool drawKeyboardKeys;
-
-    public Menu(MenuState menuState, string title, int nbOptions, List<string> options)
+    public static class Menu
     {
-      drawGamePadKeys = false;
-      drawKeyboardKeys = false;
-      _menuState = menuState;
-      _nbOptions = nbOptions;
-      _selectedOption = 0;
-      _oldOption = nbOptions - 1;
-      _title = title;
-      _options = options;
-      _optionsColors = new List<Color>();
-      for (int index = 1; index <= nbOptions; ++index)
-        _optionsColors.Add(Color.DarkGray);
-    }
-
-    public void setOption(int index, string option)
-    {
-      _options[index] = option;
-    }
-
-    public void select(
-      KeyboardState keyboard,
-      KeyboardState oldKeyboard,
-      GamePadState gamePad,
-      GamePadState oldGamePad)
-    {
-      if (_selectedOption < 0)
-        _selectedOption = _nbOptions - 1;
-      else if (_selectedOption > _nbOptions - 1)
-        _selectedOption = 0;
-      else if (keyboard.IsKeyDown(Keys.Up) && oldKeyboard.IsKeyUp(Keys.Up) || (double) gamePad.ThumbSticks.Left.Y > 0.0 && (double) oldGamePad.ThumbSticks.Left.Y == 0.0)
-      {
-        Resources.menuClick.Play();
-        --_selectedOption;
-      }
-      else
-      {
-        if ((!keyboard.IsKeyDown(Keys.Down) || !oldKeyboard.IsKeyUp(Keys.Down)) && ((double) gamePad.ThumbSticks.Left.Y >= 0.0 || (double) oldGamePad.ThumbSticks.Left.Y != 0.0))
-          return;
-        Resources.menuClick.Play();
-        ++_selectedOption;
-      }
-    }
-
-    public void updateColors()
-    {
-      if (_selectedOption < 0 || _selectedOption > _nbOptions - 1)
-        return;
-      if (_oldOption >= 0 && _oldOption <= _nbOptions - 1)
-        _optionsColors[_oldOption] = Color.Gray;
-      else if (_oldOption < 0)
-        _optionsColors[0] = Color.Gray;
-      else
-        _optionsColors[_nbOptions - 1] = Color.Gray;
-      _optionsColors[_selectedOption] = Color.AntiqueWhite;
-    }
-
-    public void checkSelect(
-      ref MenuState currentMenu,
-      ref bool activeGame,
-      GraphicsDeviceManager graphics,
-      KeyboardState keyboard,
-      KeyboardState oldKeyboard,
-      GamePadState gamePad,
-      GamePadState oldGamePad)
-    {
-      if ((!keyboard.IsKeyDown(Keys.Enter) || !oldKeyboard.IsKeyUp(Keys.Enter)) && (!gamePad.IsButtonDown(Buttons.A) || !oldGamePad.IsButtonUp(Buttons.A)))
-        return;
-      if (_menuState == MenuState.Main)
-      {
-        switch (_selectedOption)
+        public static void LoadContent(ContentManager content)
         {
-          case 0:
-            activeGame = true;
-            currentMenu = MenuState.Pause;
-            Game1.gameState = GameState.Playing;
-            break;
-          case 1:
-            currentMenu = MenuState.Options;
-            break;
-          case 2:
-            Game1.quit = true;
-            break;
+            /*SpriteFont font = content.Load<SpriteFont>("font/general");
+            Stylesheet.Current.TextBoxStyle.Font = font;*/
+            Stylesheet.Current.ButtonStyle.Width = 100;
+            Stylesheet.Current.ComboBoxStyle.Width = 100;
+            //Stylesheet.Current.TextFieldStyle.Width = 100;
         }
-      }
-      else if (_menuState == MenuState.Pause)
-      {
-        switch (_selectedOption)
+
+        public static void MainMenu(Desktop host)
         {
-          case 0:
-            Game1.gameState = GameState.Playing;
-            break;
-          case 1:
-            currentMenu = MenuState.Options;
-            break;
-          case 2:
-            activeGame = false;
-            currentMenu = MenuState.Main;
-            GameMain.gameQuit = true;
-            break;
-          case 3:
-            Game1.quit = true;
-            break;
-        }
-      }
-      else if (_menuState == MenuState.Options)
-      {
-        switch (_selectedOption)
-        {
-          case 0:
-            currentMenu = MenuState.InfoKeys;
-            break;
-          case 1:
-            graphics.IsFullScreen = !graphics.IsFullScreen;
-            graphics.ApplyChanges();
-            break;
-          case 3:
-            if (activeGame)
+            host.Widgets.Clear();
+            Grid grid = new Grid();
+
+            grid.RowSpacing = 8;
+
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+
+            TextButton hostBtn = new TextButton();
+            hostBtn.Text = "Play";
+            hostBtn.GridColumn = 1;
+            hostBtn.GridRow = 1;
+            hostBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            hostBtn.Click += (s, a) =>
             {
-              currentMenu = MenuState.Pause;
-              break;
-            }
-            currentMenu = MenuState.Main;
-            break;
+                GameMain.resetGame();
+                Game1.gameState = GameState.Playing;
+            };
+            grid.Widgets.Add(hostBtn);
+
+            TextButton optionsBtn = new TextButton();
+            optionsBtn.Text = "Options";
+            optionsBtn.GridColumn = 1;
+            optionsBtn.GridRow = 3;
+            optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            optionsBtn.Click += (s, a) =>
+            {
+                OptionsMenu(host, MainMenu);
+            };
+            grid.Widgets.Add(optionsBtn);
+
+            TextButton quitBtn = new TextButton();
+            quitBtn.Text = "Quit";
+            quitBtn.GridColumn = 1;
+            quitBtn.GridRow = 4;
+            quitBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            quitBtn.Click += (s, a) =>
+            {
+                Game1.quit = true;
+            };
+            grid.Widgets.Add(quitBtn);
+
+            host.Widgets.Add(grid);
         }
-      }
-      else
-      {
-        if (_menuState != MenuState.InfoKeys)
-          return;
-        switch (_selectedOption)
+        
+        public static void OptionsMenu(Desktop host, Action<Desktop> prevMenu)
         {
-          case 0:
-            if (!drawKeyboardKeys)
+            host.Widgets.Clear();
+            Grid grid = new Grid();
+
+            grid.RowSpacing = 8;
+
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+
+
+            TextBox resolutionLabel = new TextBox();
+            resolutionLabel.Text = "Resolution";
+            resolutionLabel.GridColumn = 1;
+            resolutionLabel.GridRow = 1;
+            resolutionLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.Widgets.Add(resolutionLabel);
+
+            ComboBox resolutionCombo = new ComboBox();
+            resolutionCombo.GridColumn = 2;
+            resolutionCombo.GridRow = 1;
+            resolutionCombo.HorizontalAlignment = HorizontalAlignment.Right;
+            List<string> resolutions = Options.getResolutions();
+            resolutions.ForEach(e => { resolutionCombo.Items.Add(new ListItem(e)); });
+            resolutionCombo.SelectedIndex = Options.getDisplayMode();
+            grid.Widgets.Add(resolutionCombo);
+
+            TextBox displayLabel = new TextBox();
+            displayLabel.Text = "Display mode";
+            displayLabel.GridColumn = 1;
+            displayLabel.GridRow = 2;
+            displayLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.Widgets.Add(displayLabel);
+
+            ComboBox displayCombo = new ComboBox();
+            displayCombo.GridColumn = 2;
+            displayCombo.GridRow = 2;
+            displayCombo.HorizontalAlignment = HorizontalAlignment.Right;
+            displayCombo.Items.Add(new ListItem("Windowed"));
+            displayCombo.Items.Add(new ListItem("Fullscreen"));
+            displayCombo.SelectedIndex = Convert.ToInt32(Options.Config.Fullscreen);
+            grid.Widgets.Add(displayCombo);
+
+            TextBox musicLabel = new TextBox();
+            musicLabel.Text = "Music volume";
+            musicLabel.GridColumn = 1;
+            musicLabel.GridRow = 3;
+            musicLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.Widgets.Add(musicLabel);
+
+            HorizontalSlider musicSlider = new HorizontalSlider();
+            musicSlider.GridColumn = 2;
+            musicSlider.GridRow = 3;
+            musicSlider.Width = 100;
+            musicSlider.HorizontalAlignment = HorizontalAlignment.Right;
+            musicSlider.Minimum = 0f;
+            musicSlider.Maximum = 1f;
+            grid.Widgets.Add(musicSlider);
+
+            TextBox soundLabel = new TextBox();
+            soundLabel.Text = "Sounds volume";
+            soundLabel.GridColumn = 1;
+            soundLabel.GridRow = 4;
+            soundLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.Widgets.Add(soundLabel);
+
+            HorizontalSlider soundSlider = new HorizontalSlider();
+            soundSlider.GridColumn = 2;
+            soundSlider.GridRow = 4;
+            soundSlider.Width = 100;
+            soundSlider.HorizontalAlignment = HorizontalAlignment.Right;
+            soundSlider.Minimum = 0f;
+            soundSlider.Maximum = 1f;
+            grid.Widgets.Add(soundSlider);
+
+            TextButton applyBtn = new TextButton();
+            applyBtn.Text = "Apply";
+            applyBtn.GridColumn = 1;
+            applyBtn.GridRow = 5;
+            applyBtn.GridColumnSpan = 2;
+            applyBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            applyBtn.Click += (s, a) =>
             {
-              drawGamePadKeys = false;
-              drawKeyboardKeys = true;
-              break;
-            }
-            drawKeyboardKeys = false;
-            break;
-          case 1:
-            if (!drawGamePadKeys)
+                if (displayCombo.SelectedItem == null || resolutionCombo.SelectedItem == null)
+                {
+                    var messageBox = Dialog.CreateMessageBox("Error", "You must select a value for display/resolution!");
+                    messageBox.ShowModal(host);
+                    return;
+                }
+                Options.Config.Fullscreen = Convert.ToBoolean(displayCombo.SelectedIndex);
+                Options.Config.Width = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Width;
+                Options.Config.Height = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Height;
+                Options.Config.MusicVolume = musicSlider.Value;
+                Options.Config.SoundVolume = soundSlider.Value;
+                Options.applyConfig();
+                Options.SetConfigFile();
+                OptionsMenu(host, prevMenu);
+            };
+            grid.Widgets.Add(applyBtn);
+
+            TextButton backBtn = new TextButton();
+            backBtn.Text = "Back";
+            backBtn.GridColumn = 1;
+            backBtn.GridRow = 7;
+            backBtn.GridColumnSpan = 2;
+            backBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            backBtn.Click += (s, a) =>
             {
-              drawKeyboardKeys = false;
-              drawGamePadKeys = true;
-              break;
-            }
-            drawGamePadKeys = false;
-            break;
-          case 2:
-            currentMenu = MenuState.Options;
-            break;
+                prevMenu(host);
+            };
+            grid.Widgets.Add(backBtn);
+
+            host.Widgets.Add(grid);
         }
-      }
-    }
 
-    public void Update(
-      ref MenuState currentMenu,
-      ref bool activeGame,
-      GameTime gameTime,
-      GraphicsDeviceManager graphics,
-      KeyboardState keyboard,
-      KeyboardState oldKeyboard,
-      MouseState mouse,
-      GamePadState gamePad,
-      GamePadState oldGamePad)
-    {
-      if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) && activeGame)
-        Game1.gameState = GameState.Playing;
-      select(keyboard, oldKeyboard, gamePad, oldGamePad);
-      updateColors();
-      checkSelect(ref currentMenu, ref activeGame, graphics, keyboard, oldKeyboard, gamePad, oldGamePad);
-      _oldOption = _selectedOption;
-    }
+        public static void GameMenu(Desktop host)
+        {
+            host.Widgets.Clear();
+            Grid grid = new Grid();
 
-    public void Draw(SpriteBatch spriteBatch)
-    {
-      spriteBatch.Draw(Resources.menuBackground, new Rectangle(0, 0, Game1.screenWidth, Game1.screenHeight), Color.White * 0.5f);
-      spriteBatch.DrawString(Resources.title, "Target", new Vector2((float) Game1.centerX(Resources.title, "Target"), 20f), Color.Gold);
-      int index = 0;
-      foreach (string option in _options)
-      {
-        spriteBatch.DrawString(Resources.normal, option, new Vector2((float) Game1.centerX(Resources.normal, option), (float) (150 + 25 * index)), _optionsColors[index]);
-        ++index;
-      }
-      if (drawGamePadKeys)
-      {
-        spriteBatch.Draw(Resources.gamepadKeys, new Rectangle(Game1.screenWidth / 2 - Resources.gamepadKeys.Width / 2, Game1.screenHeight / 2 - Resources.gamepadKeys.Height / 2, Resources.gamepadKeys.Width, Resources.gamepadKeys.Height), Color.White);
-      }
-      else
-      {
-        if (!drawKeyboardKeys)
-          return;
-        spriteBatch.Draw(Resources.keyboardKeys, new Rectangle(Game1.screenWidth / 2 - Resources.keyboardKeys.Width / 2, Game1.screenHeight / 2 - Resources.keyboardKeys.Height / 2, Resources.keyboardKeys.Width, Resources.keyboardKeys.Height), Color.White);
-      }
+            grid.RowSpacing = 8;
+
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+
+            TextButton resumeBtn = new TextButton();
+            resumeBtn.Text = "Resume";
+            resumeBtn.GridColumn = 1;
+            resumeBtn.GridRow = 1;
+            resumeBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            resumeBtn.Click += (s, a) =>
+            {
+                Game1.gameState = GameState.Playing;
+            };
+            grid.Widgets.Add(resumeBtn);
+
+            TextButton optionsBtn = new TextButton();
+            optionsBtn.Text = "Options";
+            optionsBtn.GridColumn = 1;
+            optionsBtn.GridRow = 3;
+            optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            optionsBtn.Click += (s, a) =>
+            {
+                OptionsMenu(host, GameMenu);
+            };
+            grid.Widgets.Add(optionsBtn);
+
+            TextButton quitBtn = new TextButton();
+            quitBtn.Text = "End game";
+            quitBtn.GridColumn = 1;
+            quitBtn.GridRow = 4;
+            quitBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            quitBtn.Click += (s, a) =>
+            {
+                MainMenu(host);
+            };
+            grid.Widgets.Add(quitBtn);
+
+            host.Widgets.Add(grid);
+        }
+
+        public static void GameOverMenu(Desktop host, string content)
+        {
+            host.Widgets.Clear();
+            Grid grid = new Grid();
+
+            grid.RowSpacing = 8;
+
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion());
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+
+            TextBox detailsText = new TextBox();
+            detailsText.Text = content;
+            detailsText.GridColumn = 1;
+            detailsText.GridRow = 1;
+            detailsText.HorizontalAlignment = HorizontalAlignment.Stretch;
+            grid.Widgets.Add(detailsText);
+
+            TextButton optionsBtn = new TextButton();
+            optionsBtn.Text = "Continue";
+            optionsBtn.GridColumn = 1;
+            optionsBtn.GridRow = 2;
+            optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
+            optionsBtn.Click += (s, a) =>
+            {
+                MainMenu(host);
+            };
+            grid.Widgets.Add(optionsBtn);
+
+            host.Widgets.Add(grid);
+        }
     }
-  }
 }

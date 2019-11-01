@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myra;
+using Myra.Graphics2D.UI;
 using System;
 
 namespace Target
@@ -15,11 +17,10 @@ namespace Target
         private KeyboardState oldKeyboard;
         private MouseState oldMouse;
         private GamePadState oldGamePad;
-        public static int screenWidth;
-        public static int screenHeight;
         public static bool quit;
         public static GameState gameState;
-        private GameMenu gameMenu;
+        public static Options options;
+        private Desktop _desktop;
 
         public Game1()
         {
@@ -31,11 +32,11 @@ namespace Target
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
-            screenWidth = graphics.PreferredBackBufferWidth;
-            screenHeight = graphics.PreferredBackBufferHeight;
             graphics.SynchronizeWithVerticalRetrace = false;
             IsFixedTimeStep = true;
-            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0);
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0); //Set FPS
+            _desktop = new Desktop();
+            options = new Options(graphics, GraphicsAdapter.DefaultAdapter);
         }
 
         /// <summary>
@@ -46,7 +47,9 @@ namespace Target
         /// </summary>
         protected override void Initialize()
         {
-            gameMenu = new GameMenu();
+            MyraEnvironment.Game = this;
+            gameState = GameState.Menu;
+            Menu.MainMenu(_desktop);
             base.Initialize();
         }
 
@@ -58,6 +61,7 @@ namespace Target
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.LoadContent(Content);
+            Menu.LoadContent(Content);
         }
 
         /// <summary>
@@ -83,7 +87,7 @@ namespace Target
         public static int centerX(SpriteFont spriteFont, string text)
         {
             Vector2 vector2 = spriteFont.MeasureString(text);
-            return Game1.screenWidth / 2 - (int)vector2.X / 2;
+            return Options.Config.Width / 2 - (int)vector2.X / 2;
         }
 
         /// <summary>
@@ -95,20 +99,14 @@ namespace Target
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Game1.quit)
                 Exit();
-            if (GameMain.gameQuit)
-            {
-                Game1.gameState = GameState.Menu;
-                gameMenu.resetGame(false);
-            }
             switch (Game1.gameState)
             {
                 case GameState.Menu:
                     IsMouseVisible = true;
-                    gameMenu.Update(gameTime, graphics, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
                 case GameState.Playing:
                     IsMouseVisible = false;
-                    GameMain.Update(gameTime, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
+                    GameMain.Update(gameTime, _desktop, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
             }
             oldKeyboard = Keyboard.GetState();
@@ -128,9 +126,7 @@ namespace Target
             switch (Game1.gameState)
             {
                 case GameState.Menu:
-                    if (gameMenu.getActivity())
-                        GameMain.Draw(graphics, spriteBatch);
-                    gameMenu.Draw(spriteBatch);
+                    _desktop.Render();
                     break;
                 case GameState.Playing:
                     GameMain.Draw(graphics, spriteBatch);

@@ -37,7 +37,7 @@ namespace Target
       _randomX = new Random();
       _randomY = new Random();
       _hp = hp;
-      _sprite = new Rectangle(_randomX.Next(0, Game1.screenWidth - Resources.target.Width), _randomX.Next(0, Game1.screenHeight - Resources.target.Height), Resources.target.Width, Resources.target.Height);
+      _sprite = new Rectangle(_randomX.Next(0, Options.Config.Width - Resources.target.Width), _randomX.Next(0, Options.Config.Height - Resources.target.Height), Resources.target.Width, Resources.target.Height);
     }
 
     public bool getActivity()
