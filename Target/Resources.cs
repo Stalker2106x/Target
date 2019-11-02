@@ -12,8 +12,8 @@ namespace Target
 {
   class Resources
   {
-    public static SpriteFont title;
-    public static SpriteFont normal;
+    public static SpriteFont titleFont;
+    public static SpriteFont regularFont;
     public static Texture2D menuBackground;
     public static Texture2D target;
     public static Texture2D hitmarker;
@@ -32,14 +32,16 @@ namespace Target
     public static SoundEffect fire;
     public static SoundEffect reload;
     public static SoundEffect breath;
+    public static SoundEffect heartbeat;
     public static SoundEffect pain1;
     public static SoundEffect pain2;
 
     public static void LoadContent(ContentManager content)
     {
-      Resources.title = content.Load<SpriteFont>("Font/title");
-      Resources.normal = content.Load<SpriteFont>("Font/normal");
+      Resources.titleFont = content.Load<SpriteFont>("Font/title");
+      Resources.regularFont = content.Load<SpriteFont>("Font/regular");
       Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/menuBackground");
+      //Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
       Resources.target = content.Load<Texture2D>("GFX/Enemy/target");
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
@@ -57,6 +59,7 @@ namespace Target
       Resources.fire = content.Load<SoundEffect>("Sound/Weapons/fire");
       Resources.reload = content.Load<SoundEffect>("Sound/Weapons/reload");
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");
+      Resources.heartbeat = content.Load<SoundEffect>("Sound/Player/heartbeat");
       Resources.pain1 = content.Load<SoundEffect>("Sound/Player/pain1");
       Resources.pain2 = content.Load<SoundEffect>("Sound/Player/pain2");
     }

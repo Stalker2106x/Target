@@ -5,6 +5,7 @@
 // Assembly location: D:\Projets\Target\Target.exe
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -16,22 +17,25 @@ namespace Target
     private int _maxHp;
     private int _score;
     private bool _breath;
-    private bool _recover;
+    private bool _forceRecover;
     private float breathTimer;
     private int _bulletsFired;
     private int _bulletsHit;
     private Weapon _weapon;
+    private SoundEffectInstance _heartbeat;
 
     public Player()
     {
       _breath = true;
-      _recover = false;
+      _forceRecover = false;
       breathTimer = 0.0f;
       _hp = 100;
       _maxHp = 100;
       _bulletsFired = 0;
       _bulletsHit = 0;
       _weapon = new Weapon("Barett .50", 15);
+      _heartbeat = Resources.heartbeat.CreateInstance();
+      _heartbeat.IsLooped = true;
     }
 
     public int getHealth()
@@ -110,32 +114,30 @@ namespace Target
       GamePadState gamePad,
       GamePadState oldGamePad)
     {
-      if (keyboard.IsKeyDown(Keys.LeftShift) || gamePad.IsButtonDown(Buttons.LeftShoulder))
+      if ((keyboard.IsKeyDown(Keys.LeftShift) || gamePad.IsButtonDown(Buttons.LeftShoulder)) && !_forceRecover && (double)breathTimer <= 2500.0)
       {
-        _recover = true;
-        if ((double) breathTimer <= 2500.0)
+        if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
         {
-          breathTimer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-          if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
-          {
             breathTimer += 250f;
             Resources.breath.Play();
-          }
-          _breath = false;
+            _heartbeat.Play();
         }
-        else
+        _breath = false;
+        breathTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+        if (breathTimer > 2500.0) //Too much
+        {
           _breath = true;
+          _forceRecover = true;
+        }
       }
       else
       {
+        _heartbeat.Stop();
         _breath = true;
-        if (_recover)
-        {
-          if ((double) breathTimer >= 0.0)
-            breathTimer -= (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-          else
-            _recover = false;
-        }
+        if ((double)breathTimer >= 0.0)
+            breathTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+        else if (_forceRecover) //done recovering
+            _forceRecover = false;
       }
       if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released || gamePad.IsButtonDown(Buttons.RightTrigger))
         _weapon.fire(gameTime, mouse);

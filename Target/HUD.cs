@@ -277,8 +277,8 @@ namespace Target
       spriteBatch.Draw(Game1.createTexture2D(graphics), _breathBar, new Color(0, 0, 150, 180));
       if (_reloadi)
         spriteBatch.Draw(Game1.createTexture2D(graphics), _reloadBar, Color.LimeGreen);
-      spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(22f, 79f), Color.Black);
-      spriteBatch.DrawString(Resources.title, "Score: " + _score.ToString(), new Vector2(20f, 80f), Color.White);
+      spriteBatch.DrawString(Resources.regularFont, "Score: " + _score.ToString(), new Vector2(27f, 99f), Color.Black);
+      spriteBatch.DrawString(Resources.regularFont, "Score: " + _score.ToString(), new Vector2(25f, 100f), Color.White);
       for (int ammo = _ammo; ammo >= 1; --ammo)
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_hitmarker)

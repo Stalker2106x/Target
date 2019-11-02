@@ -13,15 +13,19 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Content/Font/normal.xnb
-/importer:
-/processor:
-/build:Content/Font/normal.xnb
+#begin Content/Font/regular.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Content/Font/regular.spritefont
 
-#begin Content/Font/title.xnb
-/importer:
-/processor:
-/build:Content/Font/title.xnb
+#begin Content/Font/title.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Content/Font/title.spritefont
 
 #begin Content/GFX/Enemy/hostage.png
 /importer:TextureImporter
@@ -106,11 +110,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Content/GFX/GUI/gamepadKeys.png
-
-#begin Content/GFX/GUI/gamepadKeys.xnb
-/importer:
-/processor:
-/build:Content/GFX/GUI/gamepadKeys.xnb
 
 #begin Content/GFX/GUI/hitmarker.png
 /importer:TextureImporter
@@ -316,17 +315,17 @@
 /processorParam:Quality=Best
 /build:Content/Sound/Player/breath.wav
 
+#begin Content/Sound/Player/heatbeat.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Player/heatbeat.wav
+
 #begin Content/Sound/Player/pain1.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Content/Sound/Player/pain1.wav
-
-#begin Content/Sound/Player/pain1-ancien1.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Content/Sound/Player/pain1-ancien1.wav
 
 #begin Content/Sound/Player/pain2.wav
 /importer:WavImporter
