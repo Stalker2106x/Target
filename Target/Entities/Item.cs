@@ -90,7 +90,7 @@ namespace Target
           break;
         case ItemType.FastReload:
           GameMain._player.getWeapon().setMagazine(-GameMain._player.getWeapon().getMagazine());
-          Resources.reload.Play();
+          Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.getWeapon().setMagazine(GameMain._player.getWeapon().getMaxMagazine());
           break;
         case ItemType.Death:

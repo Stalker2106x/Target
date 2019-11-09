@@ -197,8 +197,8 @@ namespace Target
       {
         if (oldMouse.X != mouse.X || oldMouse.Y != mouse.Y)
         {
-          HUD._target.X += (float) (mouse.X - oldMouse.X);
-          HUD._target.Y += (float) (mouse.Y - oldMouse.Y);
+          HUD._target.X += (mouse.X - oldMouse.X) * Options.Config.MouseSensivity;
+          HUD._target.Y += (mouse.Y - oldMouse.Y) * Options.Config.MouseSensivity;
         }
         else if ((double) gamePad.ThumbSticks.Right.X != 0.0 || (double) gamePad.ThumbSticks.Right.Y != 0.0)
         {

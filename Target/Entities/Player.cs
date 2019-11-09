@@ -35,6 +35,7 @@ namespace Target
       _bulletsHit = 0;
       _weapon = new Weapon("Barett .50", 15);
       _heartbeat = Resources.heartbeat.CreateInstance();
+      _heartbeat.Volume = Options.Config.SoundVolume;
       _heartbeat.IsLooped = true;
     }
 
@@ -119,7 +120,7 @@ namespace Target
         if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
         {
             breathTimer += 250f;
-            Resources.breath.Play();
+            Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
             _heartbeat.Play();
         }
         _breath = false;

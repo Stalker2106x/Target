@@ -59,7 +59,7 @@ namespace Target
             TextButton playBtn = new TextButton();
             playBtn.Text = "Play";
             playBtn.GridColumn = 1;
-            playBtn.GridRow = 3;
+            playBtn.GridRow = 2;
             playBtn.Click += (s, a) =>
             {
                 GameMain.resetGame();
@@ -70,7 +70,7 @@ namespace Target
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Options";
             optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 4;
+            optionsBtn.GridRow = 3;
             optionsBtn.Click += (s, a) =>
             {
                 OptionsMenu(host, MainMenu);
@@ -80,7 +80,7 @@ namespace Target
             TextButton quitBtn = new TextButton();
             quitBtn.Text = "Quit";
             quitBtn.GridColumn = 1;
-            quitBtn.GridRow = 5;
+            quitBtn.GridRow = 4;
             quitBtn.Click += (s, a) =>
             {
                 Game1.quit = true;
@@ -147,42 +147,61 @@ namespace Target
             displayCombo.SelectedIndex = Convert.ToInt32(Options.Config.Fullscreen);
             grid.Widgets.Add(displayCombo);
 
+            TextBox sensivityLabel = new TextBox();
+            sensivityLabel.Text = "Mouse sensivity";
+            sensivityLabel.GridColumn = 1;
+            sensivityLabel.GridRow = 3;
+            sensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
+            grid.Widgets.Add(sensivityLabel);
+
+            HorizontalSlider sensivitySlider = new HorizontalSlider();
+            sensivitySlider.GridColumn = 2;
+            sensivitySlider.GridRow = 3;
+            sensivitySlider.Width = 100;
+            sensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
+            sensivitySlider.Minimum = 0.1f;
+            sensivitySlider.Maximum = 10f;
+            sensivitySlider.Value = Options.Config.MouseSensivity;
+            grid.Widgets.Add(sensivitySlider);
+
             TextBox musicLabel = new TextBox();
             musicLabel.Text = "Music volume";
             musicLabel.GridColumn = 1;
-            musicLabel.GridRow = 3;
+            musicLabel.GridRow = 4;
             musicLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(musicLabel);
 
             HorizontalSlider musicSlider = new HorizontalSlider();
             musicSlider.GridColumn = 2;
-            musicSlider.GridRow = 3;
+            musicSlider.GridRow = 4;
             musicSlider.Width = 100;
             musicSlider.HorizontalAlignment = HorizontalAlignment.Right;
             musicSlider.Minimum = 0f;
             musicSlider.Maximum = 1f;
+            musicSlider.Value = Options.Config.MusicVolume;
             grid.Widgets.Add(musicSlider);
 
             TextBox soundLabel = new TextBox();
             soundLabel.Text = "Sounds volume";
             soundLabel.GridColumn = 1;
-            soundLabel.GridRow = 4;
+            soundLabel.GridRow = 5;
             soundLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(soundLabel);
 
             HorizontalSlider soundSlider = new HorizontalSlider();
             soundSlider.GridColumn = 2;
-            soundSlider.GridRow = 4;
+            soundSlider.GridRow = 5;
             soundSlider.Width = 100;
             soundSlider.HorizontalAlignment = HorizontalAlignment.Right;
             soundSlider.Minimum = 0f;
             soundSlider.Maximum = 1f;
+            soundSlider.Value = Options.Config.SoundVolume;
             grid.Widgets.Add(soundSlider);
 
             TextButton applyBtn = new TextButton();
             applyBtn.Text = "Apply";
             applyBtn.GridColumn = 1;
-            applyBtn.GridRow = 5;
+            applyBtn.GridRow = 6;
             applyBtn.GridColumnSpan = 2;
             applyBtn.HorizontalAlignment = HorizontalAlignment.Center;
             applyBtn.Click += (s, a) =>
@@ -196,6 +215,7 @@ namespace Target
                 Options.Config.Fullscreen = Convert.ToBoolean(displayCombo.SelectedIndex);
                 Options.Config.Width = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Width;
                 Options.Config.Height = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Height;
+                Options.Config.MouseSensivity = sensivitySlider.Value;
                 Options.Config.MusicVolume = musicSlider.Value;
                 Options.Config.SoundVolume = soundSlider.Value;
                 Options.applyConfig();
@@ -253,7 +273,7 @@ namespace Target
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Options";
             optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 3;
+            optionsBtn.GridRow = 2;
             optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
             optionsBtn.Click += (s, a) =>
             {
@@ -264,7 +284,7 @@ namespace Target
             TextButton quitBtn = new TextButton();
             quitBtn.Text = "Quit";
             quitBtn.GridColumn = 1;
-            quitBtn.GridRow = 4;
+            quitBtn.GridRow = 3;
             quitBtn.HorizontalAlignment = HorizontalAlignment.Center;
             quitBtn.Click += (s, a) =>
             {

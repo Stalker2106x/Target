@@ -106,7 +106,7 @@ namespace Target
       GameMain._player.setBulletsFired(1);
       _weaponState = WeaponState.Firing;
       GameMain.hud.setRecoil();
-      Resources.fire.Play(0.5f, 0.0f, 0.0f);
+      Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
       for (int index = 0; index < GameMain._targets.Count; ++index)
         GameMain._targets[index].checkCollision();
       for (int index = 0; index < GameMain._items.Count; ++index)
@@ -117,7 +117,7 @@ namespace Target
     {
       if (_magazine >= _maxMagazine || _weaponState != WeaponState.Available)
         return;
-      Resources.reload.Play();
+      Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
       _magazine = _maxMagazine;
       _weaponState = WeaponState.Reloading;
     }

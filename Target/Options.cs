@@ -12,6 +12,7 @@ namespace Target
         public bool Fullscreen { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public float MouseSensivity { get; set; }
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
 
@@ -20,6 +21,7 @@ namespace Target
             Fullscreen = false;
             Width = Options.Resolutions[0].Width;
             Height = Options.Resolutions[0].Height;
+            MouseSensivity = 1.0f;
             MusicVolume = 1.0f;
             SoundVolume = 1.0f;
         }
@@ -78,6 +80,7 @@ namespace Target
             fs.WriteLine("fullscreen=" + (Config.Fullscreen == true ? "true" : "false"));
             fs.WriteLine("width=" + Config.Width);
             fs.WriteLine("height=" + Config.Height);
+            fs.WriteLine("sensivity=" + Config.MouseSensivity);
             fs.WriteLine("musicvolume=" + Config.MusicVolume);
             fs.WriteLine("soundvolume=" + Config.SoundVolume);
             fs.Close();
@@ -92,7 +95,6 @@ namespace Target
                     break;
                 case "width":
                     int width;
-
                     Int32.TryParse(value, out width);
                     Config.Width = width;
                     break;
@@ -101,6 +103,12 @@ namespace Target
 
                     Int32.TryParse(value, out height);
                     Config.Height = height;
+                    break;
+                case "sensivity":
+                    float sensivity;
+
+                    float.TryParse(value, out sensivity);
+                    Config.MouseSensivity = sensivity;
                     break;
                 case "soundvolume":
                     float soundvol;

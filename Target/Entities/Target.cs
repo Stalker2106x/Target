@@ -64,11 +64,11 @@ namespace Target
       if ((double) _lifetime < (double) _hurtDelay)
         return;
       _lifetime = 0.0f;
-      Resources.fire.Play(0.5f, 0.0f, 0.0f);
+      Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
       GameMain.hud.setBloodsplat();
       if (_randomX.Next(1, 3) == 1)
-        Resources.pain1.Play();
-      else
+        Resources.pain1.Play(Options.Config.SoundVolume, 0f, 0f);
+            else
         Resources.pain2.Play();
       player.setHealth(-10);
     }
