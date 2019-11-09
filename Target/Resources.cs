@@ -15,7 +15,8 @@ namespace Target
     public static SpriteFont titleFont;
     public static SpriteFont regularFont;
     public static Texture2D menuBackground;
-    public static Texture2D target;
+    public static Texture2D soldier_idle;
+    public static Texture2D soldier_firing;
     public static Texture2D hitmarker;
     public static Texture2D bloodsplat;
     public static Texture2D r700;
@@ -30,6 +31,7 @@ namespace Target
     public static Texture2D keyboardKeys;
     public static SoundEffect menuClick;
     public static SoundEffect fire;
+    public static SoundEffect burst;
     public static SoundEffect reload;
     public static SoundEffect breath;
     public static SoundEffect heartbeat;
@@ -42,7 +44,9 @@ namespace Target
       Resources.regularFont = content.Load<SpriteFont>("Font/regular");
       //Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/menuBackground");
       Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
-      Resources.target = content.Load<Texture2D>("GFX/Enemy/target");
+      //Resources.target = content.Load<Texture2D>("GFX/Enemy/target");
+      Resources.soldier_idle = content.Load<Texture2D>("GFX/Enemy/soldier_idle");
+      Resources.soldier_firing = content.Load<Texture2D>("GFX/Enemy/soldier_firing");
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
       Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
@@ -57,6 +61,7 @@ namespace Target
       Resources.keyboardKeys = content.Load<Texture2D>("GFX/GUI/keyboardKeys");
       Resources.menuClick = content.Load<SoundEffect>("Sound/GUI/click");
       Resources.fire = content.Load<SoundEffect>("Sound/Weapons/fire");
+      Resources.burst = content.Load<SoundEffect>("Sound/Weapons/burst");
       Resources.reload = content.Load<SoundEffect>("Sound/Weapons/reload");
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");
       Resources.heartbeat = content.Load<SoundEffect>("Sound/Player/heartbeat");

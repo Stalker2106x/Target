@@ -62,7 +62,7 @@ namespace Target
             String line;
 
             try { file = new StreamReader(_configfile); }
-            catch (System.IO.IOException e)
+            catch (System.IO.IOException)
             {
                 return;
             }

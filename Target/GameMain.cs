@@ -107,7 +107,7 @@ namespace Target
         if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I))
           _items.Add(new Item());
         for (int index = 0; index < _targets.Count; ++index)
-          _targets[index].Update(ref _player, gameTime, mouse);
+          _targets[index].Update(_player, gameTime, mouse);
         for (int index = 0; index < _items.Count; ++index)
           _items[index].Update(gameTime);
         _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);

@@ -39,6 +39,30 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Enemy/hostage.png
 
+#begin Content/GFX/Enemy/soldier_firing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Enemy/soldier_firing.png
+
+#begin Content/GFX/Enemy/soldier_idle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Enemy/soldier_idle.png
+
 #begin Content/GFX/Enemy/target.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -344,6 +368,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Content/Sound/Player/pain2.wav
+
+#begin Content/Sound/Weapons/burst.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Weapons/burst.wav
 
 #begin Content/Sound/Weapons/fire.wav
 /importer:WavImporter
