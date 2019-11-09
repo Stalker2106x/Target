@@ -40,8 +40,8 @@ namespace Target
     {
       Resources.titleFont = content.Load<SpriteFont>("Font/title");
       Resources.regularFont = content.Load<SpriteFont>("Font/regular");
-      Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/menuBackground");
-      //Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
+      //Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/menuBackground");
+      Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
       Resources.target = content.Load<Texture2D>("GFX/Enemy/target");
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");

@@ -70,6 +70,8 @@ namespace Target
       _reloadBar = new Rectangle(Options.Config.Width - 225, Options.Config.Height - 15, 0, 10);
       randomX = new Random();
       randomY = new Random();
+      _target.X = Options.Config.Width / 2;
+      _target.Y = Options.Config.Height / 2;
     }
 
     public void setHitmarker()

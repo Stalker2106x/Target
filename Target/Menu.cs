@@ -10,6 +10,8 @@ using Myra.Graphics2D.UI.Styles;
 using Microsoft.Xna.Framework.Content;
 using System;
 using Myra.Graphics2D.TextureAtlases;
+using Myra;
+using Microsoft.Xna.Framework;
 
 namespace Target
 {
@@ -20,6 +22,9 @@ namespace Target
             /*SpriteFont font = content.Load<SpriteFont>("font/general");
             Stylesheet.Current.TextBoxStyle.Font = font;*/
             Stylesheet.Current.ButtonStyle.Width = 500;
+            Stylesheet.Current.ButtonStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
+            Stylesheet.Current.ButtonStyle.OverBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.1f));
+            Stylesheet.Current.ButtonStyle.PressedBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.2f));
             Stylesheet.Current.ComboBoxStyle.Width = 100;
             Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
             //Stylesheet.Current.TextFieldStyle.Width = 100;0
@@ -28,22 +33,11 @@ namespace Target
         public static void MainMenu(Desktop host)
         {
             host.Widgets.Clear();
-            Grid grid = new Grid();
+            VerticalStackPanel grid = new VerticalStackPanel();
+            grid.VerticalAlignment = VerticalAlignment.Center;
+            grid.HorizontalAlignment = HorizontalAlignment.Center;
 
-            grid.RowSpacing = 8;
-
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.Spacing = 8;
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
@@ -51,15 +45,11 @@ namespace Target
 
             Label title = new Label();
             title.Text = "(Target)";
-            title.GridColumn = 1;
-            title.GridRow = 1;
-            title.VerticalSpacing = 100;
+            title.PaddingBottom = 100;
             grid.Widgets.Add(title);
 
             TextButton playBtn = new TextButton();
             playBtn.Text = "Play";
-            playBtn.GridColumn = 1;
-            playBtn.GridRow = 2;
             playBtn.Click += (s, a) =>
             {
                 GameMain.resetGame();
@@ -69,8 +59,6 @@ namespace Target
 
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Options";
-            optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 3;
             optionsBtn.Click += (s, a) =>
             {
                 OptionsMenu(host, MainMenu);
@@ -78,9 +66,7 @@ namespace Target
             grid.Widgets.Add(optionsBtn);
 
             TextButton quitBtn = new TextButton();
-            quitBtn.Text = "Quit";
-            quitBtn.GridColumn = 1;
-            quitBtn.GridRow = 4;
+            quitBtn.Text = "Exit";
             quitBtn.Click += (s, a) =>
             {
                 Game1.quit = true;
@@ -94,22 +80,22 @@ namespace Target
         {
             host.Widgets.Clear();
             Grid grid = new Grid();
+            grid.VerticalAlignment = VerticalAlignment.Center;
 
             grid.RowSpacing = 8;
 
             grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Pixels, 200));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
             grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
             grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
             grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
+            grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
@@ -118,13 +104,12 @@ namespace Target
             TextBox resolutionLabel = new TextBox();
             resolutionLabel.Text = "Resolution";
             resolutionLabel.GridColumn = 1;
-            resolutionLabel.GridRow = 1;
             resolutionLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(resolutionLabel);
 
             ComboBox resolutionCombo = new ComboBox();
             resolutionCombo.GridColumn = 2;
-            resolutionCombo.GridRow = 1;
+            resolutionCombo.GridRow = 0;
             resolutionCombo.HorizontalAlignment = HorizontalAlignment.Right;
             List<string> resolutions = Options.getResolutions();
             resolutions.ForEach(e => { resolutionCombo.Items.Add(new ListItem(e)); });
@@ -134,13 +119,13 @@ namespace Target
             TextBox displayLabel = new TextBox();
             displayLabel.Text = "Display mode";
             displayLabel.GridColumn = 1;
-            displayLabel.GridRow = 2;
+            displayLabel.GridRow = 1;
             displayLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(displayLabel);
 
             ComboBox displayCombo = new ComboBox();
             displayCombo.GridColumn = 2;
-            displayCombo.GridRow = 2;
+            displayCombo.GridRow = 1;
             displayCombo.HorizontalAlignment = HorizontalAlignment.Right;
             displayCombo.Items.Add(new ListItem("Windowed"));
             displayCombo.Items.Add(new ListItem("Fullscreen"));
@@ -150,13 +135,13 @@ namespace Target
             TextBox sensivityLabel = new TextBox();
             sensivityLabel.Text = "Mouse sensivity";
             sensivityLabel.GridColumn = 1;
-            sensivityLabel.GridRow = 3;
+            sensivityLabel.GridRow = 2;
             sensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(sensivityLabel);
 
             HorizontalSlider sensivitySlider = new HorizontalSlider();
             sensivitySlider.GridColumn = 2;
-            sensivitySlider.GridRow = 3;
+            sensivitySlider.GridRow = 2;
             sensivitySlider.Width = 100;
             sensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
             sensivitySlider.Minimum = 0.1f;
@@ -167,13 +152,13 @@ namespace Target
             TextBox musicLabel = new TextBox();
             musicLabel.Text = "Music volume";
             musicLabel.GridColumn = 1;
-            musicLabel.GridRow = 4;
+            musicLabel.GridRow = 3;
             musicLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(musicLabel);
 
             HorizontalSlider musicSlider = new HorizontalSlider();
             musicSlider.GridColumn = 2;
-            musicSlider.GridRow = 4;
+            musicSlider.GridRow = 3;
             musicSlider.Width = 100;
             musicSlider.HorizontalAlignment = HorizontalAlignment.Right;
             musicSlider.Minimum = 0f;
@@ -184,13 +169,13 @@ namespace Target
             TextBox soundLabel = new TextBox();
             soundLabel.Text = "Sounds volume";
             soundLabel.GridColumn = 1;
-            soundLabel.GridRow = 5;
+            soundLabel.GridRow = 4;
             soundLabel.HorizontalAlignment = HorizontalAlignment.Left;
             grid.Widgets.Add(soundLabel);
 
             HorizontalSlider soundSlider = new HorizontalSlider();
             soundSlider.GridColumn = 2;
-            soundSlider.GridRow = 5;
+            soundSlider.GridRow = 4;
             soundSlider.Width = 100;
             soundSlider.HorizontalAlignment = HorizontalAlignment.Right;
             soundSlider.Minimum = 0f;
@@ -220,12 +205,12 @@ namespace Target
                 Options.Config.SoundVolume = soundSlider.Value;
                 Options.applyConfig();
                 Options.SetConfigFile();
-                OptionsMenu(host, prevMenu);
+                prevMenu(host);
             };
             grid.Widgets.Add(applyBtn);
 
             TextButton backBtn = new TextButton();
-            backBtn.Text = "Back";
+            backBtn.Text = "Cancel";
             backBtn.GridColumn = 1;
             backBtn.GridRow = 7;
             backBtn.GridColumnSpan = 2;
@@ -242,28 +227,24 @@ namespace Target
         public static void GameMenu(Desktop host)
         {
             host.Widgets.Clear();
-            Grid grid = new Grid();
+            VerticalStackPanel grid = new VerticalStackPanel();
+            grid.VerticalAlignment = VerticalAlignment.Center;
+            grid.HorizontalAlignment = HorizontalAlignment.Center;
 
-            grid.RowSpacing = 8;
-
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.Spacing = 8;
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
             host.Widgets.Add(background);
 
+            Label title = new Label();
+            title.Text = "Paused";
+            title.PaddingBottom = 100;
+            title.HorizontalAlignment = HorizontalAlignment.Center;
+            grid.Widgets.Add(title);
+
             TextButton resumeBtn = new TextButton();
             resumeBtn.Text = "Resume";
-            resumeBtn.GridColumn = 1;
-            resumeBtn.GridRow = 1;
-            resumeBtn.HorizontalAlignment = HorizontalAlignment.Center;
             resumeBtn.Click += (s, a) =>
             {
                 Game1.gameState = GameState.Playing;
@@ -272,9 +253,6 @@ namespace Target
 
             TextButton optionsBtn = new TextButton();
             optionsBtn.Text = "Options";
-            optionsBtn.GridColumn = 1;
-            optionsBtn.GridRow = 2;
-            optionsBtn.HorizontalAlignment = HorizontalAlignment.Center;
             optionsBtn.Click += (s, a) =>
             {
                 OptionsMenu(host, GameMenu);
@@ -283,9 +261,6 @@ namespace Target
 
             TextButton quitBtn = new TextButton();
             quitBtn.Text = "Quit";
-            quitBtn.GridColumn = 1;
-            quitBtn.GridRow = 3;
-            quitBtn.HorizontalAlignment = HorizontalAlignment.Center;
             quitBtn.Click += (s, a) =>
             {
                 MainMenu(host);
@@ -298,18 +273,11 @@ namespace Target
         public static void GameOverMenu(Desktop host, string content)
         {
             host.Widgets.Clear();
-            Grid grid = new Grid();
+            VerticalStackPanel grid = new VerticalStackPanel();
+            grid.VerticalAlignment = VerticalAlignment.Center;
+            grid.HorizontalAlignment = HorizontalAlignment.Center;
 
-            grid.RowSpacing = 8;
-
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion());
-            grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+            grid.Spacing = 8;
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
@@ -317,22 +285,17 @@ namespace Target
 
             Label title = new Label();
             title.Text = "(Game Over)";
-            title.GridColumn = 1;
-            title.GridRow = 1;
-            title.VerticalSpacing = 100;
+            title.PaddingBottom = 100;
             grid.Widgets.Add(title);
 
             Label detailsText = new Label();
             detailsText.Text = content;
             detailsText.Font = Resources.regularFont;
-            detailsText.GridColumn = 1;
-            detailsText.GridRow = 2;
+            detailsText.PaddingBottom = 100;
             grid.Widgets.Add(detailsText);
 
             TextButton continueBtn = new TextButton();
             continueBtn.Text = "Continue";
-            continueBtn.GridColumn = 1;
-            continueBtn.GridRow = 3;
             continueBtn.Click += (s, a) =>
             {
                 MainMenu(host);
