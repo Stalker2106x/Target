@@ -351,11 +351,11 @@
 /processorParam:Quality=Best
 /build:Content/Sound/Player/breath.wav
 
-#begin Content/Sound/Player/heatbeat.wav
+#begin Content/Sound/Player/heartbeat.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Content/Sound/Player/heatbeat.wav
+/build:Content/Sound/Player/heartbeat.wav
 
 #begin Content/Sound/Player/pain1.wav
 /importer:WavImporter
