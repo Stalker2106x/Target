@@ -20,7 +20,7 @@ namespace Target
         public static bool quit;
         public static GameState gameState;
         public static Options options;
-        private Desktop _desktop;
+        private Desktop _menuUI;
 
         public Game1()
         {
@@ -28,15 +28,15 @@ namespace Target
             gameState = GameState.Menu;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1024;
-            graphics.PreferredBackBufferHeight = 768;
-            graphics.ApplyChanges();
+            options = new Options(graphics, GraphicsAdapter.DefaultAdapter);
+            graphics.IsFullScreen = Options.Config.Fullscreen;
+            graphics.PreferredBackBufferWidth = Options.Config.Width;
+            graphics.PreferredBackBufferHeight = Options.Config.Height;
             graphics.SynchronizeWithVerticalRetrace = false;
+            graphics.ApplyChanges();
             IsFixedTimeStep = true;
             TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 90.0); //Set FPS
-            _desktop = new Desktop();
-            options = new Options(graphics, GraphicsAdapter.DefaultAdapter);
+            _menuUI = new Desktop();
         }
 
         /// <summary>
@@ -60,8 +60,7 @@ namespace Target
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.LoadContent(Content);
-            Menu.LoadContent(Content);
-            Menu.MainMenu(_desktop);
+            Menu.MainMenu(_menuUI);
         }
 
         /// <summary>
@@ -106,7 +105,7 @@ namespace Target
                     break;
                 case GameState.Playing:
                     IsMouseVisible = false;
-                    GameMain.Update(gameTime, _desktop, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
+                    GameMain.Update(gameTime, _menuUI, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
                     break;
             }
             oldKeyboard = Keyboard.GetState();
@@ -126,14 +125,27 @@ namespace Target
             switch (Game1.gameState)
             {
                 case GameState.Menu:
-                    _desktop.Render();
+                    _menuUI.Render();
                     break;
                 case GameState.Playing:
                     GameMain.Draw(graphics, spriteBatch);
                     break;
             }
             spriteBatch.End();
+            PostDraw();
             base.Draw(gameTime);
         }
-    }
+        protected void PostDraw()
+        {
+          switch (Game1.gameState)
+          {
+            case GameState.Menu:
+              _menuUI.Render();
+              break;
+            case GameState.Playing:
+              GameMain.PostDraw();
+              break;
+          }
+        }
+  }
 }

@@ -1,8 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <ApplicationIcon>Content/Target.ico</ApplicationIcon>
+    <Win32Resource />
+    <Version>1.2.0</Version>
+    <PackageProjectUrl>http://stabax.org</PackageProjectUrl>
+    <Copyright>Stabax 2012-2020 (R)</Copyright>
+    <Company>Stabax</Company>
+    <Authors>stalker2106</Authors>
   </PropertyGroup>
 
   <ItemGroup>

@@ -79,7 +79,7 @@ namespace Target
 
     public static void Update(
       GameTime gameTime,
-      Desktop host,
+      Desktop menuUI,
       KeyboardState keyboard,
       KeyboardState oldKeyboard,
       MouseState mouse,
@@ -89,14 +89,14 @@ namespace Target
     {
       if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
       {
-        Menu.GameMenu(host);
+        Menu.GameMenu(menuUI);
         Game1.gameState = GameState.Menu;
       }
       if (_player.getHealth() <= 0)
       {
         gameOver = true;
         Game1.gameState = GameState.Menu;
-        Menu.GameOverMenu(host, "Score: " + _player.getScore().ToString() + "\n"
+        Menu.GameOverMenu(menuUI, "Score: " + _player.getScore().ToString() + "\n"
                               + "Tirs: " + _player.getBulletsFired().ToString() + "\n"
                               + "Precision: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
       }
@@ -128,6 +128,11 @@ namespace Target
         _player.Draw(spriteBatch);
         hud.Draw(graphics, spriteBatch);
       }
+    }
+
+    public static void PostDraw()
+    {
+      hud.DrawUI();
     }
   }
 }

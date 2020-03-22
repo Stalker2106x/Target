@@ -7,6 +7,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Myra;
+using Myra.Graphics2D.TextureAtlases;
+using Myra.Graphics2D.UI;
+using Myra.Graphics2D.UI.Styles;
 using System;
 
 namespace Target
@@ -17,32 +21,40 @@ namespace Target
     private const int BarWidth = 25;
 
     private MouseState mouseState;
-    private Rectangle _healthBar;
-    private Rectangle _healthBarBG;
-    private Rectangle _breathBar;
-    private Rectangle _breathBarBG;
+
+    HorizontalProgressBar _healthIndicator;
+    HorizontalProgressBar _breathIndicator;
+    Label _scoreIndicator;
+
     private int _ammo;
-    private int _score;
     private float _breathTimer;
     private float _gamePadSensivity;
-    private bool _reloadi;
-    private Rectangle _reloadBar;
+
+    HorizontalProgressBar _reloadIndicator;
+
     public static Vector2 _target;
+
     private Random randomX;
     private Random randomY;
+
     private bool _hitmarker;
     private float _hitmarkerOpacity;
     private float _hitmarkerTimer;
     private float _hitmarkerDelay;
+
     private float drawBonusTimer;
     private float drawBonusDelay;
+
     private bool _recoil;
     private float _recoilTimer;
     private float _recoilDelay;
+
     private bool _bloodsplat;
     private float bloodsplatTimer;
     private Rectangle bloodsplatPos;
     private float bloodsplatDelay;
+
+    private Desktop _UI;
 
     public HUD()
     {
@@ -61,18 +73,67 @@ namespace Target
       bloodsplatTimer = 0.0f;
       bloodsplatDelay = 2f;
       _ammo = 0;
-      _reloadi = false;
-      _healthBar = new Rectangle(12, 32, 200, 25);
-      _healthBarBG = new Rectangle(10, 30, 204, 27);
-      _breathBar = new Rectangle(12, 62, 200, 25);
-      _breathBarBG = new Rectangle(10, 60, 204, 29);
-      _reloadBar = new Rectangle(Options.Config.Width - 225, Options.Config.Height - 15, 0, 10);
-      _reloadBar = new Rectangle(Options.Config.Width - 225, Options.Config.Height - 15, 0, 10);
       randomX = new Random();
       randomY = new Random();
       _target.X = Options.Config.Width / 2;
       _target.Y = Options.Config.Height / 2;
+
+      _UI = new Desktop();
+      addIndicators();
     }
+
+    // NEW HUD
+
+    public void addIndicators()
+    {
+      // Top Panel
+      VerticalStackPanel topPanel = new VerticalStackPanel();
+      topPanel.Spacing = 8;
+
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
+      _healthIndicator = new HorizontalProgressBar();
+      _healthIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _healthIndicator.VerticalAlignment = VerticalAlignment.Top;
+      _healthIndicator.Width = 200;
+      _healthIndicator.Height = 20;
+      topPanel.Widgets.Add(_healthIndicator);
+
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Blue);
+      _breathIndicator = new HorizontalProgressBar();
+      _breathIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _breathIndicator.VerticalAlignment = VerticalAlignment.Top;
+      _breathIndicator.Width = 200;
+      _breathIndicator.Height = 20;
+      topPanel.Widgets.Add(_breathIndicator);
+
+      Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
+      _scoreIndicator = new Label();
+      _scoreIndicator.Text = "Score: 0";
+      _scoreIndicator.Height = 6;
+      _scoreIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _scoreIndicator.VerticalAlignment = VerticalAlignment.Top;
+      topPanel.Widgets.Add(_scoreIndicator);
+
+      _UI.Widgets.Add(topPanel);
+      // Bottom Panel
+      Panel bottomPanel = new Panel();
+
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LimeGreen);
+      _reloadIndicator = new HorizontalProgressBar();
+      _reloadIndicator.HorizontalAlignment = HorizontalAlignment.Right;
+      _reloadIndicator.VerticalAlignment = VerticalAlignment.Bottom;
+      _reloadIndicator.Width = 200;
+      _reloadIndicator.Height = 10;
+      _reloadIndicator.Left = -50;
+      bottomPanel.Widgets.Add(_reloadIndicator);
+
+      _UI.Widgets.Add(bottomPanel);
+    }
+
+    //Old
 
     public void setHitmarker()
     {
@@ -89,16 +150,24 @@ namespace Target
       bloodsplatTimer = 0.0f;
     }
 
-    public void healthIndicator(ref Player player)
+    public void udpateHealth(int maxHealth, int health)
     {
-      _healthBar.Width = player.getHealth() * 2;
-      _healthBarBG.Width = player.getMaxHealth() * 2 + 4;
+      _healthIndicator.Minimum = 0;
+      _healthIndicator.Maximum = maxHealth;
+      _healthIndicator.Value = health;
     }
 
-    public void breathIndicator(ref Player player)
+    public void updateBreath(float breath)
     {
-      _breathBar.Width = (int) player.getBreathTimer() / 15;
-      _breathBarBG.Width = 204;
+      _breathIndicator.Minimum = 0;
+      _breathIndicator.Maximum = 2500;
+      _breathIndicator.Value = breath;
+    }
+    public void updateReload(Weapon playerWeapon)
+    {
+      _reloadIndicator.Minimum = 0;
+      _reloadIndicator.Maximum = playerWeapon.getReloadDelay();
+      _reloadIndicator.Value = playerWeapon.getTimer();
     }
 
     public void ammoIndicator(ref Player player)
@@ -169,21 +238,6 @@ namespace Target
             GameMain._items[index].setActivity(false);
           }
         }
-      }
-    }
-
-    public void reloadIndicator(ref Player player)
-    {
-      if (player.getWeapon().getState() == WeaponState.Reloading)
-      {
-        _reloadi = true;
-        _reloadBar.X = (int) ((double) Options.Config.Width - ((double) player.getWeapon().getReloadDelay() / 10.0 + 30.0));
-        _reloadBar.Width = (int) ((double) player.getWeapon().getTimer() / 10.0);
-      }
-      else
-      {
-        _reloadi = false;
-        _reloadBar.Width = 0;
       }
     }
 
@@ -258,14 +312,15 @@ namespace Target
       GamePadState oldGamePad)
     {
       mouseState = mouse;
-      _score = player.getScore();
+      _scoreIndicator.Text = "Score: " + player.getScore();
+      udpateHealth(player.getMaxHealth(), player.getHealth());
+      updateBreath(player.getBreathTimer());
+      updateReload(player.getWeapon());
+
       updateDrawBonus(gameTime);
       updateCrosshair(gameTime, ref player, mouse, oldMouse, gamePad, oldGamePad);
-      healthIndicator(ref player);
-      breathIndicator(ref player);
       ammoIndicator(ref player);
       updateRecoil(gameTime);
-      reloadIndicator(ref player);
       checkHitmarker(gameTime);
       checkBloodsplat(gameTime);
     }
@@ -273,14 +328,6 @@ namespace Target
     public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(Resources.crosshair, new Rectangle((int) HUD._target.X - Resources.crosshair.Width / 2, (int) HUD._target.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height), Color.White);
-      spriteBatch.Draw(Game1.createTexture2D(graphics), _healthBarBG, new Color(105, 105, 105, 180));
-      spriteBatch.Draw(Game1.createTexture2D(graphics), _healthBar, new Color(255, 0, 0, 180));
-      spriteBatch.Draw(Game1.createTexture2D(graphics), _breathBarBG, new Color(105, 105, 105, 180));
-      spriteBatch.Draw(Game1.createTexture2D(graphics), _breathBar, new Color(0, 0, 150, 180));
-      if (_reloadi)
-        spriteBatch.Draw(Game1.createTexture2D(graphics), _reloadBar, Color.LimeGreen);
-      spriteBatch.DrawString(Resources.regularFont, "Score: " + _score.ToString(), new Vector2(27f, 99f), Color.Black);
-      spriteBatch.DrawString(Resources.regularFont, "Score: " + _score.ToString(), new Vector2(25f, 100f), Color.White);
       for (int ammo = _ammo; ammo >= 1; --ammo)
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_hitmarker)
@@ -292,6 +339,11 @@ namespace Target
         if (GameMain._items[index].getDrawState())
           spriteBatch.Draw(GameMain._items[index].getGFX(), new Rectangle(20, 150, GameMain._items[index].getGFX().Width, GameMain._items[index].getGFX().Height), Color.White * 0.75f);
       }
+    }
+
+    public void DrawUI()
+    {
+      _UI.Render();
     }
   }
 }

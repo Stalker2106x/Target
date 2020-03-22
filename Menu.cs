@@ -17,22 +17,20 @@ namespace Target
 {
     public static class Menu
     {
-        public static void LoadContent(ContentManager content)
+        public static void LoadUIStylesheet()
         {
-            /*SpriteFont font = content.Load<SpriteFont>("font/general");
-            Stylesheet.Current.TextBoxStyle.Font = font;*/
             Stylesheet.Current.ButtonStyle.Width = 500;
             Stylesheet.Current.ButtonStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
             Stylesheet.Current.ButtonStyle.OverBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.1f));
             Stylesheet.Current.ButtonStyle.PressedBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.2f));
             Stylesheet.Current.ComboBoxStyle.Width = 100;
             Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
-            //Stylesheet.Current.TextFieldStyle.Width = 100;0
         }
 
-        public static void MainMenu(Desktop host)
+        public static void MainMenu(Desktop menuUI)
         {
-            host.Widgets.Clear();
+            LoadUIStylesheet();
+            menuUI.Widgets.Clear();
             VerticalStackPanel grid = new VerticalStackPanel();
             grid.VerticalAlignment = VerticalAlignment.Center;
             grid.HorizontalAlignment = HorizontalAlignment.Center;
@@ -41,7 +39,7 @@ namespace Target
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
-            host.Widgets.Add(background);
+            menuUI.Widgets.Add(background);
 
             Label title = new Label();
             title.Text = "(Target)";
@@ -61,7 +59,7 @@ namespace Target
             optionsBtn.Text = "Options";
             optionsBtn.Click += (s, a) =>
             {
-                OptionsMenu(host, MainMenu);
+                OptionsMenu(menuUI, MainMenu);
             };
             grid.Widgets.Add(optionsBtn);
 
@@ -73,12 +71,13 @@ namespace Target
             };
             grid.Widgets.Add(quitBtn);
 
-            host.Widgets.Add(grid);
+            menuUI.Widgets.Add(grid);
         }
         
-        public static void OptionsMenu(Desktop host, Action<Desktop> prevMenu)
+        public static void OptionsMenu(Desktop menuUI, Action<Desktop> prevMenu)
         {
-            host.Widgets.Clear();
+            LoadUIStylesheet();
+            menuUI.Widgets.Clear();
             Grid grid = new Grid();
             grid.VerticalAlignment = VerticalAlignment.Center;
 
@@ -99,7 +98,7 @@ namespace Target
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
-            host.Widgets.Add(background);
+            menuUI.Widgets.Add(background);
 
             TextBox resolutionLabel = new TextBox();
             resolutionLabel.Text = "Resolution";
@@ -194,7 +193,7 @@ namespace Target
                 if (displayCombo.SelectedItem == null || resolutionCombo.SelectedItem == null)
                 {
                     var messageBox = Dialog.CreateMessageBox("Error", "You must select a value for display/resolution!");
-                    messageBox.ShowModal(host);
+                    messageBox.ShowModal(menuUI);
                     return;
                 }
                 Options.Config.Fullscreen = Convert.ToBoolean(displayCombo.SelectedIndex);
@@ -205,7 +204,7 @@ namespace Target
                 Options.Config.SoundVolume = soundSlider.Value;
                 Options.applyConfig();
                 Options.SetConfigFile();
-                prevMenu(host);
+                prevMenu(menuUI);
             };
             grid.Widgets.Add(applyBtn);
 
@@ -217,16 +216,17 @@ namespace Target
             backBtn.HorizontalAlignment = HorizontalAlignment.Center;
             backBtn.Click += (s, a) =>
             {
-                prevMenu(host);
+                prevMenu(menuUI);
             };
             grid.Widgets.Add(backBtn);
 
-            host.Widgets.Add(grid);
+            menuUI.Widgets.Add(grid);
         }
 
-        public static void GameMenu(Desktop host)
+        public static void GameMenu(Desktop menuUI)
         {
-            host.Widgets.Clear();
+            LoadUIStylesheet();
+            menuUI.Widgets.Clear();
             VerticalStackPanel grid = new VerticalStackPanel();
             grid.VerticalAlignment = VerticalAlignment.Center;
             grid.HorizontalAlignment = HorizontalAlignment.Center;
@@ -235,7 +235,7 @@ namespace Target
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
-            host.Widgets.Add(background);
+            menuUI.Widgets.Add(background);
 
             Label title = new Label();
             title.Text = "Paused";
@@ -255,7 +255,7 @@ namespace Target
             optionsBtn.Text = "Options";
             optionsBtn.Click += (s, a) =>
             {
-                OptionsMenu(host, GameMenu);
+                OptionsMenu(menuUI, GameMenu);
             };
             grid.Widgets.Add(optionsBtn);
 
@@ -263,16 +263,17 @@ namespace Target
             quitBtn.Text = "Quit";
             quitBtn.Click += (s, a) =>
             {
-                MainMenu(host);
+                MainMenu(menuUI);
             };
             grid.Widgets.Add(quitBtn);
 
-            host.Widgets.Add(grid);
+            menuUI.Widgets.Add(grid);
         }
 
-        public static void GameOverMenu(Desktop host, string content)
+        public static void GameOverMenu(Desktop menuUI, string content)
         {
-            host.Widgets.Clear();
+            LoadUIStylesheet();
+            menuUI.Widgets.Clear();
             VerticalStackPanel grid = new VerticalStackPanel();
             grid.VerticalAlignment = VerticalAlignment.Center;
             grid.HorizontalAlignment = HorizontalAlignment.Center;
@@ -281,7 +282,7 @@ namespace Target
 
             Image background = new Image();
             background.Renderable = new TextureRegion(Resources.menuBackground);
-            host.Widgets.Add(background);
+            menuUI.Widgets.Add(background);
 
             Label title = new Label();
             title.Text = "(Game Over)";
@@ -298,11 +299,11 @@ namespace Target
             continueBtn.Text = "Continue";
             continueBtn.Click += (s, a) =>
             {
-                MainMenu(host);
+                MainMenu(menuUI);
             };
             grid.Widgets.Add(continueBtn);
 
-            host.Widgets.Add(grid);
+            menuUI.Widgets.Add(grid);
         }
     }
 }
