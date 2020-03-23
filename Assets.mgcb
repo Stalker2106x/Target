@@ -51,6 +51,18 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Enemy/soldier_firing.png
 
+#begin Content/GFX/Enemy/soldier_firing_hitbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Enemy/soldier_firing_hitbox.png
+
 #begin Content/GFX/Enemy/soldier_idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -63,7 +75,7 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Enemy/soldier_idle.png
 
-#begin Content/GFX/Enemy/target.png
+#begin Content/GFX/Enemy/soldier_idle_hitbox.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -73,7 +85,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Content/GFX/Enemy/target.png
+/build:Content/GFX/Enemy/soldier_idle_hitbox.png
 
 #begin Content/GFX/Entity/death.png
 /importer:TextureImporter
@@ -357,6 +369,12 @@
 /processorParam:Quality=Best
 /build:Content/Sound/Player/heartbeat.wav
 
+#begin Content/Sound/Player/outbreath.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Player/outbreath.wav
+
 #begin Content/Sound/Player/pain1.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -368,6 +386,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Content/Sound/Player/pain2.wav
+
+#begin Content/Sound/Target/headhunter.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/headhunter.wav
+
+#begin Content/Sound/Target/headshot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/headshot.wav
 
 #begin Content/Sound/Weapons/burst.wav
 /importer:WavImporter

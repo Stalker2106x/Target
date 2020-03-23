@@ -12,19 +12,22 @@ using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using System;
+using Target.Utils;
 
 namespace Target
 {
   public class HUD
   {
-    private const int BarHeight = 25;
-    private const int BarWidth = 25;
-
     private MouseState mouseState;
 
-    HorizontalProgressBar _healthIndicator;
-    HorizontalProgressBar _breathIndicator;
-    Label _scoreIndicator;
+    private HorizontalProgressBar _healthIndicator;
+    private HorizontalProgressBar _breathIndicator;
+
+    private Label _scoreIndicator;
+    public Label scoreIndicator { get { return (_scoreIndicator); } }
+
+    Label _actionIndicator;
+    Timer _actionTimer;
 
     private int _ammo;
     private float _breathTimer;
@@ -60,6 +63,7 @@ namespace Target
     {
       _gamePadSensivity = 10f;
       _hitmarkerOpacity = (float) byte.MaxValue;
+      _actionTimer = new Timer();
       _hitmarker = false;
       _hitmarkerTimer = 0.0f;
       _hitmarkerDelay = 750f;
@@ -115,6 +119,15 @@ namespace Target
       _scoreIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _scoreIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_scoreIndicator);
+      
+      Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
+      _actionIndicator = new Label();
+      _actionIndicator.Text = "";
+      _actionIndicator.Height = 6;
+      _actionIndicator.HorizontalAlignment = HorizontalAlignment.Center;
+      _actionIndicator.VerticalAlignment = VerticalAlignment.Center;
+      topPanel.Widgets.Add(_actionIndicator);
+      _actionTimer.addAction(TimerDirection.Forward, 1500f, TimeoutBehaviour.Reset, () => { _actionIndicator.Text = ""; });
 
       _UI.Widgets.Add(topPanel);
       // Bottom Panel
@@ -149,6 +162,11 @@ namespace Target
                                          Resources.bloodsplat.Width, Resources.bloodsplat.Height);
       bloodsplatTimer = 0.0f;
     }
+    public void setAction(string action)
+    {
+      _actionIndicator.Text = action;
+      _actionTimer.Start();
+    }
 
     public void udpateHealth(int maxHealth, int health)
     {
@@ -157,17 +175,17 @@ namespace Target
       _healthIndicator.Value = health;
     }
 
-    public void updateBreath(float breath)
+    public void updateBreath(double breath)
     {
       _breathIndicator.Minimum = 0;
       _breathIndicator.Maximum = 2500;
-      _breathIndicator.Value = breath;
+      _breathIndicator.Value = (float)breath;
     }
     public void updateReload(Weapon playerWeapon)
     {
       _reloadIndicator.Minimum = 0;
-      _reloadIndicator.Maximum = playerWeapon.getReloadDelay();
-      _reloadIndicator.Value = playerWeapon.getTimer();
+      _reloadIndicator.Maximum = 1500;
+      _reloadIndicator.Value = (float)playerWeapon.getStatusTimer();
     }
 
     public void ammoIndicator(ref Player player)
@@ -261,7 +279,7 @@ namespace Target
           HUD._target.X += gamePad.ThumbSticks.Right.X * _gamePadSensivity;
           HUD._target.Y -= gamePad.ThumbSticks.Right.Y * _gamePadSensivity;
         }
-        else if (player.getBreath())
+        else if (player.getBreathState() != Player.BreathState.Holding)
         {
           _breathTimer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
           if ((double) _breathTimer < 500.0)
@@ -323,6 +341,7 @@ namespace Target
       updateRecoil(gameTime);
       checkHitmarker(gameTime);
       checkBloodsplat(gameTime);
+      _actionTimer.Update(gameTime);
     }
 
     public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)

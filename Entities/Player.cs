@@ -8,17 +8,31 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Target.Utils;
 
 namespace Target
 {
   public class Player
   {
+    public enum BreathState
+    {
+      Breathing,
+      Holding,
+      ForceRecovery
+    }
+
     private int _hp;
     private int _maxHp;
     private int _score;
-    private bool _breath;
     private bool _forceRecover;
-    private float breathTimer;
+
+    private BreathState _breathState;
+    private Timer _breathTimer;
+
+    private float _scoreMultiplier;
+    public float scoreMultiplier { get { return (_scoreMultiplier); } set { _scoreMultiplier = value; } }
+
+    private int _comboHeadshot;
     private int _bulletsFired;
     private int _bulletsHit;
     private Weapon _weapon;
@@ -26,17 +40,31 @@ namespace Target
 
     public Player()
     {
-      _breath = true;
+      _breathState = BreathState.Breathing;
       _forceRecover = false;
-      breathTimer = 0.0f;
+      _breathTimer = new Timer();
       _hp = 100;
       _maxHp = 100;
+      _comboHeadshot = 0;
       _bulletsFired = 0;
       _bulletsHit = 0;
-      _weapon = new Weapon("Barett .50", 15);
+      _weapon = new Weapon("P250", 15);
       _heartbeat = Resources.heartbeat.CreateInstance();
       _heartbeat.Volume = Options.Config.SoundVolume;
       _heartbeat.IsLooped = true;
+
+      _breathTimer.addAction(TimerDirection.Forward, 2501, TimeoutBehaviour.None, () =>
+      {
+        Resources.outbreath.Play(Options.Config.SoundVolume, 0f, 0f);
+        _breathState = BreathState.ForceRecovery;
+        _breathTimer.setDuration(2500);
+        _breathTimer.Reverse();
+      });
+      _breathTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Reset, () =>
+      {
+        _breathState = BreathState.Breathing;
+        _breathTimer.Reverse();
+      });
     }
 
     public int getHealth()
@@ -54,14 +82,13 @@ namespace Target
       return _score;
     }
 
-    public bool getBreath()
+    public BreathState getBreathState()
     {
-      return _breath;
+      return (_breathState);
     }
-
-    public float getBreathTimer()
+    public double getBreathTimer()
     {
-      return breathTimer;
+      return (_breathTimer.getDuration());
     }
 
     public float getAccuracy()
@@ -82,6 +109,23 @@ namespace Target
     public void setHealth(int hp)
     {
       _hp += hp;
+    }
+
+    public void resetComboHeadshot(int headshot)
+    {
+      _comboHeadshot = 0;
+    }
+
+    public void setComboHeadshot(int headshot)
+    {
+      _comboHeadshot += headshot;
+      if (_comboHeadshot % 10 == 0)
+      {
+        Resources.headhunter.Play(Options.Config.SoundVolume, 0f, 0f);
+        GameMain.hud.setAction("HEAD HUNTER !");
+        _scoreMultiplier += 0.5f;
+        GameMain.hud.scoreIndicator.Text = "Combo x" + _scoreMultiplier;
+      }
     }
 
     public void setBulletsFired(int bullet)
@@ -115,34 +159,34 @@ namespace Target
       GamePadState gamePad,
       GamePadState oldGamePad)
     {
-      if ((keyboard.IsKeyDown(Keys.LeftShift) || gamePad.IsButtonDown(Buttons.LeftShoulder)) && !_forceRecover && (double)breathTimer <= 2500.0)
+      //Breath management
+      if (_breathState != BreathState.ForceRecovery && (keyboard.IsKeyDown(Keys.LeftShift) || gamePad.IsButtonDown(Buttons.LeftShoulder)))
       {
-        if (oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
+        if (_breathTimer.getDuration() == 0
+          || oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
         {
-            breathTimer += 250f;
-            Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
-            _heartbeat.Play();
+          Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
+          _heartbeat.Play();
         }
-        _breath = false;
-        breathTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-        if (breathTimer > 2500.0) //Too much
-        {
-          _breath = true;
-          _forceRecover = true;
-        }
+        if (!_breathTimer.isActive()) _breathTimer.Start();
+        if (_breathTimer.getDirection() != TimerDirection.Forward) _breathTimer.Reverse();
+        _breathState = BreathState.Holding;
       }
       else
       {
+        if (_breathState != BreathState.ForceRecovery)
+        {
+          if (_breathTimer.getDirection() != TimerDirection.Backward) _breathTimer.Reverse();
+          _breathState = BreathState.Breathing;
+        }
         _heartbeat.Stop();
-        _breath = true;
-        if ((double)breathTimer >= 0.0)
-            breathTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-        else if (_forceRecover) //done recovering
-            _forceRecover = false;
       }
+      _breathTimer.Update(gameTime);
+
+      //Fire management
       if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released || gamePad.IsButtonDown(Buttons.RightTrigger))
         _weapon.fire(gameTime, mouse);
-      else if (keyboard.IsKeyDown(Keys.R) && oldKeyboard.IsKeyUp(Keys.R) || gamePad.IsButtonDown(Buttons.X))
+      if (keyboard.IsKeyDown(Keys.R) && oldKeyboard.IsKeyUp(Keys.R) || gamePad.IsButtonDown(Buttons.X))
         _weapon.reload();
       healthCap();
       _weapon.Update(gameTime);

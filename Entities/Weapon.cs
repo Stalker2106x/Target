@@ -7,14 +7,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Target.Utils;
 
 namespace Target
 {
     public enum WeaponState
     {
-        Available,
-        Firing,
-        Reloading,
+        Idle,
+        Reloading
     }
 
     public class Weapon
@@ -22,23 +22,19 @@ namespace Target
     private string _name;
     private int _magazine;
     private int _maxMagazine;
-    private WeaponState _weaponState;
-    private float timer;
-    private float reloadDelay;
-    private float fireDelay;
-    private bool _activeBonus;
-    private float bonusTimer;
+    private WeaponState _state;
+    private Timer _reloadTimer;
+    private float _fireDelay;
 
     public Weapon(string name, int maxMagazine)
     {
-      _activeBonus = false;
       _name = name;
       _maxMagazine = maxMagazine;
       _magazine = _maxMagazine;
-      _weaponState = WeaponState.Available;
-      timer = 0.0f;
-      reloadDelay = 1500f;
-      fireDelay = 250f;
+      _state = WeaponState.Idle;
+      _reloadTimer = new Timer();
+      _fireDelay = 250f;
+      _reloadTimer.addAction(TimerDirection.Forward, 1500, TimeoutBehaviour.Reset, () => { });
     }
 
     public int getMagazine()
@@ -58,53 +54,21 @@ namespace Target
 
     public WeaponState getState()
     {
-      return _weaponState;
+      return _state;
     }
 
-    public float getReloadDelay()
+    public double getStatusTimer()
     {
-      return reloadDelay;
+      return _reloadTimer.getDuration();
     }
 
-    public void setReloadDelay(float delay)
-    {
-      reloadDelay += delay;
-    }
-
-    public float getTimer()
-    {
-      return timer;
-    }
-
-    public void updateBonusTimer(GameTime gameTime)
-    {
-      if (!_activeBonus)
-        return;
-      bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if ((double) bonusTimer < 20.0)
-        return;
-      bonusTimer = 0.0f;
-      _activeBonus = false;
-    }
-
-    public void updateBonus(GameTime gameTime)
-    {
-      if (!_activeBonus)
-        return;
-      bonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if ((double) bonusTimer < 20.0)
-        return;
-      bonusTimer = 0.0f;
-      _activeBonus = false;
-    }
 
     public void fire(GameTime gameTime, MouseState mouse)
     {
-      if (_magazine <= 0 || _weaponState != WeaponState.Available)
-        return;
+      if (_magazine <= 0) reload();
+      if (_reloadTimer.isActive()) return;
       _magazine--;
       GameMain._player.setBulletsFired(1);
-      _weaponState = WeaponState.Firing;
       GameMain.hud.setRecoil();
       Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
       for (int index = 0; index < GameMain._targets.Count; ++index)
@@ -115,38 +79,16 @@ namespace Target
 
     public void reload()
     {
-      if (_magazine >= _maxMagazine || _weaponState != WeaponState.Available)
-        return;
+      if (_magazine >= _maxMagazine || _reloadTimer.isActive()) return;
       Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
       _magazine = _maxMagazine;
-      _weaponState = WeaponState.Reloading;
+      _reloadTimer.Start();
     }
 
-    public void updateState(GameTime gameTime)
-    {
-      if (_weaponState != WeaponState.Available)
-        timer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-      if (_weaponState == WeaponState.Reloading)
-      {
-        if ((double) timer < (double) reloadDelay)
-          return;
-        timer = 0.0f;
-        _weaponState = WeaponState.Available;
-      }
-      else
-      {
-        if (_weaponState != WeaponState.Firing || (double) timer < (double) fireDelay)
-          return;
-        timer = 0.0f;
-        _weaponState = WeaponState.Available;
-      }
-    }
 
     public void Update(GameTime gameTime)
     {
-      updateBonusTimer(gameTime);
-      updateBonus(gameTime);
-      updateState(gameTime);
+      _reloadTimer.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
