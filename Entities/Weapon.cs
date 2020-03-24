@@ -7,6 +7,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Target.Utils;
 
 namespace Target
@@ -61,18 +62,29 @@ namespace Target
       }
 
 
-      public void fire(GameTime gameTime, MouseState mouse)
+      public List<HitType> fire()
       {
         if (_magazine <= 0) reload();
-        if (_reloadTimer.isActive()) return;
+        if (_reloadTimer.isActive()) return (null);
+        List<HitType> hits = new List<HitType>();
+
         _magazine--;
         GameMain._player.setBulletsFired(1);
         GameMain.hud.setRecoil();
         Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
         for (int index = 0; index < GameMain._targets.Count; ++index)
-          GameMain._targets[index].checkCollision();
+        {
+          HitType hit = GameMain._targets[index].checkCollision();
+          if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
+        }
+         
         for (int index = 0; index < GameMain._items.Count; ++index)
-          GameMain._items[index].checkCollision();
+        {
+          HitType hit = GameMain._items[index].checkCollision();
+          if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
+        }
+        if (hits.Count == 0) hits.Add(HitType.Miss); //No hit, add miss
+        return (hits);
       }
 
       public void reload()

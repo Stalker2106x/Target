@@ -5,19 +5,19 @@ using System.Text;
 
 namespace Target.Utils
 {
-  enum TimerDirection
+  public enum TimerDirection
   {
     Forward,
     Backward
   }
-  enum TimeoutBehaviour
+  public enum TimeoutBehaviour
   {
     None,
     Reset,
     StartOver,
     Destroy
   }
-  struct TimeoutAction
+  public struct TimeoutAction
   {
     public bool triggered;
     public double timeout;
@@ -33,6 +33,11 @@ namespace Target.Utils
       action = action_;
     }
 
+    public void addTimeout(double toAdd)
+    {
+      timeout += toAdd;
+    }
+
     public void trigger()
     {
       action();
@@ -40,20 +45,20 @@ namespace Target.Utils
     }
   }
 
-  class Timer
+  public class Timer
   {
     private bool _active;
     private double _duration;
     private TimerDirection _direction;
-    private List<TimeoutAction> _actions;
+    public List<TimeoutAction> actions;
     private List<int> _destroyBuffer;
 
     public Timer(TimerDirection direction = TimerDirection.Forward, float startDuration = 0)
     {
       Stop();
       _duration = startDuration;
-      _actions = new List<TimeoutAction>();
       _destroyBuffer = new List<int>();
+      actions = new List<TimeoutAction>();
     }
 
     public double getDuration()
@@ -85,7 +90,7 @@ namespace Target.Utils
     {
       Stop();
       _duration = 0;
-      _actions.ForEach((it) => { it.triggered = false; });
+      actions.ForEach((it) => { it.triggered = false; });
     }
     public void StartOver()
     {
@@ -113,15 +118,10 @@ namespace Target.Utils
       _direction = (_direction == TimerDirection.Forward ? TimerDirection.Backward : TimerDirection.Forward);
     }
     //Setters
-    public void setTimeout(TimerDirection direction, double timeout, TimeoutBehaviour timeoutBehaviour, Action action)
+    public int addAction(TimerDirection direction, double timeout, TimeoutBehaviour timeoutBehaviour, Action action)
     {
-      Reset();
-      addAction(direction, timeout, timeoutBehaviour, action);
-      Start();
-    }
-    public void addAction(TimerDirection direction, double timeout, TimeoutBehaviour timeoutBehaviour, Action action)
-    {
-      _actions.Add(new TimeoutAction(direction, timeout, timeoutBehaviour, action));
+      actions.Add(new TimeoutAction(direction, timeout, timeoutBehaviour, action));
+      return (actions.Count - 1);
     }
 
     public void addMilliseconds(double time)
@@ -135,14 +135,14 @@ namespace Target.Utils
       if (!_active) return; //Only when active
       if (_direction == TimerDirection.Forward) _duration += gameTime.ElapsedGameTime.TotalMilliseconds;
       else if (_direction == TimerDirection.Backward) _duration -= gameTime.ElapsedGameTime.TotalMilliseconds;
-      for (int i = 0; i < _actions.Count; i++)
+      for (int i = 0; i < actions.Count; i++)
       {
-        if (!_actions[i].triggered && _direction == _actions[i].direction
-          && ((_direction == TimerDirection.Forward && _duration >= _actions[i].timeout)
-          || (_direction == TimerDirection.Backward && _duration <= _actions[i].timeout)))
+        if (!actions[i].triggered && _direction == actions[i].direction
+          && ((_direction == TimerDirection.Forward && _duration >= actions[i].timeout)
+          || (_direction == TimerDirection.Backward && _duration <= actions[i].timeout)))
         {
-          _actions[i].trigger();
-          switch (_actions[i].timeoutBehaviour)
+          actions[i].trigger();
+          switch (actions[i].timeoutBehaviour)
           {
             case TimeoutBehaviour.Reset:
               Reset();
@@ -161,7 +161,7 @@ namespace Target.Utils
       //Clear actions triggered
       if (_destroyBuffer.Count > 0)
       {
-        _destroyBuffer.ForEach((idx) => { _actions.RemoveAt(idx); });
+        _destroyBuffer.ForEach((idx) => { actions.RemoveAt(idx); });
         _destroyBuffer.Clear();
       }
     }

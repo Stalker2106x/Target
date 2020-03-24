@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 using Target.Utils;
 
 namespace Target
@@ -115,7 +116,7 @@ namespace Target
       _hp += hp;
     }
 
-    public void resetComboHeadshot(int headshot)
+    public void resetComboHeadshot()
     {
       _comboHeadshot = 0;
       _scoreMultiplier = 1;
@@ -154,6 +155,45 @@ namespace Target
       _hp = _maxHp;
     }
 
+    private void fire()
+    {
+      List<HitType> hits = _weapon.fire();
+
+      if (hits == null) return; //We did not shoot
+      foreach (var hit in hits)
+      {
+        _bulletsHit++;
+        switch (hit)
+        {
+          case HitType.Headshot:
+            GameMain.hud.setAction("Headshot!");
+            Resources.headshot.Play(Options.Config.SoundVolume, 0f, 0f);
+            setScore(40);
+            setComboHeadshot(1);
+            break;
+          case HitType.Hit:
+            setScore(20);
+            resetComboHeadshot();
+            break;
+          case HitType.Legshot:
+            GameMain.hud.setAction("Legshot...");
+            GameMain._player.setScore(10);
+            resetComboHeadshot();
+            break;
+          case HitType.Catch:
+            GameMain.hud.setAction("BONUS");
+            break;
+          case HitType.Miss:
+          default:
+            _bulletsHit--; //Remove the hit
+            resetComboHeadshot();
+            break;
+        }
+        
+
+      }
+    }
+
     public void Update(
       GameTime gameTime,
       KeyboardState keyboard,
@@ -189,7 +229,9 @@ namespace Target
 
       //Fire management
       if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released || gamePad.IsButtonDown(Buttons.RightTrigger))
-        _weapon.fire(gameTime, mouse);
+      {
+        fire();
+      }
       if (keyboard.IsKeyDown(Keys.R) && oldKeyboard.IsKeyUp(Keys.R) || gamePad.IsButtonDown(Buttons.X))
         _weapon.reload();
       healthCap();

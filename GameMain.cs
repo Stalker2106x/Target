@@ -11,6 +11,7 @@ using Myra.Graphics2D.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Target.Utils;
 
 namespace Target
 {
@@ -30,8 +31,8 @@ namespace Target
     public static List<Target> _targets;
     public static List<Item> _items;
     public static bool gameOver;
-    public static float spawnTimer = 0.0f;
-    public static float spawnDelay;
+    public static int spawnTimerActionIndex;
+    public static Timer spawnTimer;
 
     private static Random randomSpawn = new Random();
     
@@ -42,16 +43,22 @@ namespace Target
         hud = new HUD();
         _targets = new List<Target>();
         _items = new List<Item>();
-        spawnDelay = 3f;
+        spawnTimer = new Timer();
+        spawnTimerActionIndex = spawnTimer.addAction(TimerDirection.Forward, 3000, TimeoutBehaviour.StartOver, () => { spawnTarget(); });
+        spawnTimer.Start();
+    }
+
+    public static void addTimeout(double timeout)
+    {
+      var timerTimeout = spawnTimer.actions[spawnTimerActionIndex];
+      if (timeout < 0 && timerTimeout.timeout <= 750) return; //Cannot go under 750msec
+      timerTimeout.addTimeout(timeout);
+      spawnTimer.actions[spawnTimerActionIndex] = timerTimeout;
     }
 
     public static void spawnTarget()
     {
-      if ((double) spawnTimer < (double) spawnDelay)
-        return;
-      spawnTimer = 0.0f;
-      if ((double) spawnDelay > 0.75)
-        spawnDelay -= 0.05f;
+      addTimeout(-50); //Increase spawn rate
       if (randomSpawn.Next(1, 100) <= 90)
       {
         var target = Resources.targets.First((it) => { return (it.name == "Soldier"); }).Copy();
@@ -102,12 +109,11 @@ namespace Target
         gameOver = true;
         Game1.setState(GameState.Menu);
         Menu.GameOverMenu(menuUI, "Score: " + _player.getScore().ToString() + "\n"
-                              + "Tirs: " + _player.getBulletsFired().ToString() + "\n"
-                              + "Precision: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
+                                + "Shots: " + _player.getBulletsFired().ToString() + "\n"
+                                + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
       }
       if (!gameOver)
       {
-        spawnTarget();
         destroyTargets();
         if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I))
           _items.Add(new Item());
@@ -117,7 +123,7 @@ namespace Target
           _items[index].Update(gameTime);
         _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
         hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
-        spawnTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
+        spawnTimer.Update(gameTime);
       }
     }
 

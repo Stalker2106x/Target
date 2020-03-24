@@ -13,6 +13,14 @@ using Target.Utils;
 
 namespace Target
 {
+  public enum HitType
+  {
+    Miss,
+    Catch,
+    Hit,
+    Headshot,
+    Legshot
+  }
   public struct TargetResource
   {
     public Texture2D idle;
@@ -24,10 +32,6 @@ namespace Target
   public class Target
   {
     //Target Enums
-    private enum Type
-    {
-      Terrorist
-    }
 
     public enum State
     {
@@ -118,36 +122,19 @@ namespace Target
       return _resource.idle_hitbox;
     }
 
-    public void checkCollision()
+    public HitType checkCollision()
     {
-      if (!_sprite.Contains((int)HUD._target.X, (int)HUD._target.Y)) return;
+      if (!_sprite.Contains((int)HUD._target.X, (int)HUD._target.Y)) return (HitType.Miss);
       Color[] hitColor = new Color[1];
       getHitbox().GetData<Color>(0, new Rectangle((int)HUD._target.X - _sprite.X, (int)HUD._target.Y - _sprite.Y, 1, 1), hitColor, 0, 1);
-      
-      if (hitColor[0].A == 0) return; //Transparent, no hit
-      GameMain._player.setBulletsHit(1);
-      if (hitColor[0].R >= 255) //Headshot
-      {
-        GameMain.hud.setAction("Headshot!");
-        Resources.headshot.Play(Options.Config.SoundVolume, 0f, 0f);
-        GameMain._player.setScore(40);
-        GameMain._player.setComboHeadshot(1);
-      }
-      else
-      {
-        if (hitColor[0].G >= 255) //Legshot
-        {
-          GameMain.hud.setAction("Legshot...");
-          GameMain._player.setScore(10);
-        }
-        else //Regular
-        {
-          GameMain._player.setScore(20);
-        }
-        GameMain._player.resetComboHeadshot(0);
-      }
-      
+      if (hitColor[0].A == 0) return (HitType.Miss); //Transparent, no hit
+      HitType hit;
+
+      if (hitColor[0].R >= 255) hit = HitType.Headshot; //Headshot
+      else if (hitColor[0].G >= 255) hit = HitType.Legshot; //Legshot
+      else hit = HitType.Hit; //Regular
       _isActive = false;
+      return (hit);
     }
 
     public void fire()

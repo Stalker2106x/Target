@@ -77,10 +77,9 @@ namespace Target
       _isActive = boolen;
     }
 
-    public void checkCollision()
+    public HitType checkCollision()
     {
-      if (!_sprite.Contains((int) HUD._target.X, (int) HUD._target.Y))
-        return;
+      if (!_sprite.Contains((int) HUD._target.X, (int) HUD._target.Y)) return (HitType.Miss); //Missed
       _draw = true;
       GameMain._player.setBulletsHit(1);
       switch (_type)
@@ -97,9 +96,10 @@ namespace Target
           GameMain.gameOver = true;
           break;
         case ItemType.SpawnReducer:
-          GameMain.spawnDelay += 0.1f;
+          GameMain.addTimeout(1000);
           break;
       }
+      return (HitType.Catch);
     }
 
     public void checkOnScreen()
