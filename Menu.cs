@@ -51,7 +51,7 @@ namespace Target
             playBtn.Click += (s, a) =>
             {
                 GameMain.resetGame();
-                Game1.gameState = GameState.Playing;
+                Game1.setState(GameState.Playing);
             };
             grid.Widgets.Add(playBtn);
 
@@ -247,7 +247,7 @@ namespace Target
             resumeBtn.Text = "Resume";
             resumeBtn.Click += (s, a) =>
             {
-                Game1.gameState = GameState.Playing;
+                Game1.setState(GameState.Playing);
             };
             grid.Widgets.Add(resumeBtn);
 

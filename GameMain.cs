@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D.UI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Target
 {
@@ -52,7 +53,11 @@ namespace Target
       if ((double) spawnDelay > 0.75)
         spawnDelay -= 0.05f;
       if (randomSpawn.Next(1, 100) <= 90)
-        _targets.Add(new Target("Soldier", 1));
+      {
+        var target = Resources.targets.First((it) => { return (it.name == "Soldier"); }).Copy();
+        target.randomizeSpawn();
+        _targets.Add(target);
+      }
       else
         _items.Add(new Item());
     }
@@ -90,12 +95,12 @@ namespace Target
       if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
       {
         Menu.GameMenu(menuUI);
-        Game1.gameState = GameState.Menu;
+        Game1.setState(GameState.Menu);
       }
       if (_player.getHealth() <= 0)
       {
         gameOver = true;
-        Game1.gameState = GameState.Menu;
+        Game1.setState(GameState.Menu);
         Menu.GameOverMenu(menuUI, "Score: " + _player.getScore().ToString() + "\n"
                               + "Tirs: " + _player.getBulletsFired().ToString() + "\n"
                               + "Precision: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
@@ -107,7 +112,7 @@ namespace Target
         if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I))
           _items.Add(new Item());
         for (int index = 0; index < _targets.Count; ++index)
-          _targets[index].Update(_player, gameTime, mouse);
+          _targets[index].Update(gameTime);
         for (int index = 0; index < _items.Count; ++index)
           _items[index].Update(gameTime);
         _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);

@@ -7,11 +7,20 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 using System;
+using Target.Utils;
 
 namespace Target
 {
-  
+  public struct TargetResource
+  {
+    public Texture2D idle;
+    public Texture2D idle_hitbox;
+    public Texture2D firing;
+    public Texture2D firing_hitbox;
+  }
+
   public class Target
   {
     //Target Enums
@@ -26,33 +35,59 @@ namespace Target
       Firing
     }
 
-    private MouseState mouseState;
     private string _name;
+    public string name { get { return (_name); } set { _name = value; } }
+
     private State _state;
-    private int _hp;
-    private Random _randomX;
-    private Random _randomY;
+
+    private int _health;
+    public int health { get { return (_damage); } set { _health = value; } }
+
+    private int _damage;
+    public int damage { get { return (_damage); } set { _damage = value; } }
+
+    private static Random randomGenerator = new Random();
+    private int _posX, _posY;
     private Rectangle _sprite;
-    private Texture2D _resource;
-    private float _lifetime;
-    private float _hurtDelay;
-    private float _fireDelay;
+
+    private TargetResource _resource;
+    public TargetResource resource {
+      set
+      {
+        _resource = value;
+      }
+    }
+
+    private Timer _attackTimer;
     private bool _isActive;
 
-    public Target(string name, int hp)
+    public Target() //default ctor
     {
-      _name = name;
       _state = State.Idle;
-      _lifetime = 0.0f;
-      _hurtDelay = 4f;
-      _fireDelay = 1f;
       _isActive = true;
-      _randomX = new Random();
-      _randomY = new Random();
-      _hp = hp;
-      _resource = Resources.soldier.idle;
-      //Load resources
-      _sprite = new Rectangle(_randomX.Next(0, Options.Config.Width - Resources.soldier.idle.Width), _randomX.Next(0, Options.Config.Height - Resources.soldier.idle.Height), Resources.soldier.idle.Width, Resources.soldier.idle.Height);
+    }
+
+    public Target Copy()
+    {
+      return (Target)this.MemberwiseClone();
+    }
+
+    public void randomizeSpawn()
+    {
+      _posX = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+      _posY = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
+      _sprite = new Rectangle(_posX, _posY, _resource.idle.Width, _resource.idle.Height);
+      if (_damage > 0)
+      {
+        _attackTimer = new Timer();
+        _attackTimer.addAction(TimerDirection.Forward, 2000, TimeoutBehaviour.StartOver, () => {
+          fire();
+        });
+        _attackTimer.addAction(TimerDirection.Forward, 250, TimeoutBehaviour.None, () => {
+          _state = State.Idle;
+        }); //Reset state
+        _attackTimer.Start();
+      }
     }
 
     public bool getActivity()
@@ -60,16 +95,27 @@ namespace Target
       return _isActive;
     }
 
+    private Texture2D getTexture()
+    {
+      switch (_state)
+      {
+        case State.Idle:
+          return _resource.idle;
+        case State.Firing:
+          return _resource.firing;
+      }
+      return _resource.idle;
+    }
     private Texture2D getHitbox()
     {
       switch (_state)
       {
         case State.Idle:
-          return Resources.soldier.idle_hitbox;
+          return _resource.idle_hitbox;
         case State.Firing:
-          return Resources.soldier.firing_hitbox;
+          return _resource.firing_hitbox;
       }
-      return Resources.soldier.idle_hitbox;
+      return _resource.idle_hitbox;
     }
 
     public void checkCollision()
@@ -104,34 +150,26 @@ namespace Target
       _isActive = false;
     }
 
-    public void updateHurt(Player player, GameTime gameTime)
+    public void fire()
     {
-      _lifetime += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if (_lifetime < _hurtDelay) return;
-      _lifetime = 0.0f;
-      _resource = Resources.soldier.firing;
+      _state = State.Firing;
       Resources.burst.Play(Options.Config.SoundVolume, 0f, 0f);
       GameMain.hud.setBloodsplat();
-      if (_randomX.Next(1, 3) == 1)
+      if (randomGenerator.Next(1, 3) == 1)
         Resources.pain1.Play(Options.Config.SoundVolume, 0f, 0f);
       else
         Resources.pain2.Play(Options.Config.SoundVolume, 0f, 0f);
-      player.setHealth(-10);
+      if (_damage > 0) GameMain._player.setHealth(-_damage);
     }
 
-    public void Update(Player player, GameTime gameTime, MouseState mouse)
+    public void Update(GameTime gameTime)
     {
-      mouseState = mouse;
-      updateHurt(player, gameTime);
-      if (_lifetime > _fireDelay)
-      {
-         _resource = Resources.soldier.idle;
-      }
+      if (_damage > 0) _attackTimer.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(_resource, _sprite, Color.White);
+      spriteBatch.Draw(getTexture(), _sprite, Color.White);
     }
   }
 }

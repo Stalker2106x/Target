@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Myra;
 using Myra.Graphics2D.UI;
 using System;
@@ -18,14 +19,13 @@ namespace Target
         private MouseState oldMouse;
         private GamePadState oldGamePad;
         public static bool quit;
-        public static GameState gameState;
+        private static GameState gameState;
         public static Options options;
         private Desktop _menuUI;
 
         public Game1()
         {
             quit = false;
-            gameState = GameState.Menu;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             options = new Options(graphics, GraphicsAdapter.DefaultAdapter);
@@ -50,6 +50,7 @@ namespace Target
             MyraEnvironment.Game = this;
             gameState = GameState.Menu;
             base.Initialize();
+            setState(GameState.Menu);
         }
 
         /// <summary>
@@ -72,21 +73,11 @@ namespace Target
             Content.Unload();
         }
 
-
-        public static Texture2D createTexture2D(GraphicsDeviceManager graphics)
+        public static void setState(GameState state)
         {
-            Texture2D texture2D = new Texture2D(graphics.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-            texture2D.SetData<Color>(new Color[1]
-            {
-                Color.White
-            });
-            return texture2D;
-        }
-
-        public static int centerX(SpriteFont spriteFont, string text)
-        {
-            Vector2 vector2 = spriteFont.MeasureString(text);
-            return Options.Config.Width / 2 - (int)vector2.X / 2;
+            gameState = state;
+            if (state == GameState.Menu) MediaPlayer.Play(Resources.menuTheme);
+            else MediaPlayer.Stop();
         }
 
         /// <summary>

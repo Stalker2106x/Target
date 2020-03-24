@@ -24,13 +24,11 @@ namespace Target
     private int _hp;
     private int _maxHp;
     private int _score;
-    private bool _forceRecover;
 
     private BreathState _breathState;
     private Timer _breathTimer;
 
     private float _scoreMultiplier;
-    public float scoreMultiplier { get { return (_scoreMultiplier); } set { _scoreMultiplier = value; } }
 
     private int _comboHeadshot;
     private int _bulletsFired;
@@ -41,10 +39,11 @@ namespace Target
     public Player()
     {
       _breathState = BreathState.Breathing;
-      _forceRecover = false;
       _breathTimer = new Timer();
       _hp = 100;
       _maxHp = 100;
+      _score = 0;
+      _scoreMultiplier = 1;
       _comboHeadshot = 0;
       _bulletsFired = 0;
       _bulletsHit = 0;
@@ -75,6 +74,11 @@ namespace Target
     public int getMaxHealth()
     {
       return _maxHp;
+    }
+
+    public float getMultiplier()
+    {
+      return _scoreMultiplier;
     }
 
     public int getScore()
@@ -114,6 +118,7 @@ namespace Target
     public void resetComboHeadshot(int headshot)
     {
       _comboHeadshot = 0;
+      _scoreMultiplier = 1;
     }
 
     public void setComboHeadshot(int headshot)
@@ -124,7 +129,6 @@ namespace Target
         Resources.headhunter.Play(Options.Config.SoundVolume, 0f, 0f);
         GameMain.hud.setAction("HEAD HUNTER !");
         _scoreMultiplier += 0.5f;
-        GameMain.hud.scoreIndicator.Text = "Combo x" + _scoreMultiplier;
       }
     }
 

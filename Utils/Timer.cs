@@ -19,16 +19,24 @@ namespace Target.Utils
   }
   struct TimeoutAction
   {
+    public bool triggered;
     public double timeout;
     public TimeoutBehaviour timeoutBehaviour;
     public Action action;
     public TimerDirection direction;
     public TimeoutAction(TimerDirection direction_, double timeout_, TimeoutBehaviour timeoutBehaviour_, Action action_)
     {
+      triggered = false;
       direction = direction_;
       timeout = timeout_;
       timeoutBehaviour = timeoutBehaviour_;
       action = action_;
+    }
+
+    public void trigger()
+    {
+      action();
+      triggered = true;
     }
   }
 
@@ -77,6 +85,7 @@ namespace Target.Utils
     {
       Stop();
       _duration = 0;
+      _actions.ForEach((it) => { it.triggered = false; });
     }
     public void StartOver()
     {
@@ -126,14 +135,14 @@ namespace Target.Utils
       if (!_active) return; //Only when active
       if (_direction == TimerDirection.Forward) _duration += gameTime.ElapsedGameTime.TotalMilliseconds;
       else if (_direction == TimerDirection.Backward) _duration -= gameTime.ElapsedGameTime.TotalMilliseconds;
-      foreach (var it in _actions)
+      for (int i = 0; i < _actions.Count; i++)
       {
-        if (_direction == it.direction
-          && ((_direction == TimerDirection.Forward && _duration >= it.timeout)
-          || (_direction == TimerDirection.Backward && _duration <= it.timeout)))
+        if (!_actions[i].triggered && _direction == _actions[i].direction
+          && ((_direction == TimerDirection.Forward && _duration >= _actions[i].timeout)
+          || (_direction == TimerDirection.Backward && _duration <= _actions[i].timeout)))
         {
-          it.action();
-          switch (it.timeoutBehaviour)
+          _actions[i].trigger();
+          switch (_actions[i].timeoutBehaviour)
           {
             case TimeoutBehaviour.Reset:
               Reset();
@@ -142,7 +151,7 @@ namespace Target.Utils
               StartOver();
               break;
             case TimeoutBehaviour.Destroy:
-              _destroyBuffer.Add(_actions.IndexOf(it));
+              _destroyBuffer.Add(i);
               break;
             default:
               break;

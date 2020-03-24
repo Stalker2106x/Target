@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Soldier",
+    "static": true,
+    "health": 100,
+    "damage": 20
+  },
+  {
+    "name": "Zeppelin",
+    "static": false,
+    "health": 50,
+    "behaviour": {
+      "x": 1,
+      "y": 0
+    }
+  }
+]

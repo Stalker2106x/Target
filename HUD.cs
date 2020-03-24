@@ -26,6 +26,8 @@ namespace Target
     private Label _scoreIndicator;
     public Label scoreIndicator { get { return (_scoreIndicator); } }
 
+    private Label _multiplierIndicator;
+
     Label _actionIndicator;
     Timer _actionTimer;
 
@@ -119,7 +121,15 @@ namespace Target
       _scoreIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _scoreIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_scoreIndicator);
-      
+
+      Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
+      _multiplierIndicator = new Label();
+      _multiplierIndicator.Text = "x1";
+      _multiplierIndicator.Height = 6;
+      _multiplierIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _multiplierIndicator.VerticalAlignment = VerticalAlignment.Top;
+      topPanel.Widgets.Add(_multiplierIndicator);
+
       Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
       _actionIndicator = new Label();
       _actionIndicator.Text = "";
@@ -318,6 +328,15 @@ namespace Target
         HUD._target.Y = (float) (Options.Config.Height - 1);
       }
     }
+    
+    public Texture2D getCrosshair()
+    {
+      if (_reloadIndicator.Value > 0) //We're reloading
+      {
+        return (Resources.reloadingCursor);
+      }
+      return (Resources.crosshair);
+    }
 
     public void Update(
       ref Player player,
@@ -330,6 +349,7 @@ namespace Target
       GamePadState oldGamePad)
     {
       mouseState = mouse;
+      _multiplierIndicator.Text = "x" + player.getMultiplier();
       _scoreIndicator.Text = "Score: " + player.getScore();
       udpateHealth(player.getMaxHealth(), player.getHealth());
       updateBreath(player.getBreathTimer());
@@ -346,7 +366,7 @@ namespace Target
 
     public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(Resources.crosshair, new Rectangle((int) HUD._target.X - Resources.crosshair.Width / 2, (int) HUD._target.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height), Color.White);
+      spriteBatch.Draw(getCrosshair(), new Rectangle((int) HUD._target.X - Resources.crosshair.Width / 2, (int) HUD._target.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height), Color.White);
       for (int ammo = _ammo; ammo >= 1; --ammo)
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_hitmarker)
