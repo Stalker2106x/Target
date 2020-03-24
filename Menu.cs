@@ -12,6 +12,7 @@ using System;
 using Myra.Graphics2D.TextureAtlases;
 using Myra;
 using Microsoft.Xna.Framework;
+using System.Reflection;
 
 namespace Target
 {
@@ -25,6 +26,18 @@ namespace Target
             Stylesheet.Current.ButtonStyle.PressedBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.2f));
             Stylesheet.Current.ComboBoxStyle.Width = 100;
             Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
+        }
+
+        public static void AddVersionFooter(Desktop menuUI)
+        {
+
+          Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
+          Label version = new Label();
+          version.HorizontalAlignment = HorizontalAlignment.Right;
+          version.VerticalAlignment = VerticalAlignment.Bottom;
+          version.Text = "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+          menuUI.Widgets.Add(version);
         }
 
         public static void MainMenu(Desktop menuUI)
@@ -72,7 +85,8 @@ namespace Target
             grid.Widgets.Add(quitBtn);
 
             menuUI.Widgets.Add(grid);
-        }
+            AddVersionFooter(menuUI);
+          }
         
         public static void OptionsMenu(Desktop menuUI, Action<Desktop> prevMenu)
         {
@@ -221,10 +235,12 @@ namespace Target
             grid.Widgets.Add(backBtn);
 
             menuUI.Widgets.Add(grid);
-        }
+            AddVersionFooter(menuUI);
+          }
 
         public static void GameMenu(Desktop menuUI)
         {
+            AddVersionFooter(menuUI);
             LoadUIStylesheet();
             menuUI.Widgets.Clear();
             VerticalStackPanel grid = new VerticalStackPanel();
@@ -272,6 +288,7 @@ namespace Target
 
         public static void GameOverMenu(Desktop menuUI, string content)
         {
+            AddVersionFooter(menuUI);
             LoadUIStylesheet();
             menuUI.Widgets.Clear();
             VerticalStackPanel grid = new VerticalStackPanel();
@@ -304,6 +321,7 @@ namespace Target
             grid.Widgets.Add(continueBtn);
 
             menuUI.Widgets.Add(grid);
+            AddVersionFooter(menuUI);
         }
     }
 }

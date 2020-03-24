@@ -107,7 +107,7 @@ namespace Target
 
     public void setScore(int score)
     {
-      _score += score;
+      _score += (int)(score * _scoreMultiplier);
     }
 
     public void setHealth(int hp)
