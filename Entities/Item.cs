@@ -16,6 +16,7 @@ namespace Target
     FastReload,
     Death,
     SpawnReducer,
+    Nuke
   }
 
   public class Item
@@ -36,7 +37,7 @@ namespace Target
       _draw = false;
       _position = new Vector2((float) randomX.Next(0, Options.Config.Width - 100), 0.0f);
       _sprite = new Rectangle((int) _position.X, 0, 100, 100);
-      switch (randomType.Next(1, 5))
+      switch (randomType.Next(1, 6))
       {
         case 1:
           _type = ItemType.Health;
@@ -53,6 +54,10 @@ namespace Target
         case 4:
           _type = ItemType.SpawnReducer;
           _gfx = Resources.itemSpawnReducer;
+          break;
+        case 5:
+          _type = ItemType.Nuke;
+          _gfx = Resources.itemNuke;
           break;
       }
     }
@@ -79,7 +84,7 @@ namespace Target
 
     public HitType checkCollision()
     {
-      if (!_sprite.Contains((int) HUD._target.X, (int) HUD._target.Y)) return (HitType.Miss); //Missed
+      if (!_sprite.Contains((int)GameMain.hud.crosshair.position.X, (int)GameMain.hud.crosshair.position.Y)) return (HitType.Miss); //Missed
       _draw = true;
       GameMain._player.setBulletsHit(1);
       switch (_type)
@@ -97,6 +102,10 @@ namespace Target
           break;
         case ItemType.SpawnReducer:
           GameMain.addTimeout(1000);
+          break;
+        case ItemType.Nuke:
+          Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
+          GameMain._targets.Clear();
           break;
       }
       return (HitType.Catch);

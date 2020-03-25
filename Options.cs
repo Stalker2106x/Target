@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
@@ -46,6 +47,8 @@ namespace Target
 
         public static GameSettings Config { get; set; }
 
+        public static Dictionary<GameAction, Control> Bindings;
+
         public Options(GraphicsDeviceManager gdevice, GraphicsAdapter gadapter)
         {
             GDevice = gdevice;
@@ -55,7 +58,33 @@ namespace Target
             Config = new GameSettings();
             _configfile = "./Content/Config.cfg";
             LoadConfigFile();
+            DefaultBindings();
         }
+
+        public void DefaultBindings()
+        {
+            Bindings = new Dictionary<GameAction, Control>();
+            //Fire
+            Control fireControl = new Control();
+            fireControl.mouse = MouseButton.Left;
+            fireControl.button = Buttons.RightShoulder;
+            Bindings.Add(GameAction.Fire, fireControl);
+            //Reload
+            Control reloadControl = new Control();
+            reloadControl.key = Keys.R;
+            reloadControl.button = Buttons.X;
+            Bindings.Add(GameAction.Reload, reloadControl);
+            //Breath
+            Control breathControl = new Control();
+            breathControl.key = Keys.LeftShift;
+            breathControl.button = Buttons.LeftShoulder;
+            Bindings.Add(GameAction.HoldBreath, breathControl);
+            //Menu
+            Control menuControl = new Control();
+            menuControl.key = Keys.Escape;
+            menuControl.button = Buttons.Start;
+            Bindings.Add(GameAction.Menu, menuControl);
+    }
 
         public void LoadConfigFile()
         {

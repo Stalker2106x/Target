@@ -124,9 +124,9 @@ namespace Target
 
     public HitType checkCollision()
     {
-      if (!_sprite.Contains((int)HUD._target.X, (int)HUD._target.Y)) return (HitType.Miss);
+      if (!_sprite.Contains(GameMain.hud.crosshair.position.X, GameMain.hud.crosshair.position.Y)) return (HitType.Miss);
       Color[] hitColor = new Color[1];
-      getHitbox().GetData<Color>(0, new Rectangle((int)HUD._target.X - _sprite.X, (int)HUD._target.Y - _sprite.Y, 1, 1), hitColor, 0, 1);
+      getHitbox().GetData<Color>(0, new Rectangle((int)GameMain.hud.crosshair.position.X - _sprite.X, (int)GameMain.hud.crosshair.position.Y - _sprite.Y, 1, 1), hitColor, 0, 1);
       if (hitColor[0].A == 0) return (HitType.Miss); //Transparent, no hit
       HitType hit;
 

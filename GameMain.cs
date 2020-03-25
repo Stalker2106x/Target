@@ -89,25 +89,17 @@ namespace Target
       }
     }
 
-    public static void Update(
-      GameTime gameTime,
-      Desktop menuUI,
-      KeyboardState keyboard,
-      KeyboardState oldKeyboard,
-      MouseState mouse,
-      MouseState oldMouse,
-      GamePadState gamePad,
-      GamePadState oldGamePad)
+    public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
     {
-      if (keyboard.IsKeyDown(Keys.Escape) && oldKeyboard.IsKeyUp(Keys.Escape) || gamePad.IsButtonDown(Buttons.Start))
+      if (Options.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
       {
         Menu.GameMenu(menuUI);
-        Game1.setState(GameState.Menu);
+        GameEngine.setState(GameState.Menu);
       }
       if (_player.getHealth() <= 0)
       {
         gameOver = true;
-        Game1.setState(GameState.Menu);
+        GameEngine.setState(GameState.Menu);
         Menu.GameOverMenu(menuUI, "Score: " + _player.getScore().ToString() + "\n"
                                 + "Shots: " + _player.getBulletsFired().ToString() + "\n"
                                 + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
@@ -115,14 +107,13 @@ namespace Target
       if (!gameOver)
       {
         destroyTargets();
-        if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I))
-          _items.Add(new Item());
+        //if (keyboard.IsKeyDown(Keys.I) && oldKeyboard.IsKeyUp(Keys.I)) _items.Add(new Item());
         for (int index = 0; index < _targets.Count; ++index)
           _targets[index].Update(gameTime);
         for (int index = 0; index < _items.Count; ++index)
           _items[index].Update(gameTime);
-        _player.Update(gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
-        hud.Update(ref _player, gameTime, keyboard, oldKeyboard, mouse, oldMouse, gamePad, oldGamePad);
+        _player.Update(gameTime, state, prevState);
+        hud.Update(gameTime, ref _player, state, prevState);
         spawnTimer.Update(gameTime);
       }
     }

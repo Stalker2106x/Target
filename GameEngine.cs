@@ -11,19 +11,17 @@ namespace Target
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class GameEngine : Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private KeyboardState oldKeyboard;
-        private MouseState oldMouse;
-        private GamePadState oldGamePad;
+        private DeviceState prevDeviceState;
         public static bool quit;
         private static GameState gameState;
         public static Options options;
         private Desktop _menuUI;
 
-        public Game1()
+        public GameEngine()
         {
             quit = false;
             graphics = new GraphicsDeviceManager(this);
@@ -87,21 +85,19 @@ namespace Target
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Game1.quit)
-                Exit();
-            switch (Game1.gameState)
+            if (quit) Exit();
+            DeviceState deviceState = new DeviceState(Mouse.GetState(), Keyboard.GetState(), GamePad.GetState(PlayerIndex.One));
+            switch (gameState)
             {
                 case GameState.Menu:
                     IsMouseVisible = true;
                     break;
                 case GameState.Playing:
                     IsMouseVisible = false;
-                    GameMain.Update(gameTime, _menuUI, Keyboard.GetState(), oldKeyboard, Mouse.GetState(), oldMouse, GamePad.GetState(PlayerIndex.One), oldGamePad);
+                    GameMain.Update(gameTime, _menuUI, deviceState, prevDeviceState);
                     break;
             }
-            oldKeyboard = Keyboard.GetState();
-            oldMouse = Mouse.GetState();
-            oldGamePad = GamePad.GetState(PlayerIndex.One);
+            prevDeviceState = deviceState;
             base.Update(gameTime);
         }
 
@@ -113,7 +109,7 @@ namespace Target
         {
             GraphicsDevice.Clear(Color.DarkSlateGray);
             spriteBatch.Begin();
-            switch (Game1.gameState)
+            switch (gameState)
             {
                 case GameState.Menu:
                     _menuUI.Render();
@@ -128,7 +124,7 @@ namespace Target
         }
         protected void PostDraw()
         {
-          switch (Game1.gameState)
+          switch (gameState)
           {
             case GameState.Menu:
               _menuUI.Render();

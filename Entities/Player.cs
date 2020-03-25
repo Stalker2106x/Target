@@ -57,6 +57,7 @@ namespace Target
       {
         Resources.outbreath.Play(Options.Config.SoundVolume, 0f, 0f);
         _breathState = BreathState.ForceRecovery;
+        GameMain.hud.crosshair.setSway(true);
         _breathTimer.setDuration(2500);
         _breathTimer.Reverse();
       });
@@ -98,7 +99,8 @@ namespace Target
 
     public float getAccuracy()
     {
-      return (float) ((double) _bulletsHit / (double) _bulletsFired * 100.0);
+      if (_bulletsFired == 0) return (100); //No bullets, 100%
+      return ((float)(_bulletsHit / _bulletsFired) * 100.0f);
     }
 
     public int getBulletsFired()
@@ -194,20 +196,12 @@ namespace Target
       }
     }
 
-    public void Update(
-      GameTime gameTime,
-      KeyboardState keyboard,
-      KeyboardState oldKeyboard,
-      MouseState mouse,
-      MouseState oldMouse,
-      GamePadState gamePad,
-      GamePadState oldGamePad)
+    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
       //Breath management
-      if (_breathState != BreathState.ForceRecovery && (keyboard.IsKeyDown(Keys.LeftShift) || gamePad.IsButtonDown(Buttons.LeftShoulder)))
+      if (_breathState != BreathState.ForceRecovery && Options.Bindings[GameAction.HoldBreath].IsControlDown(state))
       {
-        if (_breathTimer.getDuration() == 0
-          || oldKeyboard.IsKeyUp(Keys.LeftShift) && oldGamePad.IsButtonUp(Buttons.LeftShoulder)) //First time
+        if (_breathTimer.getDuration() == 0 || Options.Bindings[GameAction.HoldBreath].IsControlPressed(state, prevState)) //First time
         {
           Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
           _heartbeat.Play();
@@ -215,6 +209,7 @@ namespace Target
         if (!_breathTimer.isActive()) _breathTimer.Start();
         if (_breathTimer.getDirection() != TimerDirection.Forward) _breathTimer.Reverse();
         _breathState = BreathState.Holding;
+        GameMain.hud.crosshair.setSway(false);
       }
       else
       {
@@ -222,17 +217,16 @@ namespace Target
         {
           if (_breathTimer.getDirection() != TimerDirection.Backward) _breathTimer.Reverse();
           _breathState = BreathState.Breathing;
+          GameMain.hud.crosshair.setSway(true);
         }
         _heartbeat.Stop();
       }
       _breathTimer.Update(gameTime);
 
-      //Fire management
-      if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released || gamePad.IsButtonDown(Buttons.RightTrigger))
-      {
+      //Weapon management
+      if (Options.Bindings[GameAction.Fire].IsControlPressed(state, prevState))
         fire();
-      }
-      if (keyboard.IsKeyDown(Keys.R) && oldKeyboard.IsKeyUp(Keys.R) || gamePad.IsButtonDown(Buttons.X))
+      if (Options.Bindings[GameAction.Reload].IsControlPressed(state, prevState))
         _weapon.reload();
       healthCap();
       _weapon.Update(gameTime);

@@ -64,7 +64,7 @@ namespace Target
             playBtn.Click += (s, a) =>
             {
                 GameMain.resetGame();
-                Game1.setState(GameState.Playing);
+                GameEngine.setState(GameState.Playing);
             };
             grid.Widgets.Add(playBtn);
 
@@ -80,7 +80,7 @@ namespace Target
             quitBtn.Text = "Exit";
             quitBtn.Click += (s, a) =>
             {
-                Game1.quit = true;
+                GameEngine.quit = true;
             };
             grid.Widgets.Add(quitBtn);
 
@@ -263,7 +263,7 @@ namespace Target
             resumeBtn.Text = "Resume";
             resumeBtn.Click += (s, a) =>
             {
-                Game1.setState(GameState.Playing);
+                GameEngine.setState(GameState.Playing);
             };
             grid.Widgets.Add(resumeBtn);
 

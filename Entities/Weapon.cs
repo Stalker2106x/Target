@@ -61,7 +61,6 @@ namespace Target
         return _reloadTimer.getDuration();
       }
 
-
       public List<HitType> fire()
       {
         if (_magazine <= 0) reload();
@@ -70,7 +69,7 @@ namespace Target
 
         _magazine--;
         GameMain._player.setBulletsFired(1);
-        GameMain.hud.setRecoil();
+        GameMain.hud.crosshair.triggerRecoil();
         Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
         for (int index = 0; index < GameMain._targets.Count; ++index)
         {

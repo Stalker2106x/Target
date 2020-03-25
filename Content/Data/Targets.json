@@ -3,7 +3,12 @@
     "name": "Soldier",
     "static": true,
     "health": 100,
-    "damage": 20
+    "damage": 20,
+    "hitbox": {
+      "red": "headshot",
+      "blue": "hit",
+      "green": "legshot"
+    }
   },
   {
     "name": "Zeppelin",
@@ -12,6 +17,10 @@
     "behaviour": {
       "x": 1,
       "y": 0
+    },
+    "hitbox": {
+      "red": "critical",
+      "blue": "hit"
     }
   }
 ]
