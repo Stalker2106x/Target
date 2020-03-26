@@ -59,9 +59,9 @@ namespace Target
     public static void spawnTarget()
     {
       addTimeout(-50); //Increase spawn rate
-      if (randomSpawn.Next(1, 100) <= 90)
+      if (randomSpawn.Next(0, 100) <= 90)
       {
-        var target = Resources.targets.First((it) => { return (it.name == "Soldier"); }).Copy();
+        var target = Resources.targets[randomSpawn.Next(0, Resources.targets.Count)].Copy();
         target.randomizeSpawn();
         _targets.Add(target);
       }

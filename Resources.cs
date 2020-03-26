@@ -42,6 +42,8 @@ namespace Target
     public static SoundEffect fire;
     public static SoundEffect burst;
     public static SoundEffect reload;
+    public static SoundEffect cash;
+    public static SoundEffect fail;
     public static SoundEffect headhunter;
     public static SoundEffect headshot;
     public static SoundEffect breath;
@@ -87,6 +89,8 @@ namespace Target
       Resources.fire = content.Load<SoundEffect>("Sound/Weapons/fire");
       Resources.burst = content.Load<SoundEffect>("Sound/Weapons/burst");
       Resources.reload = content.Load<SoundEffect>("Sound/Weapons/reload");
+      Resources.cash = content.Load<SoundEffect>("Sound/Target/cash");
+      Resources.fail = content.Load<SoundEffect>("Sound/Target/fail");
       Resources.headhunter = content.Load<SoundEffect>("Sound/Target/headhunter");
       Resources.headshot = content.Load<SoundEffect>("Sound/Target/headshot");
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");

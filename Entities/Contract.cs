@@ -78,6 +78,7 @@ namespace Target.Entities
       reward.Claim();
       GameMain.hud.updateContract("");
       GameMain.hud.setAction("Contract complete");
+      Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
     }
 
     public void Fail()
@@ -85,6 +86,7 @@ namespace Target.Entities
       inactive = true;
       GameMain.hud.updateContract("");
       GameMain.hud.setAction("Contract failed");
+      Resources.fail.Play(Options.Config.SoundVolume, 0f, 0f);
     }
   }
 }

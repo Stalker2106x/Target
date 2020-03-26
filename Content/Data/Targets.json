@@ -14,8 +14,8 @@
     "name": "Zeppelin",
     "static": false,
     "health": 50,
-    "behaviour": {
-      "x": 1,
+    "move": {
+      "x": -5,
       "y": 0
     },
     "hitbox": {

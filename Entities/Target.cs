@@ -50,9 +50,11 @@ namespace Target
     private int _damage;
     public int damage { get { return (_damage); } set { _damage = value; } }
 
+    private Point _move;
+    public Point move { get { return (_move); } set { _move = value; } }
+
     private static Random randomGenerator = new Random();
-    private int _posX, _posY;
-    private Rectangle _sprite;
+    private Point _position;
 
     private TargetResource _resource;
     public TargetResource resource {
@@ -78,9 +80,8 @@ namespace Target
 
     public void randomizeSpawn()
     {
-      _posX = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
-      _posY = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
-      _sprite = new Rectangle(_posX, _posY, _resource.idle.Width, _resource.idle.Height);
+      _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+      _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
       if (_damage > 0)
       {
         _attackTimer = new Timer();
@@ -97,6 +98,11 @@ namespace Target
     public bool getActivity()
     {
       return _isActive;
+    }
+
+    private Rectangle getRectangle()
+    {
+      return (new Rectangle(_position.X, _position.Y, getTexture().Width, getTexture().Height));
     }
 
     private Texture2D getTexture()
@@ -124,9 +130,10 @@ namespace Target
 
     public HitType checkCollision()
     {
-      if (!_sprite.Contains(GameMain.hud.crosshair.position.X, GameMain.hud.crosshair.position.Y)) return (HitType.Miss);
+      Rectangle targetRect = getRectangle();
+      if (!targetRect.Contains(GameMain.hud.crosshair.position.X, GameMain.hud.crosshair.position.Y)) return (HitType.Miss);
       Color[] hitColor = new Color[1];
-      getHitbox().GetData<Color>(0, new Rectangle((int)GameMain.hud.crosshair.position.X - _sprite.X, (int)GameMain.hud.crosshair.position.Y - _sprite.Y, 1, 1), hitColor, 0, 1);
+      getHitbox().GetData<Color>(0, new Rectangle((int)GameMain.hud.crosshair.position.X - targetRect.X, (int)GameMain.hud.crosshair.position.Y - targetRect.Y, 1, 1), hitColor, 0, 1);
       if (hitColor[0].A == 0) return (HitType.Miss); //Transparent, no hit
       HitType hit;
 
@@ -151,12 +158,15 @@ namespace Target
 
     public void Update(GameTime gameTime)
     {
+      _position.X += _move.X;
+      _position.Y += _move.Y;
       if (_damage > 0) _attackTimer.Update(gameTime);
+      if (!Utils.Tools.IsOnScreen(getRectangle())) _isActive = false; //Destroy out of screen stuff
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(getTexture(), _sprite, Color.White);
+      spriteBatch.Draw(getTexture(), getRectangle(), Color.White);
     }
   }
 }

@@ -444,6 +444,18 @@
 /processorParam:Quality=Best
 /build:Content/Sound/Player/pain2.wav
 
+#begin Content/Sound/Target/cash.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/cash.wav
+
+#begin Content/Sound/Target/fail.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/fail.wav
+
 #begin Content/Sound/Target/headhunter.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
