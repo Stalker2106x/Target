@@ -212,9 +212,9 @@ namespace Target
     public void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
     {
       //Breath management
-      if (_breathState != BreathState.ForceRecovery && Options.Bindings[GameAction.HoldBreath].IsControlDown(state))
+      if (_breathState != BreathState.ForceRecovery && Options.Config.Bindings[GameAction.HoldBreath].IsControlDown(state))
       {
-        if (_breathTimer.getDuration() == 0 || Options.Bindings[GameAction.HoldBreath].IsControlPressed(state, prevState)) //First time
+        if (_breathTimer.getDuration() == 0 || Options.Config.Bindings[GameAction.HoldBreath].IsControlPressed(state, prevState)) //First time
         {
           Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
           _heartbeat.Play();
@@ -237,9 +237,9 @@ namespace Target
       _breathTimer.Update(gameTime);
 
       //Weapon management
-      if (Options.Bindings[GameAction.Fire].IsControlPressed(state, prevState))
+      if (Options.Config.Bindings[GameAction.Fire].IsControlPressed(state, prevState))
         fire();
-      if (Options.Bindings[GameAction.Reload].IsControlPressed(state, prevState))
+      if (Options.Config.Bindings[GameAction.Reload].IsControlPressed(state, prevState))
         _weapon.reload();
       healthCap();
       _weapon.Update(gameTime);

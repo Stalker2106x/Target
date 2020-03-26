@@ -233,7 +233,7 @@ namespace Target
           Options.Config.MusicVolume = musicSlider.Value;
           Options.Config.SoundVolume = soundSlider.Value;
           Options.applyConfig();
-          Options.SetConfigFile();
+          Options.Config.Save();
           prevMenu(menuUI);
       };
       grid.Widgets.Add(applyBtn);
@@ -269,7 +269,7 @@ namespace Target
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      for (int bindCount = 0; bindCount < Options.Bindings.Count; bindCount++)
+      for (int bindCount = 0; bindCount < Options.Config.Bindings.Count; bindCount++)
         grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
@@ -304,7 +304,7 @@ namespace Target
 
       //Binds
       int i = 1;
-      foreach (KeyValuePair<GameAction, ControlPair> entry in Options.Bindings)
+      foreach (KeyValuePair<GameAction, ControlPair> entry in Options.Config.Bindings)
       {
         Label action = new Label();
         action.Text = entry.Key.ToString();
@@ -330,11 +330,11 @@ namespace Target
             } while (!control.IsBound() && attempts > 0);
             if (control.GetInput() != "Unbound")
             {
-              var bind = Options.Bindings[entry.Key];
+              var bind = Options.Config.Bindings[entry.Key];
               bind.primary = control;
-              Options.Bindings[entry.Key] = bind;
+              Options.Config.Bindings[entry.Key] = bind;
             }
-            primaryBind.Text = Options.Bindings[entry.Key].primary.GetValueOrDefault().GetInput();
+            primaryBind.Text = Options.Config.Bindings[entry.Key].primary.GetValueOrDefault().GetInput();
           })).Start();
         };
         grid.Widgets.Add(primaryBind);
@@ -357,11 +357,11 @@ namespace Target
             } while (!control.IsBound() && attempts > 0);
             if (control.GetInput() != "Unbound")
             {
-              var bind = Options.Bindings[entry.Key];
+              var bind = Options.Config.Bindings[entry.Key];
               bind.secondary = control;
-              Options.Bindings[entry.Key] = bind;
+              Options.Config.Bindings[entry.Key] = bind;
             }
-            secondaryBind.Text = Options.Bindings[entry.Key].secondary.GetValueOrDefault().GetInput();
+            secondaryBind.Text = Options.Config.Bindings[entry.Key].secondary.GetValueOrDefault().GetInput();
           })).Start();
         };
         grid.Widgets.Add(secondaryBind);

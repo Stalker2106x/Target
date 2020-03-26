@@ -101,7 +101,7 @@ namespace Target
 
     public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
     {
-      if (Options.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
+      if (Options.Config.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
       {
         Menu.GameMenu(menuUI);
         GameEngine.setState(GameState.Menu);
