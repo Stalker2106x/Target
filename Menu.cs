@@ -474,6 +474,7 @@ namespace Target
 
         TextButton continueBtn = new TextButton();
         continueBtn.Text = "Continue";
+        continueBtn.HorizontalAlignment = HorizontalAlignment.Center;
         continueBtn.Click += (s, a) =>
         {
             MainMenu(menuUI);

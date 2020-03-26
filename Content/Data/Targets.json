@@ -8,7 +8,8 @@
       "red": "headshot",
       "blue": "hit",
       "green": "legshot"
-    }
+    },
+    "spawn": "any"
   },
   {
     "name": "Zeppelin",
@@ -21,6 +22,7 @@
     "hitbox": {
       "red": "critical",
       "blue": "hit"
-    }
+    },
+    "spawn": "rightBorder"
   }
 ]

@@ -5,7 +5,7 @@ using System.Text;
 namespace Target.Entities
 {
 
-  class Contract
+  public class Contract
   {
     class Reward
     {
@@ -30,7 +30,7 @@ namespace Target.Entities
         switch(type)
         {
           case Type.Score:
-            GameMain._player.setScore(amount);
+            GameMain._player.addScore(amount);
             break;
           default:
             break;
@@ -58,17 +58,17 @@ namespace Target.Entities
       amount = 0;
       target = 5;
       reward = new Reward();
+      GameMain.hud.contractsPanel.AddIndicator(this);
     }
 
     public string GetStatus()
     {
-      return ("Active contract: " + type.ToString() + " " + amount + "/" + target);
+      return (type.ToString() + " " + amount + "/" + target);
     }
 
     public void Update(HitType hit)
     {
       if (type == Type.Headshot && hit == HitType.Headshot) amount++;
-      GameMain.hud.updateContract(GetStatus());
       if (amount >= target) Complete();
     }
 
@@ -76,15 +76,16 @@ namespace Target.Entities
     {
       inactive = true;
       reward.Claim();
-      GameMain.hud.updateContract("");
+      GameMain.hud.contractsPanel.RemoveIndicator(this);
       GameMain.hud.setAction("Contract complete");
+      GameMain._player.addContractCompleted();
       Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
     }
 
     public void Fail()
     {
       inactive = true;
-      GameMain.hud.updateContract("");
+      GameMain.hud.contractsPanel.RemoveIndicator(this);
       GameMain.hud.setAction("Contract failed");
       Resources.fail.Play(Options.Config.SoundVolume, 0f, 0f);
     }

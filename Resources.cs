@@ -18,6 +18,7 @@ namespace Target
   {
     public static SpriteFont titleFont;
     public static SpriteFont regularFont;
+    public static SpriteFont alertFont;
 
     public static List<Target> targets;
 
@@ -43,7 +44,8 @@ namespace Target
     public static SoundEffect burst;
     public static SoundEffect reload;
     public static SoundEffect cash;
-    public static SoundEffect fail;
+    public static SoundEffect fail; 
+    public static SoundEffect unstoppable;
     public static SoundEffect headhunter;
     public static SoundEffect headshot;
     public static SoundEffect breath;
@@ -57,6 +59,7 @@ namespace Target
       //UI
       Resources.titleFont = content.Load<SpriteFont>("Font/title");
       Resources.regularFont = content.Load<SpriteFont>("Font/regular");
+      Resources.alertFont = content.Load<SpriteFont>("Font/alert");
       Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
 
       //Enemy
@@ -91,6 +94,7 @@ namespace Target
       Resources.reload = content.Load<SoundEffect>("Sound/Weapons/reload");
       Resources.cash = content.Load<SoundEffect>("Sound/Target/cash");
       Resources.fail = content.Load<SoundEffect>("Sound/Target/fail");
+      Resources.unstoppable = content.Load<SoundEffect>("Sound/Target/unstoppable");
       Resources.headhunter = content.Load<SoundEffect>("Sound/Target/headhunter");
       Resources.headshot = content.Load<SoundEffect>("Sound/Target/headshot");
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");

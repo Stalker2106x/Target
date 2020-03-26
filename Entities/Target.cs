@@ -19,7 +19,8 @@ namespace Target
     Catch,
     Hit,
     Headshot,
-    Legshot
+    Legshot,
+    Critical
   }
   public struct TargetResource
   {
@@ -27,6 +28,18 @@ namespace Target
     public Texture2D idle_hitbox;
     public Texture2D firing;
     public Texture2D firing_hitbox;
+  }
+  public enum SpawnLocation
+  {
+    Any,
+    RightBorder
+  }
+
+  public struct Hitbox
+  {
+    public HitType red;
+    public HitType green;
+    public HitType blue;
   }
 
   public class Target
@@ -52,6 +65,12 @@ namespace Target
 
     private Point _move;
     public Point move { get { return (_move); } set { _move = value; } }
+
+    private Hitbox _hitbox;
+    public Hitbox hitbox { get { return (_hitbox); } set { _hitbox = value; } }
+
+    private SpawnLocation _spawn;
+    public SpawnLocation spawn { get { return (_spawn); } set { _spawn = value; } }
 
     private static Random randomGenerator = new Random();
     private Point _position;
@@ -80,7 +99,8 @@ namespace Target
 
     public void randomizeSpawn()
     {
-      _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+      if (_spawn == SpawnLocation.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+      else if (_spawn == SpawnLocation.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
       _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
       if (_damage > 0)
       {
@@ -128,7 +148,7 @@ namespace Target
       return _resource.idle_hitbox;
     }
 
-    public HitType checkCollision()
+    public HitType checkCollision(int damage)
     {
       Rectangle targetRect = getRectangle();
       if (!targetRect.Contains(GameMain.hud.crosshair.position.X, GameMain.hud.crosshair.position.Y)) return (HitType.Miss);
@@ -137,10 +157,21 @@ namespace Target
       if (hitColor[0].A == 0) return (HitType.Miss); //Transparent, no hit
       HitType hit;
 
-      if (hitColor[0].R >= 255) hit = HitType.Headshot; //Headshot
-      else if (hitColor[0].G >= 255) hit = HitType.Legshot; //Legshot
-      else hit = HitType.Hit; //Regular
-      _isActive = false;
+      if (hitColor[0].R >= 255) //Headshot
+      {
+        _health -= (int)(damage * 1.5);
+        hit = _hitbox.red;
+      }
+      else if (hitColor[0].G >= 255) //Legshot
+      {
+        _health -= (int)(damage * 0.75);
+        hit = _hitbox.green;
+      }
+      else
+      {
+        _health -= damage;
+        hit = _hitbox.blue; //Regular
+      }
       return (hit);
     }
 
@@ -153,7 +184,7 @@ namespace Target
         Resources.pain1.Play(Options.Config.SoundVolume, 0f, 0f);
       else
         Resources.pain2.Play(Options.Config.SoundVolume, 0f, 0f);
-      if (_damage > 0) GameMain._player.setHealth(-_damage);
+      if (_damage > 0) GameMain._player.addHealth(-_damage);
     }
 
     public void Update(GameTime gameTime)
@@ -161,7 +192,7 @@ namespace Target
       _position.X += _move.X;
       _position.Y += _move.Y;
       if (_damage > 0) _attackTimer.Update(gameTime);
-      if (!Utils.Tools.IsOnScreen(getRectangle())) _isActive = false; //Destroy out of screen stuff
+      if (!Utils.Tools.IsOnScreen(getRectangle()) || _health <= 0) _isActive = false; //Destroy out of screen stuff
     }
 
     public void Draw(SpriteBatch spriteBatch)

@@ -16,6 +16,13 @@
 #begin Content/Data/targets.json
 /copy:Content/Data/targets.json
 
+#begin Content/Font/alert.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Content/Font/alert.spritefont
+
 #begin Content/Font/regular.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
@@ -467,6 +474,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Content/Sound/Target/headshot.wav
+
+#begin Content/Sound/Target/unstoppable.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/unstoppable.wav
 
 #begin Content/Sound/Weapons/burst.wav
 /importer:WavImporter

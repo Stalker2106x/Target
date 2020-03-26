@@ -12,6 +12,7 @@ using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using System;
+using Target.UI;
 using Target.Utils;
 
 namespace Target
@@ -25,7 +26,6 @@ namespace Target
     public Label scoreIndicator { get { return (_scoreIndicator); } }
 
     private Label _multiplierIndicator;
-    private Label _contractIndicator;
 
     Label _actionIndicator;
     Timer _actionTimer;
@@ -37,6 +37,7 @@ namespace Target
     private Random _randomGenerator;
 
     public Crosshair crosshair;
+    public ContractsPanel contractsPanel;
 
     private bool _hitmarker;
     private float _hitmarkerOpacity;
@@ -69,6 +70,7 @@ namespace Target
       bloodsplatDelay = 2f;
       _ammo = 0;
       _UI = new Desktop();
+      contractsPanel = new ContractsPanel(_UI);
       addIndicators();
     }
 
@@ -114,17 +116,10 @@ namespace Target
       _multiplierIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_multiplierIndicator);
 
-      Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
-      _contractIndicator = new Label();
-      _contractIndicator.Text = "";
-      _contractIndicator.Height = 6;
-      _contractIndicator.HorizontalAlignment = HorizontalAlignment.Left;
-      _contractIndicator.VerticalAlignment = VerticalAlignment.Top;
-      topPanel.Widgets.Add(_contractIndicator);
-
-      Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
+      Stylesheet.Current.LabelStyle.Font = Resources.alertFont;
       _actionIndicator = new Label();
       _actionIndicator.Text = "";
+      _actionIndicator.TextColor = Color.DarkRed;
       _actionIndicator.Height = 6;
       _actionIndicator.HorizontalAlignment = HorizontalAlignment.Center;
       _actionIndicator.VerticalAlignment = VerticalAlignment.Center;
@@ -189,10 +184,6 @@ namespace Target
       _reloadIndicator.Maximum = 1500;
       _reloadIndicator.Value = (float)playerWeapon.getStatusTimer();
     }
-    public void updateContract(string contractStatus)
-    {
-      _contractIndicator.Text = contractStatus;
-    }
 
     public void ammoIndicator(ref Player player)
     {
@@ -243,11 +234,12 @@ namespace Target
     public void Update(GameTime gameTime, ref Player player, DeviceState state, DeviceState prevState)
     {
       _multiplierIndicator.Text = "x" + player.getMultiplier();
-      _scoreIndicator.Text = "Score: " + player.getScore();
+      _scoreIndicator.Text = "Score: " + player.stats.score;
       udpateHealth(player.getMaxHealth(), player.getHealth());
       updateBreath(player.getBreathTimer());
       updateReload(player.getWeapon());
       crosshair.Update(gameTime, state);
+      contractsPanel.Update();
 
       updateDrawBonus(gameTime);
       ammoIndicator(ref player);

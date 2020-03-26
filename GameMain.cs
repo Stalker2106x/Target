@@ -89,20 +89,22 @@ namespace Target
       }
     }
 
+    public static void GameOver(Desktop menuUI)
+    {
+      GameMain.gameOver = true;
+      GameEngine.setState(GameState.Menu);
+      Menu.GameOverMenu(menuUI, "Score: " + _player.stats.score.ToString() + "\n"
+                              + "Shots fired: " + _player.stats.bulletsFired.ToString() + "\n"
+                              + "Contrats completed: " + _player.stats.contractsCompleted.ToString() + "\n"
+                              + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
+    }
+
     public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
     {
       if (Options.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
       {
         Menu.GameMenu(menuUI);
         GameEngine.setState(GameState.Menu);
-      }
-      if (_player.getHealth() <= 0)
-      {
-        gameOver = true;
-        GameEngine.setState(GameState.Menu);
-        Menu.GameOverMenu(menuUI, "Score: " + _player.getScore().ToString() + "\n"
-                                + "Shots: " + _player.getBulletsFired().ToString() + "\n"
-                                + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
       }
       if (!gameOver)
       {
@@ -112,7 +114,7 @@ namespace Target
           _targets[index].Update(gameTime);
         for (int index = 0; index < _items.Count; ++index)
           _items[index].Update(gameTime);
-        _player.Update(gameTime, state, prevState);
+        _player.Update(gameTime, menuUI, state, prevState);
         hud.Update(gameTime, ref _player, state, prevState);
         spawnTimer.Update(gameTime);
       }

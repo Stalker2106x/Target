@@ -95,7 +95,7 @@ namespace Target
       switch (_type)
       {
         case ItemType.Health:
-          GameMain._player.setHealth(40);
+          GameMain._player.addHealth(50);
           break;
         case ItemType.FastReload:
           GameMain._player.getWeapon().setMagazine(-GameMain._player.getWeapon().getMagazine());
@@ -103,7 +103,7 @@ namespace Target
           GameMain._player.getWeapon().setMagazine(GameMain._player.getWeapon().getMaxMagazine());
           break;
         case ItemType.Death:
-          GameMain.gameOver = true;
+          GameMain._player.addHealth(-200);
           break;
         case ItemType.SpawnReducer:
           GameMain.addTimeout(1000);

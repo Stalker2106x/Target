@@ -21,6 +21,7 @@ namespace Target
     public class Weapon
     {
       private string _name;
+      private int _damage;
       private int _magazine;
       private int _maxMagazine;
       private WeaponState _state;
@@ -30,6 +31,7 @@ namespace Target
       {
         _name = name;
         _maxMagazine = maxMagazine;
+        _damage = 150;
         _magazine = _maxMagazine;
         _state = WeaponState.Idle;
         _reloadTimer = new Timer();
@@ -73,7 +75,7 @@ namespace Target
         Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
         for (int index = 0; index < GameMain._targets.Count; ++index)
         {
-          HitType hit = GameMain._targets[index].checkCollision();
+          HitType hit = GameMain._targets[index].checkCollision(_damage);
           if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
         }
          
