@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using Target.Entities;
 using Target.Utils;
 
 namespace Target
@@ -37,6 +38,8 @@ namespace Target
     private Weapon _weapon;
     private SoundEffectInstance _heartbeat;
 
+    private List<Contract> _contracts;
+
     public Player()
     {
       _breathState = BreathState.Breathing;
@@ -48,6 +51,7 @@ namespace Target
       _comboHeadshot = 0;
       _bulletsFired = 0;
       _bulletsHit = 0;
+      _contracts = new List<Contract>();
       _weapon = new Weapon("P250", 15);
       _heartbeat = Resources.heartbeat.CreateInstance();
       _heartbeat.Volume = Options.Config.SoundVolume;
@@ -144,6 +148,10 @@ namespace Target
     {
       _bulletsHit += bullet;
     }
+    public void addContract()
+    {
+      _contracts.Add(new Contract());
+    }
 
     public Weapon getWeapon()
     {
@@ -191,8 +199,7 @@ namespace Target
             resetComboHeadshot();
             break;
         }
-        
-
+        foreach (Contract contract in _contracts) contract.Update(hit);
       }
     }
 
@@ -230,6 +237,7 @@ namespace Target
         _weapon.reload();
       healthCap();
       _weapon.Update(gameTime);
+      if (_contracts.Count > 0) for (int i = _contracts.Count-1; i >= 0; i--) if (_contracts[i].inactive) _contracts.RemoveAt(i); //Clear obsolete contracts
     }
 
     public void Draw(SpriteBatch spriteBatch)

@@ -109,6 +109,7 @@ namespace Target
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
@@ -268,10 +269,8 @@ namespace Target
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
+      for (int bindCount = 0; bindCount < Options.Bindings.Count; bindCount++)
+        grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));

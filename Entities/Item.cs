@@ -16,7 +16,8 @@ namespace Target
     FastReload,
     Death,
     SpawnReducer,
-    Nuke
+    Nuke,
+    Contract
   }
 
   public class Item
@@ -37,7 +38,7 @@ namespace Target
       _draw = false;
       _position = new Vector2((float) randomX.Next(0, Options.Config.Width - 100), 0.0f);
       _sprite = new Rectangle((int) _position.X, 0, 100, 100);
-      switch (randomType.Next(1, 6))
+      switch (randomType.Next(1, 7))
       {
         case 1:
           _type = ItemType.Health;
@@ -58,6 +59,10 @@ namespace Target
         case 5:
           _type = ItemType.Nuke;
           _gfx = Resources.itemNuke;
+          break;
+        case 6:
+          _type = ItemType.Contract;
+          _gfx = Resources.itemContract;
           break;
       }
     }
@@ -106,6 +111,10 @@ namespace Target
         case ItemType.Nuke:
           Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._targets.Clear();
+          break;
+        case ItemType.Contract:
+          Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
+          GameMain._player.addContract();
           break;
       }
       return (HitType.Catch);

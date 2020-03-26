@@ -25,6 +25,7 @@ namespace Target
     public Label scoreIndicator { get { return (_scoreIndicator); } }
 
     private Label _multiplierIndicator;
+    private Label _contractIndicator;
 
     Label _actionIndicator;
     Timer _actionTimer;
@@ -113,6 +114,14 @@ namespace Target
       _multiplierIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_multiplierIndicator);
 
+      Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
+      _contractIndicator = new Label();
+      _contractIndicator.Text = "";
+      _contractIndicator.Height = 6;
+      _contractIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _contractIndicator.VerticalAlignment = VerticalAlignment.Top;
+      topPanel.Widgets.Add(_contractIndicator);
+
       Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
       _actionIndicator = new Label();
       _actionIndicator.Text = "";
@@ -179,6 +188,10 @@ namespace Target
       _reloadIndicator.Minimum = 0;
       _reloadIndicator.Maximum = 1500;
       _reloadIndicator.Value = (float)playerWeapon.getStatusTimer();
+    }
+    public void updateContract(string contractStatus)
+    {
+      _contractIndicator.Text = contractStatus;
     }
 
     public void ammoIndicator(ref Player player)

@@ -24,18 +24,18 @@ namespace Target
     public static Texture2D menuBackground;
     public static Texture2D hitmarker;
     public static Texture2D bloodsplat;
-    public static Texture2D r700;
     public static Texture2D reloadingCursor;
     public static Texture2D crosshair;
     public static Texture2D bullet;
+
     public static Texture2D itemHealth;
     public static Texture2D itemFastReload;
     public static Texture2D itemDeath;
     public static Texture2D itemSpawnReducer;
     public static Texture2D itemNuke;
+    public static Texture2D itemContract;
+
     public static Texture2D mapWoods;
-    public static Texture2D gamepadKeys;
-    public static Texture2D keyboardKeys;
 
     public static Song menuTheme;
     public static SoundEffect menuClick;
@@ -64,24 +64,20 @@ namespace Target
         loadTargetResource(content, it);
       }
       //Bonus
-      Resources.itemHealth = content.Load<Texture2D>("GFX/Entity/health");
-      Resources.itemFastReload = content.Load<Texture2D>("GFX/Entity/fastReload");
-      Resources.itemDeath = content.Load<Texture2D>("GFX/Entity/death");
-      Resources.itemSpawnReducer = content.Load<Texture2D>("GFX/Entity/time");
-      Resources.itemNuke = content.Load<Texture2D>("GFX/Entity/nuke");
+      Resources.itemHealth = content.Load<Texture2D>("GFX/Item/health");
+      Resources.itemFastReload = content.Load<Texture2D>("GFX/Item/fastReload");
+      Resources.itemDeath = content.Load<Texture2D>("GFX/Item/death");
+      Resources.itemSpawnReducer = content.Load<Texture2D>("GFX/Item/time");
+      Resources.itemNuke = content.Load<Texture2D>("GFX/Item/nuke");
+      Resources.itemContract = content.Load<Texture2D>("GFX/Item/contract");
 
       //HUD
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
       Resources.reloadingCursor = content.Load<Texture2D>("GFX/Player/reloading");
       Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
-      Resources.bullet = content.Load<Texture2D>("GFX/Weapons/bullet");
-      Resources.r700 = content.Load<Texture2D>("GFX/Weapons/r700");
+      Resources.bullet = content.Load<Texture2D>("GFX/GUI/bullet");
       
-      //Help
-      Resources.gamepadKeys = content.Load<Texture2D>("GFX/GUI/gamepadKeys");
-      Resources.keyboardKeys = content.Load<Texture2D>("GFX/GUI/keyboardKeys");
-
       //Maps
       Resources.mapWoods = content.Load<Texture2D>("GFX/Maps/woods");
 
