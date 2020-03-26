@@ -47,7 +47,7 @@ namespace Target
 
         public static GameSettings Config { get; set; }
 
-        public static Dictionary<GameAction, Control> Bindings;
+        public static Dictionary<GameAction, ControlPair> Bindings;
 
         public Options(GraphicsDeviceManager gdevice, GraphicsAdapter gadapter)
         {
@@ -63,28 +63,12 @@ namespace Target
 
         public void DefaultBindings()
         {
-            Bindings = new Dictionary<GameAction, Control>();
-            //Fire
-            Control fireControl = new Control();
-            fireControl.mouse = MouseButton.Left;
-            fireControl.button = Buttons.RightShoulder;
-            Bindings.Add(GameAction.Fire, fireControl);
-            //Reload
-            Control reloadControl = new Control();
-            reloadControl.key = Keys.R;
-            reloadControl.button = Buttons.X;
-            Bindings.Add(GameAction.Reload, reloadControl);
-            //Breath
-            Control breathControl = new Control();
-            breathControl.key = Keys.LeftShift;
-            breathControl.button = Buttons.LeftShoulder;
-            Bindings.Add(GameAction.HoldBreath, breathControl);
-            //Menu
-            Control menuControl = new Control();
-            menuControl.key = Keys.Escape;
-            menuControl.button = Buttons.Start;
-            Bindings.Add(GameAction.Menu, menuControl);
-    }
+            Bindings = new Dictionary<GameAction, ControlPair>();
+            Bindings.Add(GameAction.Fire, new ControlPair(new Control(MouseButton.Left), new Control(Buttons.RightShoulder)));
+            Bindings.Add(GameAction.Reload, new ControlPair(new Control(Keys.R), new Control(Buttons.X)));
+            Bindings.Add(GameAction.HoldBreath, new ControlPair(new Control(Keys.LeftShift), new Control(Buttons.LeftShoulder)));
+            Bindings.Add(GameAction.Menu, new ControlPair(new Control(Keys.Escape), new Control(Buttons.Start)));
+        }
 
         public void LoadConfigFile()
         {

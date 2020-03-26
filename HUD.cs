@@ -18,8 +18,6 @@ namespace Target
 {
   public class HUD
   {
-    private MouseState mouseState;
-
     private HorizontalProgressBar _healthIndicator;
     private HorizontalProgressBar _breathIndicator;
 

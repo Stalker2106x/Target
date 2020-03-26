@@ -13,12 +13,14 @@ namespace Target
     /// </summary>
     public class GameEngine : Game
     {
+        private static DeviceState deviceState;
+        private static DeviceState prevDeviceState;
+        private static GameState gameState;
+        public static bool quit;
+        public static Options options;
+
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private DeviceState prevDeviceState;
-        public static bool quit;
-        private static GameState gameState;
-        public static Options options;
         private Desktop _menuUI;
 
         public GameEngine()
@@ -77,16 +79,20 @@ namespace Target
             if (state == GameState.Menu) MediaPlayer.Play(Resources.menuTheme);
             else MediaPlayer.Stop();
         }
+        public static DeviceState getDeviceState()
+        {
+            return (deviceState);
+        }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
+    /// <summary>
+    /// Allows the game to run logic such as updating the world,
+    /// checking for collisions, gathering input, and playing audio.
+    /// </summary>
+    /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    protected override void Update(GameTime gameTime)
         {
             if (quit) Exit();
-            DeviceState deviceState = new DeviceState(Mouse.GetState(), Keyboard.GetState(), GamePad.GetState(PlayerIndex.One));
+            deviceState = new DeviceState(Mouse.GetState(), Keyboard.GetState(), GamePad.GetState(PlayerIndex.One));
             switch (gameState)
             {
                 case GameState.Menu:
