@@ -70,7 +70,7 @@ namespace Target
         List<HitType> hits = new List<HitType>();
 
         _magazine--;
-        GameMain._player.setBulletsFired(1);
+        GameMain._player.addBulletsFired(1);
         GameMain.hud.crosshair.triggerRecoil();
         Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
         for (int index = 0; index < GameMain._targets.Count; ++index)

@@ -33,8 +33,16 @@ namespace Target
       ForceRecovery
     }
 
-    private int _hp;
-    private int _maxHp;
+    private int _health;
+    public int health {
+      get { return (_health); }
+      set {
+        _health = value;
+        if (_health > _maxHealth) _health = _maxHealth;
+      }
+    }
+
+    private int _maxHealth;
 
     private BreathState _breathState;
     private Timer _breathTimer;
@@ -54,8 +62,8 @@ namespace Target
     {
       _breathState = BreathState.Breathing;
       _breathTimer = new Timer();
-      _hp = 100;
-      _maxHp = 100;
+      _health = 100;
+      _maxHealth = 100;
       _scoreMultiplier = 1;
       _comboHeadshot = 0;
       _contracts = new List<Contract>();
@@ -79,16 +87,6 @@ namespace Target
       });
     }
 
-    public int getHealth()
-    {
-      return _hp;
-    }
-
-    public int getMaxHealth()
-    {
-      return _maxHp;
-    }
-
     public float getMultiplier()
     {
       return _scoreMultiplier;
@@ -108,6 +106,15 @@ namespace Target
       if (_stats.bulletsFired == 0) return (100); //No bullets, 100%
       return ((float)(_stats.bulletsHit / _stats.bulletsFired) * 100.0f);
     }
+    public void setBulletsHit(int hit)
+    {
+      _stats.bulletsHit += hit;
+    }
+
+    public void addBulletsFired(int hit)
+    {
+      _stats.bulletsFired += hit;
+    }
 
     public void addScore(int score)
     {
@@ -116,7 +123,7 @@ namespace Target
 
     public void addHealth(int hp)
     {
-      _hp += hp;
+      _health += health;
     }
     public void addContractCompleted()
     {
@@ -129,7 +136,7 @@ namespace Target
       _scoreMultiplier = 1;
     }
 
-    public void setComboHeadshot(int headshot)
+    public void addComboHeadshot(int headshot)
     {
       _comboHeadshot += headshot;
       if (_comboHeadshot % 10 == 0)
@@ -141,15 +148,6 @@ namespace Target
       }
     }
 
-    public void setBulletsFired(int bullet)
-    {
-      _stats.bulletsFired += bullet;
-    }
-
-    public void setBulletsHit(int bullet)
-    {
-      _stats.bulletsHit += bullet;
-    }
     public void addContract()
     {
       _contracts.Add(new Contract());
@@ -158,13 +156,6 @@ namespace Target
     public Weapon getWeapon()
     {
       return _weapon;
-    }
-
-    public void healthCap()
-    {
-      if (_hp <= _maxHp)
-        return;
-      _hp = _maxHp;
     }
 
     private void fire()
@@ -181,7 +172,7 @@ namespace Target
             GameMain.hud.setAction("Headshot!");
             Resources.headshot.Play(Options.Config.SoundVolume, 0f, 0f);
             addScore(40);
-            setComboHeadshot(1);
+            addComboHeadshot(1);
             break;
           case HitType.Hit:
             addScore(20);
@@ -235,17 +226,19 @@ namespace Target
         _heartbeat.Stop();
       }
       _breathTimer.Update(gameTime);
-
       //Weapon management
       if (Options.Config.Bindings[GameAction.Fire].IsControlPressed(state, prevState))
         fire();
       if (Options.Config.Bindings[GameAction.Reload].IsControlPressed(state, prevState))
         _weapon.reload();
-      healthCap();
       _weapon.Update(gameTime);
       if (_contracts.Count > 0) for (int i = _contracts.Count-1; i >= 0; i--) if (_contracts[i].inactive) _contracts.RemoveAt(i); //Clear obsolete contracts
-
-      if (getHealth() <= 0) GameMain.GameOver(menuUI);
+      if (_health <= 0) GameMain.GameOver(menuUI);
+      //HUD
+      GameMain.hud.updateScoreMultiplier(_scoreMultiplier);
+      GameMain.hud.updateScore(_stats.score);
+      GameMain.hud.updateBreath(_breathTimer.getDuration());
+      GameMain.hud.updateReload(_weapon);
     }
 
     public void Draw(SpriteBatch spriteBatch)

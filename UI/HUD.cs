@@ -185,6 +185,15 @@ namespace Target
       _reloadIndicator.Value = (float)playerWeapon.getStatusTimer();
     }
 
+    public void updateScoreMultiplier(float scoreMultiplier)
+    {
+      _multiplierIndicator.Text = "x" + scoreMultiplier;
+    }
+    public void updateScore(int score)
+    {
+      _scoreIndicator.Text = "Score:" + score;
+    }
+
     public void ammoIndicator(ref Player player)
     {
       _ammo = player.getWeapon().getMagazine();
@@ -233,11 +242,6 @@ namespace Target
 
     public void Update(GameTime gameTime, ref Player player, DeviceState state, DeviceState prevState)
     {
-      _multiplierIndicator.Text = "x" + player.getMultiplier();
-      _scoreIndicator.Text = "Score: " + player.stats.score;
-      udpateHealth(player.getMaxHealth(), player.getHealth());
-      updateBreath(player.getBreathTimer());
-      updateReload(player.getWeapon());
       crosshair.Update(gameTime, state);
       contractsPanel.Update();
 
