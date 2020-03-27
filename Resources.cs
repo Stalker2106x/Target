@@ -28,6 +28,7 @@ namespace Target
     public static Texture2D grabCursor;
     public static Texture2D reloadingCursor;
     public static Texture2D crosshair;
+    public static Texture2D defuse;
 
     public static Texture2D menuBackground;
     public static Texture2D hitmarker;
@@ -52,10 +53,13 @@ namespace Target
 
     public static SoundEffect bombtick;
     public static SoundEffect explosion;
+    public static SoundEffect defusal;
 
+    public static SoundEffect denied;
     public static SoundEffect unstoppable;
     public static SoundEffect headhunter;
     public static SoundEffect headshot;
+
     public static SoundEffect breath;
     public static SoundEffect outbreath;
     public static SoundEffect heartbeat;
@@ -91,6 +95,7 @@ namespace Target
       Resources.reloadingCursor = content.Load<Texture2D>("GFX/Player/reloading");
       Resources.grabCursor = content.Load<Texture2D>("GFX/Player/grab");
       Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
+      Resources.defuse = content.Load<Texture2D>("GFX/Player/defuse");
 
       //HUD
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
@@ -117,10 +122,13 @@ namespace Target
 
       Resources.bombtick = content.Load<SoundEffect>("Sound/Target/bombtick");
       Resources.explosion = content.Load<SoundEffect>("Sound/Target/explosion");
+      Resources.defusal = content.Load<SoundEffect>("Sound/Target/defusal");
 
-    Resources.unstoppable = content.Load<SoundEffect>("Sound/Target/unstoppable");
-      Resources.headhunter = content.Load<SoundEffect>("Sound/Target/headhunter");
-      Resources.headshot = content.Load<SoundEffect>("Sound/Target/headshot");
+      Resources.unstoppable = content.Load<SoundEffect>("Sound/Combo/unstoppable");
+      Resources.headhunter = content.Load<SoundEffect>("Sound/Combo/headhunter");
+      Resources.denied = content.Load<SoundEffect>("Sound/Combo/denied");
+      Resources.headshot = content.Load<SoundEffect>("Sound/Combo/headshot");
+
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");
       Resources.outbreath = content.Load<SoundEffect>("Sound/Player/outbreath");
       Resources.heartbeat = content.Load<SoundEffect>("Sound/Player/heartbeat");

@@ -15,22 +15,28 @@ namespace Target.Entities
     private bool _active;
     private Point _position;
     private Texture2D _texture;
-    private Timer _durationTimer;
+
     private HorizontalProgressBar _indicator;
+
+    private Timer _durationTimer;
+    private Timer _soundTimer;
 
     public Bomb()
     {
       _active = true;
       _position = new Point(_randomGenerator.Next(0, Options.Config.Width), _randomGenerator.Next(0, Options.Config.Height));
       _texture = Resources.bomb;
+
       _durationTimer = new Timer();
-      _durationTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop, () => { Defuse(); });
+      _durationTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop, () => { CompleteDefusal(); });
       _durationTimer.addAction(TimerDirection.Forward, 10000, TimeoutBehaviour.Stop, () => { Explode(); });
       _durationTimer.Start();
-      _indicator = GameMain.hud.addBombIndicator(_position);
-      _indicator.Maximum = 10000;
-      _indicator.Minimum = -1;
-      _indicator.Value = 0;
+
+      _soundTimer = new Timer();
+      _soundTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { Resources.bombtick.Play(Options.Config.SoundVolume, 0f, 0f); });
+      _soundTimer.Start();
+
+      _indicator = GameMain.hud.addBombIndicator(_position, 10000);
     }
 
     public bool getActivity()
@@ -42,17 +48,37 @@ namespace Target.Entities
     {
       _active = false;
       GameMain.hud.removeBombIndicator(_indicator);
+      GameMain._player.defusing = false;
     }
 
-    public void Defuse()
+    public void CompleteDefusal()
     {
       Destroy();
+      Resources.defusal.Play(Options.Config.SoundVolume, 0f, 0f);
       GameMain._player.setDefuser(false);
+      //GameMain._player.stats.bombsDefused += 1;
     }
 
     public void Explode()
     {
+      Resources.explosion.Play(Options.Config.SoundVolume, 0f, 0f);
       Destroy();
+    }
+
+    public void Defuse()
+    {
+      GameMain._player.defusing = true;
+      _soundTimer.Reset();
+      _durationTimer.Reverse();
+      if (GameMain._player.hasDefuser()) _durationTimer.setTimeScale(3);
+      else _durationTimer.setTimeScale(2);
+    }
+    public void Rearm()
+    {
+      GameMain._player.defusing = false;
+      _soundTimer.Start();
+      _durationTimer.Reverse();
+      _durationTimer.setTimeScale(1);
     }
 
     public Rectangle getRectangle()
@@ -64,23 +90,12 @@ namespace Target.Entities
     {
       if (GameMain.hud.crosshair.checkCollision(getRectangle()))
       {
-        if (Options.Config.Bindings[GameAction.Defuse].IsControlPressed(state, prevState)) //First time
-        {
-          _durationTimer.Reverse();
-          if (GameMain._player.hasDefuser()) _durationTimer.setTimeScale(3);
-          else _durationTimer.setTimeScale(2);
-        }
-        else if (!Options.Config.Bindings[GameAction.Defuse].IsControlDown(state) && _durationTimer.getDirection() != TimerDirection.Forward) //Not holding
-        {
-          _durationTimer.Reverse();
-          _durationTimer.setTimeScale(1);
-        }
+        if (Options.Config.Bindings[GameAction.Defuse].IsControlPressed(state, prevState)) Defuse(); //User started defusing
+        else if (!Options.Config.Bindings[GameAction.Defuse].IsControlDown(state) && _durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //Not holding, rearm
+        //Fall here if holding, nothing happens, let the timer go out
       }
-      else if (_durationTimer.getDirection() != TimerDirection.Forward)
-      {
-        _durationTimer.Reverse();
-        _durationTimer.setTimeScale(1);
-      }
+      else if (_durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //None, rearm
+      _soundTimer.Update(gameTime);
       _durationTimer.Update(gameTime);
       _indicator.Value = (float)_durationTimer.getDuration();
     }

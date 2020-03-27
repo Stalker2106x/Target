@@ -47,6 +47,9 @@ namespace Target
     private int _kevlar;
     private int _kevlarMax;
 
+    private bool _defusing;
+    public bool defusing { get { return (_defusing); } set { _defusing = value; } }
+
     private BreathState _breathState;
     private Timer _breathTimer;
 
@@ -73,7 +76,7 @@ namespace Target
       _scoreMultiplier = 1;
       _comboHeadshot = 0;
       _contracts = new List<Contract>();
-      _weapon = new Weapon("P250", 15);
+      _weapon = new Weapon("P250", 10);
       _heartbeat = Resources.heartbeat.CreateInstance();
       _heartbeat.Volume = Options.Config.SoundVolume;
       _heartbeat.IsLooped = true;
@@ -112,10 +115,12 @@ namespace Target
       if (_stats.bulletsFired == 0) return (100); //No bullets, 100%
       return ((float)(_stats.bulletsHit / _stats.bulletsFired) * 100.0f);
     }
+
     public void setBulletsHit(int hit)
     {
       _stats.bulletsHit += hit;
     }
+
     public void setDefuser(bool has)
     {
       _defuser = has;
@@ -156,6 +161,7 @@ namespace Target
     {
       _comboHeadshot = 0;
       _scoreMultiplier = 1;
+      Resources.denied.Play(Options.Config.SoundVolume, 0f, 0f);
     }
 
     public void addComboHeadshot(int headshot)

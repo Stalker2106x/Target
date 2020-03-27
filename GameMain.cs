@@ -67,7 +67,7 @@ namespace Target
     }
     public static void spawnBomb()
     {
-      if (_randomGenerator.Next(0, 101) > 0) return; //1 chance out of 100 per sec
+      if (_randomGenerator.Next(0, 61) > 0) return; //1 chance out of 60 per sec
       _bombs.Add(new Bomb());
     }
     public static void spawnItem()
@@ -117,7 +117,7 @@ namespace Target
       GameEngine.setState(GameState.Menu);
       Menu.GameOverMenu(menuUI, "Score: " + _player.stats.score.ToString() + "\n"
                               + "Shots fired: " + _player.stats.bulletsFired.ToString() + "\n"
-                              + "Contrats completed: " + _player.stats.contractsCompleted.ToString() + "\n"
+                              + "Contracts completed: " + _player.stats.contractsCompleted.ToString() + "\n"
                               + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
     }
 

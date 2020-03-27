@@ -328,6 +328,18 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Player/crosshair_.png
 
+#begin Content/GFX/Player/defuse.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Player/defuse.png
+
 #begin Content/GFX/Player/grab.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -508,6 +520,30 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Weapons/r700.png
 
+#begin Content/Sound/Combo/denied.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Combo/denied.wav
+
+#begin Content/Sound/Combo/headhunter.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Combo/headhunter.wav
+
+#begin Content/Sound/Combo/headshot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Combo/headshot.wav
+
+#begin Content/Sound/Combo/unstoppable.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Combo/unstoppable.wav
+
 #begin Content/Sound/GUI/click.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -598,11 +634,11 @@
 /processorParam:Quality=Best
 /build:Content/Sound/Target/bombtick.wav
 
-#begin Content/Sound/Target/defuse.wav
+#begin Content/Sound/Target/defusal.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Content/Sound/Target/defuse.wav
+/build:Content/Sound/Target/defusal.wav
 
 #begin Content/Sound/Target/explosion.wav
 /importer:WavImporter

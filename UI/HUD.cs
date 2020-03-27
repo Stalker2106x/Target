@@ -146,11 +146,14 @@ namespace Target
       _UI.Widgets.Add(bottomPanel);
     }
 
-    public HorizontalProgressBar addBombIndicator(Point bombPos)
+    public HorizontalProgressBar addBombIndicator(Point bombPos, int duration)
     {
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
       Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
       HorizontalProgressBar bombIndicator = new HorizontalProgressBar();
+      bombIndicator.Minimum = -1;
+      bombIndicator.Maximum = 10000;
+      bombIndicator.Value = 0;
       bombIndicator.Top = bombPos.Y;
       bombIndicator.Left = bombPos.X;
       bombIndicator.Width = 100;
