@@ -7,30 +7,46 @@ namespace Target.Entities
 
   public class Contract
   {
-    class Reward
+    public class Reward
     {
       public enum Type
       {
-        Score
+        ExpandMagazine,
+        ReduceReloadDuration
       }
 
       //Class
-
+      private static Random _randomGenerator = new Random();
       public Type type;
-      private int amount;
 
       public Reward()
       {
-        type = Type.Score;
-        amount = 500;
+        type = (Type)_randomGenerator.Next(0, Enum.GetValues(typeof(Type)).Length);
+      }
+
+      public string GetDescription()
+      {
+        switch (type)
+        {
+          case Type.ExpandMagazine:
+            return ("Expand magazine");
+          case Type.ReduceReloadDuration:
+            return ("Reduce reload duration");
+          default:
+            break;
+        }
+        return ("None");
       }
 
       public void Claim()
       {
         switch(type)
         {
-          case Type.Score:
-            GameMain._player.addScore(amount);
+          case Type.ExpandMagazine:
+            GameMain._player.getWeapon().addMagazineSize(1);
+            break;
+          case Type.ReduceReloadDuration:
+            GameMain._player.getWeapon().addReloadDuration(100);
             break;
           default:
             break;
@@ -40,35 +56,57 @@ namespace Target.Entities
 
     public enum Type
     {
-      Headshot
+      HeadshotCombo,
+      CriticalCombo
     }
 
     //Class
+    private static Random _randomGenerator = new Random();
 
     private Type type;
     private int amount;
     private int target;
-    private Reward reward;
+    public Reward reward;
     public bool inactive;
 
     public Contract()
     {
       inactive = false;
-      type = Type.Headshot;
+      type = (Type)_randomGenerator.Next(0, Enum.GetValues(typeof(Type)).Length);
       amount = 0;
       target = 5;
       reward = new Reward();
       GameMain.hud.contractsPanel.AddIndicator(this);
     }
 
-    public string GetStatus()
+    public string GetMission()
     {
-      return (type.ToString() + " " + amount + "/" + target);
+      string description = "Deal only ";
+      switch (type)
+      {
+        case Type.HeadshotCombo:
+          description += "headshot on soldiers";
+          break;
+        case Type.CriticalCombo:
+          description += "critical on zeppelin";
+          break;
+        default:
+          break;
+      }
+      return (description + " (" + amount + "/" + target + ")");
     }
 
     public void Update(HitType hit)
     {
-      if (type == Type.Headshot && hit == HitType.Headshot) amount++;
+      if (hit == HitType.Headshot)
+      {
+        if (type == Type.HeadshotCombo) amount++;
+      }
+      else if (hit == HitType.Critical)
+      {
+        if (type == Type.CriticalCombo) amount++;
+      }
+      else if (hit != HitType.Catch) Fail(); //If its not an objective or combo, fail contract
       if (amount >= target) Complete();
     }
 

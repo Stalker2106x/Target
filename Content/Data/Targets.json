@@ -2,14 +2,32 @@
   {
     "name": "Soldier",
     "static": true,
-    "health": 100,
+    "health": 70,
     "damage": 20,
     "hitbox": {
       "red": "headshot",
       "blue": "hit",
       "green": "legshot"
     },
-    "spawn": "any"
+    "spawn": {
+      "location": "any",
+      "probability": "70"
+    }
+  },
+  {
+    "name": "Juggernaut",
+    "static": true,
+    "health": 210,
+    "damage": 40,
+    "hitbox": {
+      "red": "headshot",
+      "blue": "hit",
+      "green": "legshot"
+    },
+    "spawn": {
+      "location": "any",
+      "probability": "10"
+    }
   },
   {
     "name": "Zeppelin",
@@ -23,6 +41,9 @@
       "red": "critical",
       "blue": "hit"
     },
-    "spawn": "rightBorder"
+    "spawn": {
+      "location": "rightBorder",
+      "probability": "20"
+    }
   }
 ]

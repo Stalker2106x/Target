@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using Target.Utils;
 
 namespace Target
 {
@@ -31,7 +32,7 @@ namespace Target
 
     public static Texture2D itemHealth;
     public static Texture2D itemFastReload;
-    public static Texture2D itemDeath;
+    public static Texture2D itemPoints;
     public static Texture2D itemSpawnReducer;
     public static Texture2D itemNuke;
     public static Texture2D itemContract;
@@ -66,12 +67,13 @@ namespace Target
       Resources.targets = JsonConvert.DeserializeObject<List<Target>>(File.ReadAllText("Content/Data/targets.json"));
       foreach (var it in Resources.targets)
       {
+        GameMain.targetsProbability.AddRange(it.spawn.probability);
         loadTargetResource(content, it);
       }
       //Bonus
       Resources.itemHealth = content.Load<Texture2D>("GFX/Item/health");
       Resources.itemFastReload = content.Load<Texture2D>("GFX/Item/fastReload");
-      Resources.itemDeath = content.Load<Texture2D>("GFX/Item/death");
+      Resources.itemPoints = content.Load<Texture2D>("GFX/Item/points");
       Resources.itemSpawnReducer = content.Load<Texture2D>("GFX/Item/time");
       Resources.itemNuke = content.Load<Texture2D>("GFX/Item/nuke");
       Resources.itemContract = content.Load<Texture2D>("GFX/Item/contract");

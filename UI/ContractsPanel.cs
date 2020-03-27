@@ -26,7 +26,7 @@ namespace Target.UI
       Label indicator = new Label();
       indicator.HorizontalAlignment = HorizontalAlignment.Right;
       indicator.VerticalAlignment = VerticalAlignment.Top;
-      indicator.Text = contract.GetStatus();
+      indicator.Text = contract.GetMission() + " Reward: " + contract.reward.GetDescription();
       _panel.Widgets.Add(indicator);
       _indicators.Add(new Tuple<Label, Contract>(indicator, contract));
     }
@@ -39,7 +39,7 @@ namespace Target.UI
 
     public void Update()
     {
-      foreach (Tuple<Label, Contract> indicator in _indicators) indicator.Item1.Text = indicator.Item2.GetStatus();
+      foreach (Tuple<Label, Contract> indicator in _indicators) indicator.Item1.Text = indicator.Item2.GetMission() + " Reward: " + indicator.Item2.reward.GetDescription();
     }
   }
 }

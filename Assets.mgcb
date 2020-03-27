@@ -97,18 +97,6 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Item/contract.png
 
-#begin Content/GFX/Item/death.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Content/GFX/Item/death.png
-
 #begin Content/GFX/Item/empty.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -156,6 +144,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Item/nuke.png
+
+#begin Content/GFX/Item/points.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Item/points.png
 
 #begin Content/GFX/Item/time.png
 /importer:TextureImporter
@@ -324,6 +324,54 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Target/hostage.png
+
+#begin Content/GFX/Target/juggernaut/firing.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Target/juggernaut/firing.png
+
+#begin Content/GFX/Target/juggernaut/firing_hitbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Target/juggernaut/firing_hitbox.png
+
+#begin Content/GFX/Target/juggernaut/idle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Target/juggernaut/idle.png
+
+#begin Content/GFX/Target/juggernaut/idle_hitbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Target/juggernaut/idle_hitbox.png
 
 #begin Content/GFX/Target/soldier/firing.png
 /importer:TextureImporter

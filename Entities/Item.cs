@@ -14,16 +14,15 @@ namespace Target
   {
     Health,
     FastReload,
-    Death,
     SpawnReducer,
     Nuke,
-    Contract
+    Contract,
+    Points
   }
 
   public class Item
   {
-    private Random randomX = new Random();
-    private Random randomType = new Random();
+    private Random randomGenerator = new Random();
     private ItemType _type;
     private Vector2 _position;
     private Texture2D _gfx;
@@ -33,12 +32,11 @@ namespace Target
 
     public Item()
     {
-      randomX = new Random();
       _isActive = true;
       _draw = false;
-      _position = new Vector2((float) randomX.Next(0, Options.Config.Width - 100), 0.0f);
+      _position = new Vector2((float)randomGenerator.Next(0, Options.Config.Width - 100), 0.0f);
       _sprite = new Rectangle((int) _position.X, 0, 100, 100);
-      switch (randomType.Next(1, 7))
+      switch (randomGenerator.Next(1, 6))
       {
         case 1:
           _type = ItemType.Health;
@@ -49,20 +47,20 @@ namespace Target
           _gfx = Resources.itemFastReload;
           break;
         case 3:
-          _type = ItemType.Death;
-          _gfx = Resources.itemDeath;
-          break;
-        case 4:
           _type = ItemType.SpawnReducer;
           _gfx = Resources.itemSpawnReducer;
           break;
-        case 5:
+        case 4:
           _type = ItemType.Nuke;
           _gfx = Resources.itemNuke;
           break;
-        case 6:
+        case 5:
           _type = ItemType.Contract;
           _gfx = Resources.itemContract;
+          break;
+        case 6:
+          _type = ItemType.Points;
+          _gfx = Resources.itemPoints;
           break;
       }
     }
@@ -98,22 +96,21 @@ namespace Target
           GameMain._player.addHealth(50);
           break;
         case ItemType.FastReload:
-          GameMain._player.getWeapon().setMagazine(-GameMain._player.getWeapon().getMagazine());
+          GameMain._player.getWeapon().addBullets(-GameMain._player.getWeapon().getMagazine());
           Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.getWeapon().setMagazine(GameMain._player.getWeapon().getMaxMagazine());
-          break;
-        case ItemType.Death:
-          GameMain._player.addHealth(-200);
+          GameMain._player.getWeapon().addBullets(GameMain._player.getWeapon().getMaxMagazine());
           break;
         case ItemType.SpawnReducer:
           GameMain.addTimeout(1000);
           break;
         case ItemType.Nuke:
-          Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._targets.Clear();
           break;
         case ItemType.Contract:
-          Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
+          GameMain._player.addContract();
+          break;
+        case ItemType.Points:
+          Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.addContract();
           break;
       }

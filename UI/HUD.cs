@@ -165,7 +165,7 @@ namespace Target
       _actionTimer.Start();
     }
 
-    public void udpateHealth(int maxHealth, int health)
+    public void updateHealth(int maxHealth, int health)
     {
       _healthIndicator.Minimum = 0;
       _healthIndicator.Maximum = maxHealth;
@@ -242,7 +242,7 @@ namespace Target
 
     public void Update(GameTime gameTime, ref Player player, DeviceState state, DeviceState prevState)
     {
-      crosshair.Update(gameTime, state);
+      crosshair.Update(gameTime, state, prevState);
       contractsPanel.Update();
 
       updateDrawBonus(gameTime);

@@ -31,42 +31,47 @@ namespace Target
     public static List<Target> _targets;
     public static List<Item> _items;
     public static bool gameOver;
-    public static int spawnTimerActionIndex;
-    public static Timer spawnTimer;
 
-    private static Random randomSpawn = new Random();
-    
+    private static int _targetSpawnTimerActionIndex;
+    private static Timer _targetSpawnTimer;
+    private static Timer _itemSpawnTimer;
+
+    private static Random _randomGenerator = new Random();
+    public static ProbabilityRange targetsProbability = new ProbabilityRange();
+
     public static void resetGame()
     {
-        gameOver = false;
-        _player = new Player();
-        hud = new HUD();
-        _targets = new List<Target>();
-        _items = new List<Item>();
-        spawnTimer = new Timer();
-        spawnTimerActionIndex = spawnTimer.addAction(TimerDirection.Forward, 3000, TimeoutBehaviour.StartOver, () => { spawnTarget(); });
-        spawnTimer.Start();
+      gameOver = false;
+      _player = new Player();
+      hud = new HUD();
+      _targets = new List<Target>();
+      _items = new List<Item>();
+      _targetSpawnTimer = new Timer();
+      _targetSpawnTimerActionIndex = _targetSpawnTimer.addAction(TimerDirection.Forward, 3000, TimeoutBehaviour.StartOver, () => { spawnTarget(); });
+      _targetSpawnTimer.Start();
+      _itemSpawnTimer = new Timer();
+      _itemSpawnTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { spawnItem(); });
+      _itemSpawnTimer.Start();
     }
 
     public static void addTimeout(double timeout)
     {
-      var timerTimeout = spawnTimer.actions[spawnTimerActionIndex];
-      if (timeout < 0 && timerTimeout.timeout <= 750) return; //Cannot go under 750msec
+      var timerTimeout = _targetSpawnTimer.actions[_targetSpawnTimerActionIndex];
+      if (timeout < 0 && timerTimeout.timeout <= 250) return; //Cannot go under 250msec
       timerTimeout.addTimeout(timeout);
-      spawnTimer.actions[spawnTimerActionIndex] = timerTimeout;
+      _targetSpawnTimer.actions[_targetSpawnTimerActionIndex] = timerTimeout;
+    }
+    public static void spawnItem()
+    {
+      if (_randomGenerator.Next(0, 11) == 0) _items.Add(new Item());
     }
 
     public static void spawnTarget()
     {
       addTimeout(-50); //Increase spawn rate
-      if (randomSpawn.Next(0, 100) <= 90)
-      {
-        var target = Resources.targets[randomSpawn.Next(0, Resources.targets.Count)].Copy();
-        target.randomizeSpawn();
-        _targets.Add(target);
-      }
-      else
-        _items.Add(new Item());
+      var target = Resources.targets[targetsProbability.GetIndex(_randomGenerator.Next(0, 100))].Copy();
+      target.randomizeSpawn();
+      _targets.Add(target);
     }
 
     public static void destroyTargets()
@@ -116,7 +121,8 @@ namespace Target
           _items[index].Update(gameTime);
         _player.Update(gameTime, menuUI, state, prevState);
         hud.Update(gameTime, ref _player, state, prevState);
-        spawnTimer.Update(gameTime);
+        _targetSpawnTimer.Update(gameTime);
+        _itemSpawnTimer.Update(gameTime);
       }
     }
 

@@ -25,17 +25,18 @@ namespace Target
       private int _magazine;
       private int _maxMagazine;
       private WeaponState _state;
+      private int _reloadTimerActionIndex;
       private Timer _reloadTimer;
 
       public Weapon(string name, int maxMagazine)
       {
         _name = name;
         _maxMagazine = maxMagazine;
-        _damage = 150;
+        _damage = 100;
         _magazine = _maxMagazine;
         _state = WeaponState.Idle;
         _reloadTimer = new Timer();
-        _reloadTimer.addAction(TimerDirection.Forward, 1500, TimeoutBehaviour.Reset, () => { });
+        _reloadTimerActionIndex = _reloadTimer.addAction(TimerDirection.Forward, 1500, TimeoutBehaviour.Reset, () => { });
       }
 
       public int getMagazine()
@@ -48,12 +49,22 @@ namespace Target
         return _maxMagazine;
       }
 
-      public void setMagazine(int bullets)
-      {
-        _magazine += bullets;
-      }
+    public void addBullets(int bullets)
+    {
+      _magazine += bullets;
+    }
+    public void addMagazineSize(int expandSize)
+    {
+      _maxMagazine += expandSize;
+    }
+    public void addReloadDuration(float duration)
+    {
+      var action = _reloadTimer.actions[_reloadTimerActionIndex];
+      action.timeout += duration;
+      _reloadTimer.actions[_reloadTimerActionIndex] = action;
+    }
 
-      public WeaponState getState()
+    public WeaponState getState()
       {
         return _state;
       }

@@ -38,11 +38,11 @@ namespace Target
       get { return (_health); }
       set {
         _health = value;
-        if (_health > _maxHealth) _health = _maxHealth;
+        if (_health > _healthMax) _health = _healthMax;
       }
     }
 
-    private int _maxHealth;
+    private int _healthMax;
 
     private BreathState _breathState;
     private Timer _breathTimer;
@@ -62,8 +62,8 @@ namespace Target
     {
       _breathState = BreathState.Breathing;
       _breathTimer = new Timer();
-      _health = 100;
-      _maxHealth = 100;
+      _healthMax = 100;
+      _health = _healthMax;
       _scoreMultiplier = 1;
       _comboHeadshot = 0;
       _contracts = new List<Contract>();
@@ -235,6 +235,7 @@ namespace Target
       if (_contracts.Count > 0) for (int i = _contracts.Count-1; i >= 0; i--) if (_contracts[i].inactive) _contracts.RemoveAt(i); //Clear obsolete contracts
       if (_health <= 0) GameMain.GameOver(menuUI);
       //HUD
+      GameMain.hud.updateHealth(_healthMax, _health);
       GameMain.hud.updateScoreMultiplier(_scoreMultiplier);
       GameMain.hud.updateScore(_stats.score);
       GameMain.hud.updateBreath(_breathTimer.getDuration());

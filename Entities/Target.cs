@@ -29,10 +29,16 @@ namespace Target
     public Texture2D firing;
     public Texture2D firing_hitbox;
   }
-  public enum SpawnLocation
+  public struct SpawnParameters
   {
-    Any,
-    RightBorder
+    public enum Location
+    {
+      Any,
+      RightBorder
+    }
+
+    public Location location;
+    public int probability;
   }
 
   public struct Hitbox
@@ -69,9 +75,9 @@ namespace Target
     private Hitbox _hitbox;
     public Hitbox hitbox { get { return (_hitbox); } set { _hitbox = value; } }
 
-    private SpawnLocation _spawn;
-    public SpawnLocation spawn { get { return (_spawn); } set { _spawn = value; } }
-
+    private SpawnParameters _spawn;
+    public SpawnParameters spawn { get { return (_spawn); } set { _spawn = value; } }
+    
     private static Random randomGenerator = new Random();
     private Point _position;
 
@@ -99,8 +105,8 @@ namespace Target
 
     public void randomizeSpawn()
     {
-      if (_spawn == SpawnLocation.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
-      else if (_spawn == SpawnLocation.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
+      if (_spawn.location == SpawnParameters.Location.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+      else if (_spawn.location == SpawnParameters.Location.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
       _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
       if (_damage > 0)
       {

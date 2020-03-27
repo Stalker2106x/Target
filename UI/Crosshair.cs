@@ -15,6 +15,8 @@ namespace Target
 
     private Random _randomGenerator;
 
+    private int _framesToSkip; //Skip frames for cursor management
+
     //Sway
     private Timer _swayTimer;
     private Timer _swayVectorTimer;
@@ -96,11 +98,20 @@ namespace Target
       return (Resources.crosshair);
     }
 
-    public void Update(GameTime gameTime, DeviceState state)
+    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
-      position.X += state.mouse.X - (Options.Config.Width / 2);
-      position.Y += state.mouse.Y - (Options.Config.Height / 2);
-      Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
+      if (_framesToSkip > 0)
+      {
+        _framesToSkip--;
+        return;
+      }
+      if (state.mouse.X < 0 || state.mouse.X > Options.Config.Width || state.mouse.Y < 0 || state.mouse.Y > Options.Config.Height)
+      {
+        Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
+        _framesToSkip = 1;
+      }
+      position.X += state.mouse.X - prevState.mouse.X;
+      position.Y += state.mouse.Y - prevState.mouse.Y;
       _swayTimer.Update(gameTime);
       _swayVectorTimer.Update(gameTime);
       _recoilTimer.Update(gameTime);
