@@ -44,6 +44,9 @@ namespace Target
 
     private int _healthMax;
 
+    private int _kevlar;
+    private int _kevlarMax;
+
     private BreathState _breathState;
     private Timer _breathTimer;
 
@@ -54,6 +57,7 @@ namespace Target
 
     private int _comboHeadshot;
     private Weapon _weapon;
+    private bool _defuser;
     private SoundEffectInstance _heartbeat;
 
     private List<Contract> _contracts;
@@ -62,6 +66,8 @@ namespace Target
     {
       _breathState = BreathState.Breathing;
       _breathTimer = new Timer();
+      _kevlarMax = 3;
+      _kevlar = 0;
       _healthMax = 100;
       _health = _healthMax;
       _scoreMultiplier = 1;
@@ -110,6 +116,20 @@ namespace Target
     {
       _stats.bulletsHit += hit;
     }
+    public void setDefuser(bool has)
+    {
+      _defuser = has;
+    }
+
+    public bool hasDefuser()
+    {
+      return (_defuser);
+    }
+
+    public void addKevlar()
+    {
+      _kevlar = _kevlarMax;
+    }
 
     public void addBulletsFired(int hit)
     {
@@ -123,7 +143,9 @@ namespace Target
 
     public void addHealth(int hp)
     {
-      _health += health;
+      if (_kevlar > 0) _kevlar--;
+      else _health += hp;
+      
     }
     public void addContractCompleted()
     {
@@ -188,7 +210,6 @@ namespace Target
             resetComboHeadshot();
             break;
           case HitType.Catch:
-            GameMain.hud.setAction("BONUS");
             break;
           case HitType.Miss:
           default:
@@ -236,9 +257,10 @@ namespace Target
       if (_health <= 0) GameMain.GameOver(menuUI);
       //HUD
       GameMain.hud.updateHealth(_healthMax, _health);
+      GameMain.hud.updateKevlar(_kevlarMax, _kevlar);
+      GameMain.hud.updateBreath(_breathTimer.getDuration());
       GameMain.hud.updateScoreMultiplier(_scoreMultiplier);
       GameMain.hud.updateScore(_stats.score);
-      GameMain.hud.updateBreath(_breathTimer.getDuration());
       GameMain.hud.updateReload(_weapon);
     }
 

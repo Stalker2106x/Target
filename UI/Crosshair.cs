@@ -83,6 +83,11 @@ namespace Target
       _recoilVectorTimer.addAction(TimerDirection.Forward, 500, TimeoutBehaviour.Reset, () => { _recoilTimer.Stop(); });
     }
 
+    public bool checkCollision(Rectangle toCheck)
+    {
+      return (getRectangle().Intersects(toCheck));
+    }
+
     public void triggerRecoil()
     {
       _recoilTimer.StartOver();
@@ -95,7 +100,16 @@ namespace Target
       {
         return (Resources.reloadingCursor);
       }
+      foreach (var it in GameMain._items)
+      {
+        if (checkCollision(it.getRectangle())) return (Resources.grabCursor);
+      }
       return (Resources.crosshair);
+    }
+
+    public Rectangle getRectangle()
+    {
+      return (new Rectangle((int)position.X - Resources.crosshair.Width / 2, (int)position.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height));
     }
 
     public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
@@ -120,7 +134,7 @@ namespace Target
 
     public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
-      spriteBatch.Draw(getTexture(), new Rectangle((int)position.X - Resources.crosshair.Width / 2, (int)position.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height), Color.White);
+      spriteBatch.Draw(getTexture(), getRectangle(), Color.White);
     }
   }
 }

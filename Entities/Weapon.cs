@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Linq;
 using Target.Utils;
 
 namespace Target
@@ -80,22 +81,26 @@ namespace Target
         if (_reloadTimer.isActive()) return (null);
         List<HitType> hits = new List<HitType>();
 
-        _magazine--;
-        GameMain._player.addBulletsFired(1);
-        GameMain.hud.crosshair.triggerRecoil();
-        Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
+        for (int index = 0; index < GameMain._items.Count; ++index)
+        {
+          HitType hit = GameMain._items[index].checkCollision();
+          if (hit != HitType.Miss)
+          {
+            hits.Add(hit); //Add hit if different from miss
+            return (hits); //return immediately, its a catch, we dont want to fire
+          }
+        }
         for (int index = 0; index < GameMain._targets.Count; ++index)
         {
           HitType hit = GameMain._targets[index].checkCollision(_damage);
           if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
         }
-         
-        for (int index = 0; index < GameMain._items.Count; ++index)
-        {
-          HitType hit = GameMain._items[index].checkCollision();
-          if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
-        }
         if (hits.Count == 0) hits.Add(HitType.Miss); //No hit, add miss
+        
+        _magazine--;
+        GameMain._player.addBulletsFired(1);
+        GameMain.hud.crosshair.triggerRecoil();
+        Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
         return (hits);
       }
 

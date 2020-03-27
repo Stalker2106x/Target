@@ -45,6 +45,7 @@ namespace Target
   public enum GameAction
   {
     Fire,
+    Defuse,
     HoldBreath,
     Reload,
     Menu

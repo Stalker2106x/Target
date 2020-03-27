@@ -20,6 +20,7 @@ namespace Target
   public class HUD
   {
     private HorizontalProgressBar _healthIndicator;
+    private HorizontalProgressBar _kevlarIndicator;
     private HorizontalProgressBar _breathIndicator;
 
     private Label _scoreIndicator;
@@ -44,9 +45,6 @@ namespace Target
     private float _hitmarkerTimer;
     private float _hitmarkerDelay;
 
-    private float drawBonusTimer;
-    private float drawBonusDelay;
-
     private bool _bloodsplat;
     private float bloodsplatTimer;
     private Rectangle bloodsplatPos;
@@ -63,8 +61,6 @@ namespace Target
       _hitmarker = false;
       _hitmarkerTimer = 0.0f;
       _hitmarkerDelay = 750f;
-      drawBonusTimer = 0.0f;
-      drawBonusDelay = 2f;
       _bloodsplat = false;
       bloodsplatTimer = 0.0f;
       bloodsplatDelay = 2f;
@@ -73,8 +69,6 @@ namespace Target
       contractsPanel = new ContractsPanel(_UI);
       addIndicators();
     }
-
-    // NEW HUD
 
     public void addIndicators()
     {
@@ -91,8 +85,17 @@ namespace Target
       _healthIndicator.Height = 20;
       topPanel.Widgets.Add(_healthIndicator);
 
-      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
       Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Blue);
+      _kevlarIndicator = new HorizontalProgressBar();
+      _kevlarIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _kevlarIndicator.VerticalAlignment = VerticalAlignment.Top;
+      _kevlarIndicator.Width = 200;
+      _kevlarIndicator.Height = 20;
+      topPanel.Widgets.Add(_kevlarIndicator);
+
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Green);
       _breathIndicator = new HorizontalProgressBar();
       _breathIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _breathIndicator.VerticalAlignment = VerticalAlignment.Top;
@@ -143,7 +146,23 @@ namespace Target
       _UI.Widgets.Add(bottomPanel);
     }
 
-    //Old
+    public HorizontalProgressBar addBombIndicator(Point bombPos)
+    {
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
+      HorizontalProgressBar bombIndicator = new HorizontalProgressBar();
+      bombIndicator.Top = bombPos.Y;
+      bombIndicator.Left = bombPos.X;
+      bombIndicator.Width = 100;
+      bombIndicator.Height = 5;
+      _UI.Widgets.Add(bombIndicator);
+      return (bombIndicator);
+    }
+
+    public void removeBombIndicator(HorizontalProgressBar indicator)
+    {
+      _UI.Widgets.Remove(indicator);
+    }
 
     public void setHitmarker()
     {
@@ -171,6 +190,13 @@ namespace Target
       _healthIndicator.Maximum = maxHealth;
       _healthIndicator.Value = health;
     }
+    public void updateKevlar(int maxKevlar, int state)
+    {
+      _kevlarIndicator.Minimum = 0;
+      _kevlarIndicator.Maximum = maxKevlar;
+      _kevlarIndicator.Value = state;
+    }
+
 
     public void updateBreath(double breath)
     {
@@ -224,28 +250,11 @@ namespace Target
       _bloodsplat = false;
     }
 
-    public void updateDrawBonus(GameTime gameTime)
-    {
-      for (int index = 0; index < GameMain._items.Count; ++index)
-      {
-        if (GameMain._items[index].getDrawState())
-        {
-          drawBonusTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-          if ((double) drawBonusTimer >= (double) drawBonusDelay)
-          {
-            drawBonusTimer = 0.0f;
-            GameMain._items[index].setActivity(false);
-          }
-        }
-      }
-    }
-
     public void Update(GameTime gameTime, ref Player player, DeviceState state, DeviceState prevState)
     {
       crosshair.Update(gameTime, state, prevState);
       contractsPanel.Update();
 
-      updateDrawBonus(gameTime);
       ammoIndicator(ref player);
       checkHitmarker(gameTime);
       checkBloodsplat(gameTime);
@@ -259,11 +268,6 @@ namespace Target
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_bloodsplat)
         spriteBatch.Draw(Resources.bloodsplat, bloodsplatPos, Color.Red);
-      for (int index = 0; index < GameMain._items.Count; ++index)
-      {
-        if (GameMain._items[index].getDrawState())
-          spriteBatch.Draw(GameMain._items[index].getGFX(), new Rectangle(20, 150, GameMain._items[index].getGFX().Width, GameMain._items[index].getGFX().Height), Color.White * 0.75f);
-      }
     }
 
     public void DrawUI()

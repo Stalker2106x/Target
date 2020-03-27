@@ -90,12 +90,12 @@ namespace Target
     }
 
     private Timer _attackTimer;
-    private bool _isActive;
+    private bool _active;
 
     public Target() //default ctor
     {
       _state = State.Idle;
-      _isActive = true;
+      _active = true;
     }
 
     public Target Copy()
@@ -123,7 +123,7 @@ namespace Target
 
     public bool getActivity()
     {
-      return _isActive;
+      return _active;
     }
 
     private Rectangle getRectangle()
@@ -198,7 +198,7 @@ namespace Target
       _position.X += _move.X;
       _position.Y += _move.Y;
       if (_damage > 0) _attackTimer.Update(gameTime);
-      if (!Utils.Tools.IsOnScreen(getRectangle()) || _health <= 0) _isActive = false; //Destroy out of screen stuff
+      if (!Utils.Tools.IsOnScreen(getRectangle()) || _health <= 0) _active = false; //Destroy out of screen stuff
     }
 
     public void Draw(SpriteBatch spriteBatch)

@@ -21,21 +21,18 @@ namespace Target
     public static SpriteFont regularFont;
     public static SpriteFont alertFont;
 
+    public static Texture2D bomb;
     public static List<Target> targets;
+    public static List<Item> items;
+
+    public static Texture2D grabCursor;
+    public static Texture2D reloadingCursor;
+    public static Texture2D crosshair;
 
     public static Texture2D menuBackground;
     public static Texture2D hitmarker;
     public static Texture2D bloodsplat;
-    public static Texture2D reloadingCursor;
-    public static Texture2D crosshair;
     public static Texture2D bullet;
-
-    public static Texture2D itemHealth;
-    public static Texture2D itemFastReload;
-    public static Texture2D itemPoints;
-    public static Texture2D itemSpawnReducer;
-    public static Texture2D itemNuke;
-    public static Texture2D itemContract;
 
     public static Texture2D mapWoods;
 
@@ -44,8 +41,18 @@ namespace Target
     public static SoundEffect fire;
     public static SoundEffect burst;
     public static SoundEffect reload;
+
     public static SoundEffect cash;
-    public static SoundEffect fail; 
+    public static SoundEffect fail;
+    public static SoundEffect nuke;
+    public static SoundEffect rewind;
+    public static SoundEffect contract;
+    public static SoundEffect armor;
+    public static SoundEffect medikit;
+
+    public static SoundEffect bombtick;
+    public static SoundEffect explosion;
+
     public static SoundEffect unstoppable;
     public static SoundEffect headhunter;
     public static SoundEffect headshot;
@@ -63,26 +70,31 @@ namespace Target
       Resources.alertFont = content.Load<SpriteFont>("Font/alert");
       Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
 
-      //Enemy
+      //Targets
+      Resources.bomb = content.Load<Texture2D>("GFX/Target/bomb");
       Resources.targets = JsonConvert.DeserializeObject<List<Target>>(File.ReadAllText("Content/Data/targets.json"));
       foreach (var it in Resources.targets)
       {
         GameMain.targetsProbability.AddRange(it.spawn.probability);
         loadTargetResource(content, it);
       }
-      //Bonus
-      Resources.itemHealth = content.Load<Texture2D>("GFX/Item/health");
-      Resources.itemFastReload = content.Load<Texture2D>("GFX/Item/fastReload");
-      Resources.itemPoints = content.Load<Texture2D>("GFX/Item/points");
-      Resources.itemSpawnReducer = content.Load<Texture2D>("GFX/Item/time");
-      Resources.itemNuke = content.Load<Texture2D>("GFX/Item/nuke");
-      Resources.itemContract = content.Load<Texture2D>("GFX/Item/contract");
+
+      //Items
+      Resources.items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/Data/items.json"));
+      foreach (var it in Resources.items)
+      {
+        GameMain.itemsProbability.AddRange(it.probability);
+        it.texture = content.Load<Texture2D>("GFX/Item/" + it.type.ToString().ToLower());
+      }
+
+      //Crosshair
+      Resources.reloadingCursor = content.Load<Texture2D>("GFX/Player/reloading");
+      Resources.grabCursor = content.Load<Texture2D>("GFX/Player/grab");
+      Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
 
       //HUD
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
-      Resources.reloadingCursor = content.Load<Texture2D>("GFX/Player/reloading");
-      Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
       Resources.bullet = content.Load<Texture2D>("GFX/GUI/bullet");
       
       //Maps
@@ -94,9 +106,19 @@ namespace Target
       Resources.fire = content.Load<SoundEffect>("Sound/Weapons/fire");
       Resources.burst = content.Load<SoundEffect>("Sound/Weapons/burst");
       Resources.reload = content.Load<SoundEffect>("Sound/Weapons/reload");
-      Resources.cash = content.Load<SoundEffect>("Sound/Target/cash");
-      Resources.fail = content.Load<SoundEffect>("Sound/Target/fail");
-      Resources.unstoppable = content.Load<SoundEffect>("Sound/Target/unstoppable");
+
+      Resources.cash = content.Load<SoundEffect>("Sound/Items/cash");
+      Resources.fail = content.Load<SoundEffect>("Sound/Items/fail");
+      Resources.nuke = content.Load<SoundEffect>("Sound/Items/nuke");
+      Resources.rewind = content.Load<SoundEffect>("Sound/Items/rewind");
+      Resources.contract = content.Load<SoundEffect>("Sound/Items/contract");
+      Resources.armor = content.Load<SoundEffect>("Sound/Items/armor");
+      Resources.medikit = content.Load<SoundEffect>("Sound/Items/medikit");
+
+      Resources.bombtick = content.Load<SoundEffect>("Sound/Target/bombtick");
+      Resources.explosion = content.Load<SoundEffect>("Sound/Target/explosion");
+
+    Resources.unstoppable = content.Load<SoundEffect>("Sound/Target/unstoppable");
       Resources.headhunter = content.Load<SoundEffect>("Sound/Target/headhunter");
       Resources.headshot = content.Load<SoundEffect>("Sound/Target/headshot");
       Resources.breath = content.Load<SoundEffect>("Sound/Player/breath");

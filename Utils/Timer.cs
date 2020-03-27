@@ -13,6 +13,7 @@ namespace Target.Utils
   public enum TimeoutBehaviour
   {
     None,
+    Stop,
     Reset,
     StartOver,
     Destroy
@@ -49,6 +50,7 @@ namespace Target.Utils
   {
     private bool _active;
     private double _duration;
+    private double _multiplier;
     private TimerDirection _direction;
     public List<TimeoutAction> actions;
     private List<int> _destroyBuffer;
@@ -57,6 +59,7 @@ namespace Target.Utils
     {
       Stop();
       _duration = startDuration;
+      _multiplier = 1;
       _destroyBuffer = new List<int>();
       actions = new List<TimeoutAction>();
     }
@@ -73,6 +76,10 @@ namespace Target.Utils
     public bool isActive()
     {
       return (_active);
+    }
+    public void setTimeScale(double multiplier)
+    {
+      _multiplier = multiplier;
     }
 
     public void setDuration(double duration)
@@ -133,8 +140,8 @@ namespace Target.Utils
     public void Update(GameTime gameTime)
     {
       if (!_active) return; //Only when active
-      if (_direction == TimerDirection.Forward) _duration += gameTime.ElapsedGameTime.TotalMilliseconds;
-      else if (_direction == TimerDirection.Backward) _duration -= gameTime.ElapsedGameTime.TotalMilliseconds;
+      if (_direction == TimerDirection.Forward) _duration += gameTime.ElapsedGameTime.TotalMilliseconds * _multiplier;
+      else if (_direction == TimerDirection.Backward) _duration -= gameTime.ElapsedGameTime.TotalMilliseconds * _multiplier;
       for (int i = 0; i < actions.Count; i++)
       {
         if (!actions[i].triggered && _direction == actions[i].direction
@@ -144,6 +151,9 @@ namespace Target.Utils
           actions[i].trigger();
           switch (actions[i].timeoutBehaviour)
           {
+            case TimeoutBehaviour.Stop:
+              Stop();
+              break;
             case TimeoutBehaviour.Reset:
               Reset();
               break;

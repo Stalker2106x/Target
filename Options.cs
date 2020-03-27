@@ -37,6 +37,7 @@ namespace Target
       Bindings = new Dictionary<GameAction, ControlPair>();
       Bindings.Add(GameAction.Fire, new ControlPair(new Control(MouseButton.Left), new Control(Buttons.RightShoulder)));
       Bindings.Add(GameAction.Reload, new ControlPair(new Control(Keys.R), new Control(Buttons.X)));
+      Bindings.Add(GameAction.Defuse, new ControlPair(new Control(Keys.E), new Control(Buttons.LeftTrigger)));
       Bindings.Add(GameAction.HoldBreath, new ControlPair(new Control(Keys.LeftShift), new Control(Buttons.LeftShoulder)));
       Bindings.Add(GameAction.Menu, new ControlPair(new Control(Keys.Escape), new Control(Buttons.Start)));
     }

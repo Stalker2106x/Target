@@ -1,0 +1,34 @@
+﻿[
+  {
+    "type": "Medikit",
+    "probability": 20
+  },
+  {
+    "type": "InstantReload",
+    "probability": 20
+  },
+  {
+    "type": "SpawnReducer",
+    "probability": 10
+  },
+  {
+    "type": "Nuke",
+    "probability": 5
+  },
+  {
+    "type": "Contract",
+    "probability": 10
+  },
+  {
+    "type": "Points",
+    "probability": 15
+  },
+  {
+    "type": "KevlarVest",
+    "probability": 10
+  },
+  {
+    "type": "Defuser",
+    "probability": 10
+  }
+]

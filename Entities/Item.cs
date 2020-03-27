@@ -12,57 +12,54 @@ namespace Target
 {
   public enum ItemType
   {
-    Health,
-    FastReload,
+    Medikit,
+    InstantReload,
     SpawnReducer,
     Nuke,
     Contract,
-    Points
+    Points,
+    KevlarVest,
+    Defuser
   }
 
   public class Item
   {
-    private Random randomGenerator = new Random();
+    private static Random randomGenerator = new Random();
+
     private ItemType _type;
-    private Vector2 _position;
-    private Texture2D _gfx;
-    private Rectangle _sprite;
+    public ItemType type { get { return (_type); } set { _type = value; } }
+
+    private int _probability;
+    public int probability { get { return (_probability); } set { _probability = value; } }
+
+    private Point _position;
+    private Texture2D _texture;
+    public Texture2D texture {
+      set
+      {
+        _texture = value;
+      }
+    }
     private bool _isActive;
-    private bool _draw;
 
     public Item()
     {
       _isActive = true;
-      _draw = false;
-      _position = new Vector2((float)randomGenerator.Next(0, Options.Config.Width - 100), 0.0f);
-      _sprite = new Rectangle((int) _position.X, 0, 100, 100);
-      switch (randomGenerator.Next(1, 6))
-      {
-        case 1:
-          _type = ItemType.Health;
-          _gfx = Resources.itemHealth;
-          break;
-        case 2:
-          _type = ItemType.FastReload;
-          _gfx = Resources.itemFastReload;
-          break;
-        case 3:
-          _type = ItemType.SpawnReducer;
-          _gfx = Resources.itemSpawnReducer;
-          break;
-        case 4:
-          _type = ItemType.Nuke;
-          _gfx = Resources.itemNuke;
-          break;
-        case 5:
-          _type = ItemType.Contract;
-          _gfx = Resources.itemContract;
-          break;
-        case 6:
-          _type = ItemType.Points;
-          _gfx = Resources.itemPoints;
-          break;
-      }
+    }
+
+    public Item Copy()
+    {
+      return (Item)this.MemberwiseClone();
+    }
+
+    public void randomizeSpawn()
+    {
+      _position = new Point(randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), 0);
+    }
+
+    public Rectangle getRectangle()
+    {
+      return (new Rectangle(_position.X, _position.Y, _texture.Width, _texture.Height));
     }
 
     public bool getActivity()
@@ -70,73 +67,64 @@ namespace Target
       return _isActive;
     }
 
-    public bool getDrawState()
-    {
-      return _draw;
-    }
-
-    public Texture2D getGFX()
-    {
-      return _gfx;
-    }
-
-    public void setActivity(bool boolen)
-    {
-      _isActive = boolen;
-    }
-
     public HitType checkCollision()
     {
-      if (!_sprite.Contains((int)GameMain.hud.crosshair.position.X, (int)GameMain.hud.crosshair.position.Y)) return (HitType.Miss); //Missed
-      _draw = true;
+      if (!getRectangle().Contains((int)GameMain.hud.crosshair.position.X, (int)GameMain.hud.crosshair.position.Y)) return (HitType.Miss); //Missed
       GameMain._player.setBulletsHit(1);
+      Catch();
+      _isActive = false;
+      return (HitType.Catch);
+    }
+
+    public void Catch()
+    {
+      GameMain.hud.setAction(type.ToString());
       switch (_type)
       {
-        case ItemType.Health:
+        case ItemType.Medikit:
+          Resources.medikit.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.addHealth(50);
           break;
-        case ItemType.FastReload:
+        case ItemType.InstantReload:
           GameMain._player.getWeapon().addBullets(-GameMain._player.getWeapon().getMagazine());
           Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.getWeapon().addBullets(GameMain._player.getWeapon().getMaxMagazine());
           break;
         case ItemType.SpawnReducer:
+          Resources.rewind.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain.addTimeout(1000);
           break;
         case ItemType.Nuke:
+          Resources.nuke.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._targets.Clear();
           break;
         case ItemType.Contract:
+          Resources.contract.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.addContract();
           break;
         case ItemType.Points:
           Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
           GameMain._player.addContract();
           break;
+        case ItemType.KevlarVest:
+          Resources.armor.Play(Options.Config.SoundVolume, 0f, 0f);
+          GameMain._player.addKevlar();
+          break;
+        case ItemType.Defuser:
+          GameMain._player.setDefuser(true);
+          break;
       }
-      return (HitType.Catch);
-    }
-
-    public void checkOnScreen()
-    {
-      if ((double) _position.Y <= (double)Options.Config.Width)
-        return;
-      _isActive = false;
     }
 
     public void Update(GameTime gameTime)
     {
-      _position.Y += 5f;
-      checkOnScreen();
-      _sprite.X = (int) _position.X;
-      _sprite.Y = (int) _position.Y;
+      _position.Y += 5;
+      if (_position.Y > Options.Config.Height) _isActive = false; //out of screen
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-      if (_draw)
-        return;
-      spriteBatch.Draw(_gfx, _sprite, Color.White);
+      spriteBatch.Draw(_texture, getRectangle(), Color.White);
     }
   }
 }

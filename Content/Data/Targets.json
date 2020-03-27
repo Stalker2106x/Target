@@ -11,7 +11,7 @@
     },
     "spawn": {
       "location": "any",
-      "probability": "70"
+      "probability": 70
     }
   },
   {
@@ -26,13 +26,13 @@
     },
     "spawn": {
       "location": "any",
-      "probability": "10"
+      "probability": 10
     }
   },
   {
     "name": "Zeppelin",
     "static": false,
-    "health": 50,
+    "health": 150,
     "move": {
       "x": -5,
       "y": 0
@@ -43,7 +43,7 @@
     },
     "spawn": {
       "location": "rightBorder",
-      "probability": "20"
+      "probability": 20
     }
   }
 ]
