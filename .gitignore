@@ -4,7 +4,7 @@
 
 #Visual Studio files
 Properties/
-.vs/
+.vs/*
 *.pidb
 *.userprefs
 *.[Oo]bj
