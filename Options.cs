@@ -68,6 +68,7 @@ namespace Target
             GAdapter = gadapter;
             LoadResolutions();
             Config = GameSettings.Load();
+            applyConfig();
         }
 
         public void LoadResolutions()

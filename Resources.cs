@@ -28,12 +28,14 @@ namespace Target
     public static Texture2D grabCursor;
     public static Texture2D reloadingCursor;
     public static Texture2D crosshair;
-    public static Texture2D defuse;
+    public static Texture2D defuseCursor;
 
     public static Texture2D menuBackground;
+    public static Texture2D hands;
     public static Texture2D hitmarker;
     public static Texture2D bloodsplat;
     public static Texture2D bullet;
+    public static Texture2D defuser;
 
     public static Texture2D mapWoods;
 
@@ -95,13 +97,15 @@ namespace Target
       Resources.reloadingCursor = content.Load<Texture2D>("GFX/Player/reloading");
       Resources.grabCursor = content.Load<Texture2D>("GFX/Player/grab");
       Resources.crosshair = content.Load<Texture2D>("GFX/Player/crosshair");
-      Resources.defuse = content.Load<Texture2D>("GFX/Player/defuse");
+      Resources.defuseCursor = content.Load<Texture2D>("GFX/Player/defuse");
 
       //HUD
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
+      Resources.hands = content.Load<Texture2D>("GFX/Player/hands");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
       Resources.bullet = content.Load<Texture2D>("GFX/GUI/bullet");
-      
+      Resources.defuser = content.Load<Texture2D>("GFX/GUI/defuser");
+
       //Maps
       Resources.mapWoods = content.Load<Texture2D>("GFX/Maps/woods");
 

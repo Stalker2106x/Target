@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Myra.Graphics2D.UI;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.IO;
 using Target.Entities;
 using Target.Utils;
 
@@ -17,11 +19,23 @@ namespace Target
 {
   public struct PlayerStats
   {
+    const string SavePath = "Content/User.json";
+
     public int score;
     public int bulletsFired;
     public int bulletsHit;
     public int contractsCompleted;
     public int headshotComboMax;
+
+    public static PlayerStats Load()
+    {
+      if (!File.Exists(SavePath)) return (new PlayerStats());
+      return (JsonConvert.DeserializeObject<PlayerStats>(File.ReadAllText(SavePath)));
+    }
+    public void Save()
+    {
+      File.WriteAllText(SavePath, JsonConvert.SerializeObject(this));
+    }
   }
 
   public class Player
@@ -36,10 +50,6 @@ namespace Target
     private int _health;
     public int health {
       get { return (_health); }
-      set {
-        _health = value;
-        if (_health > _healthMax) _health = _healthMax;
-      }
     }
 
     private int _healthMax;
@@ -124,6 +134,23 @@ namespace Target
     public void setDefuser(bool has)
     {
       _defuser = has;
+      GameMain.hud.updateDefuser(has);
+    }
+
+    public bool isDefusing()
+    {
+      return (_defusing);
+    }
+
+    public void addHealth(int hp, bool ignoreKevlar = false)
+    {
+      if (hp < 0 && _kevlar > 0)
+      {
+        _kevlar--;
+        return;
+      }
+      _health += hp;
+      if (_health > _healthMax) _health = _healthMax;
     }
 
     public bool hasDefuser()
@@ -146,12 +173,6 @@ namespace Target
       _stats.score += (int)(score * _scoreMultiplier);
     }
 
-    public void addHealth(int hp)
-    {
-      if (_kevlar > 0) _kevlar--;
-      else _health += hp;
-      
-    }
     public void addContractCompleted()
     {
       _stats.contractsCompleted++;
@@ -160,8 +181,11 @@ namespace Target
     public void resetComboHeadshot()
     {
       _comboHeadshot = 0;
-      _scoreMultiplier = 1;
-      Resources.denied.Play(Options.Config.SoundVolume, 0f, 0f);
+      if (_scoreMultiplier > 1)
+      {
+        _scoreMultiplier = 1;
+        Resources.denied.Play(Options.Config.SoundVolume, 0f, 0f);
+      }
     }
 
     public void addComboHeadshot(int headshot)
@@ -199,20 +223,20 @@ namespace Target
           case HitType.Headshot:
             GameMain.hud.setAction("Headshot!");
             Resources.headshot.Play(Options.Config.SoundVolume, 0f, 0f);
-            addScore(40);
+            GameMain.hud.crosshair.triggerHitmarker();
             addComboHeadshot(1);
             break;
           case HitType.Hit:
-            addScore(20);
+            GameMain.hud.crosshair.triggerHitmarker();
             resetComboHeadshot();
             break;
           case HitType.Critical:
+            GameMain.hud.crosshair.triggerHitmarker();
             GameMain.hud.setAction("Critical!");
-            addScore(40);
             break;
           case HitType.Legshot:
+            GameMain.hud.crosshair.triggerHitmarker();
             GameMain.hud.setAction("Legshot...");
-            addScore(10);
             resetComboHeadshot();
             break;
           case HitType.Catch:
@@ -235,6 +259,7 @@ namespace Target
         if (_breathTimer.getDuration() == 0 || Options.Config.Bindings[GameAction.HoldBreath].IsControlPressed(state, prevState)) //First time
         {
           Resources.breath.Play(Options.Config.SoundVolume, 0f, 0f);
+          _breathTimer.addMilliseconds(500);
           _heartbeat.Play();
         }
         if (!_breathTimer.isActive()) _breathTimer.Start();
@@ -260,7 +285,12 @@ namespace Target
         _weapon.reload();
       _weapon.Update(gameTime);
       if (_contracts.Count > 0) for (int i = _contracts.Count-1; i >= 0; i--) if (_contracts[i].inactive) _contracts.RemoveAt(i); //Clear obsolete contracts
-      if (_health <= 0) GameMain.GameOver(menuUI);
+      if (_health <= 0)
+      {
+
+        _heartbeat.Stop(); //Clean heartbeat state
+        GameMain.GameOver(menuUI);
+      }
       //HUD
       GameMain.hud.updateHealth(_healthMax, _health);
       GameMain.hud.updateKevlar(_kevlarMax, _kevlar);
@@ -272,6 +302,7 @@ namespace Target
 
     public void Draw(SpriteBatch spriteBatch)
     {
+      _weapon.Draw(spriteBatch);
     }
   }
 }

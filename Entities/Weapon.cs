@@ -13,42 +13,36 @@ using Target.Utils;
 
 namespace Target
 {
-    public enum WeaponState
+  public class Weapon
+  {
+    private string _name;
+    private int _damage;
+    private int _magazine;
+    private int _maxMagazine;
+    private int _reloadTimerActionIndex;
+    private Timer _reloadTimer;
+    private Texture2D _texture;
+
+    public Weapon(string name, int maxMagazine)
     {
-        Idle,
-        Reloading
+      _name = name;
+      _maxMagazine = maxMagazine;
+      _damage = 100;
+      _magazine = _maxMagazine;
+      _reloadTimer = new Timer();
+      _reloadTimerActionIndex = _reloadTimer.addAction(TimerDirection.Forward, 1500, TimeoutBehaviour.Reset, () => { });
+      _texture = Resources.hands;
     }
 
-    public class Weapon
+    public int getMagazine()
     {
-      private string _name;
-      private int _damage;
-      private int _magazine;
-      private int _maxMagazine;
-      private WeaponState _state;
-      private int _reloadTimerActionIndex;
-      private Timer _reloadTimer;
+      return _magazine;
+    }
 
-      public Weapon(string name, int maxMagazine)
-      {
-        _name = name;
-        _maxMagazine = maxMagazine;
-        _damage = 100;
-        _magazine = _maxMagazine;
-        _state = WeaponState.Idle;
-        _reloadTimer = new Timer();
-        _reloadTimerActionIndex = _reloadTimer.addAction(TimerDirection.Forward, 1500, TimeoutBehaviour.Reset, () => { });
-      }
-
-      public int getMagazine()
-      {
-        return _magazine;
-      }
-
-      public int getMaxMagazine()
-      {
-        return _maxMagazine;
-      }
+    public int getMaxMagazine()
+    {
+      return _maxMagazine;
+    }
 
     public void addBullets(int bullets)
     {
@@ -65,61 +59,61 @@ namespace Target
       _reloadTimer.actions[_reloadTimerActionIndex] = action;
     }
 
-    public WeaponState getState()
-      {
-        return _state;
-      }
-
-      public double getStatusTimer()
-      {
-        return _reloadTimer.getDuration();
-      }
-
-      public List<HitType> fire()
-      {
-        if (_magazine <= 0) reload();
-        if (_reloadTimer.isActive()) return (null);
-        List<HitType> hits = new List<HitType>();
-
-        for (int index = 0; index < GameMain._items.Count; ++index)
-        {
-          HitType hit = GameMain._items[index].checkCollision();
-          if (hit != HitType.Miss)
-          {
-            hits.Add(hit); //Add hit if different from miss
-            return (hits); //return immediately, its a catch, we dont want to fire
-          }
-        }
-        for (int index = 0; index < GameMain._targets.Count; ++index)
-        {
-          HitType hit = GameMain._targets[index].checkCollision(_damage);
-          if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
-        }
-        if (hits.Count == 0) hits.Add(HitType.Miss); //No hit, add miss
-        
-        _magazine--;
-        GameMain._player.addBulletsFired(1);
-        GameMain.hud.crosshair.triggerRecoil();
-        Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
-        return (hits);
-      }
-
-      public void reload()
-      {
-        if (_magazine >= _maxMagazine || _reloadTimer.isActive()) return;
-        Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
-        _magazine = _maxMagazine;
-        _reloadTimer.Start();
-      }
-
-
-      public void Update(GameTime gameTime)
-      {
-        _reloadTimer.Update(gameTime);
-      }
-
-      public void Draw(SpriteBatch spriteBatch)
-      {
-      }
+    public double getStatusTimer()
+    {
+      return _reloadTimer.getDuration();
     }
+
+    public Rectangle getRectangle()
+    {
+      return (new Rectangle((int)(Options.Config.Width * 0.70f) + (GameMain.hud.crosshair.position.X / 10), (int)(Options.Config.Height * 0.70f) + (GameMain.hud.crosshair.position.Y / 10), _texture.Width, _texture.Height));
+    }
+
+    public List<HitType> fire()
+    {
+      if (_magazine <= 0) reload();
+      if (_reloadTimer.isActive()) return (null);
+      List<HitType> hits = new List<HitType>();
+
+      for (int index = 0; index < GameMain._items.Count; ++index)
+      {
+        HitType hit = GameMain._items[index].checkCollision();
+        if (hit != HitType.Miss)
+        {
+          hits.Add(hit); //Add hit if different from miss
+          return (hits); //return immediately, its a catch, we dont want to fire
+        }
+      }
+      for (int index = 0; index < GameMain._targets.Count; ++index)
+      {
+        HitType hit = GameMain._targets[index].checkCollision(_damage);
+        if (hit != HitType.Miss) hits.Add(hit); //Add hit if different from miss
+      }
+      if (hits.Count == 0) hits.Add(HitType.Miss); //No hit, add miss
+        
+      _magazine--;
+      GameMain.player.addBulletsFired(1);
+      GameMain.hud.crosshair.triggerRecoil();
+      Resources.fire.Play(Options.Config.SoundVolume, 0f, 0f);
+      return (hits);
+    }
+
+    public void reload()
+    {
+      if (_magazine >= _maxMagazine || _reloadTimer.isActive()) return;
+      Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
+      _magazine = _maxMagazine;
+      _reloadTimer.Start();
+    }
+
+    public void Update(GameTime gameTime)
+    {
+      _reloadTimer.Update(gameTime);
+    }
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
+      spriteBatch.Draw(_texture, getRectangle(), Color.White);
+    }
+  }
 }

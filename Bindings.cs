@@ -8,7 +8,10 @@ namespace Target
   {
     None,
     Left,
-    Right
+    Middle,
+    Right,
+    XButton1,
+    XButton2
   }
   static class MouseHelper
   {
@@ -18,9 +21,14 @@ namespace Target
       {
         case MouseButton.Left:
           return (state.LeftButton == ButtonState.Pressed);
+        case MouseButton.Middle:
+          return (state.MiddleButton == ButtonState.Pressed);
         case MouseButton.Right:
           return (state.RightButton == ButtonState.Pressed);
-        case MouseButton.None:
+        case MouseButton.XButton1:
+          return (state.XButton1 == ButtonState.Pressed);
+        case MouseButton.XButton2:
+          return (state.XButton2 == ButtonState.Pressed);
         default:
           return (false);
       }

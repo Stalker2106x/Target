@@ -43,10 +43,10 @@ namespace Target.Entities
         switch(type)
         {
           case Type.ExpandMagazine:
-            GameMain._player.getWeapon().addMagazineSize(1);
+            GameMain.player.getWeapon().addMagazineSize(1);
             break;
           case Type.ReduceReloadDuration:
-            GameMain._player.getWeapon().addReloadDuration(100);
+            GameMain.player.getWeapon().addReloadDuration(100);
             break;
           default:
             break;
@@ -116,7 +116,7 @@ namespace Target.Entities
       reward.Claim();
       GameMain.hud.contractsPanel.RemoveIndicator(this);
       GameMain.hud.setAction("Contract complete");
-      GameMain._player.addContractCompleted();
+      GameMain.player.addContractCompleted();
       Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
     }
 

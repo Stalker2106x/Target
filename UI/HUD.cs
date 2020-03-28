@@ -28,6 +28,8 @@ namespace Target
 
     private Label _multiplierIndicator;
 
+    private Image _defuserIndicator;
+
     Label _actionIndicator;
     Timer _actionTimer;
 
@@ -106,7 +108,6 @@ namespace Target
       Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
       _scoreIndicator = new Label();
       _scoreIndicator.Text = "Score: 0";
-      _scoreIndicator.Height = 6;
       _scoreIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _scoreIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_scoreIndicator);
@@ -114,16 +115,21 @@ namespace Target
       Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
       _multiplierIndicator = new Label();
       _multiplierIndicator.Text = "x1";
-      _multiplierIndicator.Height = 6;
       _multiplierIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _multiplierIndicator.VerticalAlignment = VerticalAlignment.Top;
       topPanel.Widgets.Add(_multiplierIndicator);
+
+      _defuserIndicator = new Image();
+      _defuserIndicator.Opacity = 0;
+      _defuserIndicator.Renderable = new TextureRegion(Resources.defuser, new Rectangle(0, 0, Resources.defuser.Width, Resources.defuser.Height));
+      _defuserIndicator.HorizontalAlignment = HorizontalAlignment.Left;
+      _defuserIndicator.VerticalAlignment = VerticalAlignment.Top;
+      topPanel.Widgets.Add(_defuserIndicator);
 
       Stylesheet.Current.LabelStyle.Font = Resources.alertFont;
       _actionIndicator = new Label();
       _actionIndicator.Text = "";
       _actionIndicator.TextColor = Color.DarkRed;
-      _actionIndicator.Height = 6;
       _actionIndicator.HorizontalAlignment = HorizontalAlignment.Center;
       _actionIndicator.VerticalAlignment = VerticalAlignment.Center;
       topPanel.Widgets.Add(_actionIndicator);
@@ -218,10 +224,17 @@ namespace Target
     {
       _multiplierIndicator.Text = "x" + scoreMultiplier;
     }
+
     public void updateScore(int score)
     {
       _scoreIndicator.Text = "Score:" + score;
     }
+
+    public void updateDefuser(bool state)
+    {
+      _defuserIndicator.Opacity = 1;
+    }
+
 
     public void ammoIndicator(ref Player player)
     {

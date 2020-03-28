@@ -52,6 +52,18 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/GUI/bullet.png
 
+#begin Content/GFX/GUI/defuser.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/GUI/defuser.png
+
 #begin Content/GFX/GUI/hitmarker.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -316,18 +328,6 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Player/crosshair.png
 
-#begin Content/GFX/Player/crosshair_.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Content/GFX/Player/crosshair_.png
-
 #begin Content/GFX/Player/defuse.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -351,6 +351,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Player/grab.png
+
+#begin Content/GFX/Player/hands.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Player/hands.png
 
 #begin Content/GFX/Player/reloading.png
 /importer:TextureImporter
@@ -376,7 +388,7 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Target/bomb.png
 
-#begin Content/GFX/Target/hostage.png
+#begin Content/GFX/Target/hostage/idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -386,7 +398,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Content/GFX/Target/hostage.png
+/build:Content/GFX/Target/hostage/idle.png
+
+#begin Content/GFX/Target/hostage/idle_hitbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Target/hostage/idle_hitbox.png
 
 #begin Content/GFX/Target/juggernaut/firing.png
 /importer:TextureImporter

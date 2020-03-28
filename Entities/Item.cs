@@ -70,7 +70,7 @@ namespace Target
     public HitType checkCollision()
     {
       if (!getRectangle().Contains((int)GameMain.hud.crosshair.position.X, (int)GameMain.hud.crosshair.position.Y)) return (HitType.Miss); //Missed
-      GameMain._player.setBulletsHit(1);
+      GameMain.player.setBulletsHit(1);
       Catch();
       _isActive = false;
       return (HitType.Catch);
@@ -83,16 +83,16 @@ namespace Target
       {
         case ItemType.Medikit:
           Resources.medikit.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.addHealth(50);
+          GameMain.player.addHealth(50);
           break;
         case ItemType.InstantReload:
-          GameMain._player.getWeapon().addBullets(-GameMain._player.getWeapon().getMagazine());
+          GameMain.player.getWeapon().addBullets(-GameMain.player.getWeapon().getMagazine());
           Resources.reload.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.getWeapon().addBullets(GameMain._player.getWeapon().getMaxMagazine());
+          GameMain.player.getWeapon().addBullets(GameMain.player.getWeapon().getMaxMagazine());
           break;
         case ItemType.SpawnReducer:
           Resources.rewind.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain.addTimeout(1000);
+          GameMain.addTimeout(500);
           break;
         case ItemType.Nuke:
           Resources.nuke.Play(Options.Config.SoundVolume, 0f, 0f);
@@ -100,18 +100,18 @@ namespace Target
           break;
         case ItemType.Contract:
           Resources.contract.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.addContract();
+          GameMain.player.addContract();
           break;
         case ItemType.Points:
           Resources.cash.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.addContract();
+          GameMain.player.addContract();
           break;
         case ItemType.KevlarVest:
           Resources.armor.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._player.addKevlar();
+          GameMain.player.addKevlar();
           break;
         case ItemType.Defuser:
-          GameMain._player.setDefuser(true);
+          GameMain.player.setDefuser(true);
           break;
       }
     }

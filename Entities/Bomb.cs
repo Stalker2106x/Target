@@ -24,19 +24,22 @@ namespace Target.Entities
     public Bomb()
     {
       _active = true;
-      _position = new Point(_randomGenerator.Next(0, Options.Config.Width), _randomGenerator.Next(0, Options.Config.Height));
       _texture = Resources.bomb;
 
       _durationTimer = new Timer();
       _durationTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop, () => { CompleteDefusal(); });
-      _durationTimer.addAction(TimerDirection.Forward, 10000, TimeoutBehaviour.Stop, () => { Explode(); });
+      _durationTimer.addAction(TimerDirection.Forward, 5000, TimeoutBehaviour.Stop, () => { Explode(); });
       _durationTimer.Start();
 
       _soundTimer = new Timer();
       _soundTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { Resources.bombtick.Play(Options.Config.SoundVolume, 0f, 0f); });
       _soundTimer.Start();
+    }
 
-      _indicator = GameMain.hud.addBombIndicator(_position, 10000);
+    public void randomizeSpawn()
+    {
+      _position = new Point(_randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), _randomGenerator.Next(0, (Options.Config.Height - getRectangle().Height)));
+      _indicator = GameMain.hud.addBombIndicator(_position, 5000);
     }
 
     public bool getActivity()
@@ -48,14 +51,14 @@ namespace Target.Entities
     {
       _active = false;
       GameMain.hud.removeBombIndicator(_indicator);
-      GameMain._player.defusing = false;
+      GameMain.player.defusing = false;
     }
 
     public void CompleteDefusal()
     {
       Destroy();
       Resources.defusal.Play(Options.Config.SoundVolume, 0f, 0f);
-      GameMain._player.setDefuser(false);
+      GameMain.player.setDefuser(false);
       //GameMain._player.stats.bombsDefused += 1;
     }
 
@@ -63,19 +66,21 @@ namespace Target.Entities
     {
       Resources.explosion.Play(Options.Config.SoundVolume, 0f, 0f);
       Destroy();
+      GameMain.player.addScore(-500);
+      GameMain.player.addHealth(-50, true);
     }
 
     public void Defuse()
     {
-      GameMain._player.defusing = true;
+      GameMain.player.defusing = true;
       _soundTimer.Reset();
       _durationTimer.Reverse();
-      if (GameMain._player.hasDefuser()) _durationTimer.setTimeScale(3);
-      else _durationTimer.setTimeScale(2);
+      if (GameMain.player.hasDefuser()) _durationTimer.setTimeScale(4);
+      else _durationTimer.setTimeScale(3);
     }
     public void Rearm()
     {
-      GameMain._player.defusing = false;
+      GameMain.player.defusing = false;
       _soundTimer.Start();
       _durationTimer.Reverse();
       _durationTimer.setTimeScale(1);

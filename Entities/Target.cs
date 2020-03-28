@@ -69,17 +69,27 @@ namespace Target
     private int _damage;
     public int damage { get { return (_damage); } set { _damage = value; } }
 
+    private int _score;
+    public int score { get { return (_score); } set { _score = value; } }
+
+    private int _fireDelay;
+    public int fireDelay { get { return (_fireDelay); } set { _fireDelay = value; } }
+
     private Point _move;
     public Point move { get { return (_move); } set { _move = value; } }
 
     private Hitbox _hitbox;
     public Hitbox hitbox { get { return (_hitbox); } set { _hitbox = value; } }
 
+    private int _lifetime;
+    public int lifetime { get { return (_lifetime); } set { _lifetime = value; } }
+
     private SpawnParameters _spawn;
     public SpawnParameters spawn { get { return (_spawn); } set { _spawn = value; } }
     
     private static Random randomGenerator = new Random();
     private Point _position;
+    private Timer _lifetimeTimer;
 
     private TargetResource _resource;
     public TargetResource resource {
@@ -111,13 +121,19 @@ namespace Target
       if (_damage > 0)
       {
         _attackTimer = new Timer();
-        _attackTimer.addAction(TimerDirection.Forward, 2000, TimeoutBehaviour.StartOver, () => {
+        _attackTimer.addAction(TimerDirection.Forward, _fireDelay, TimeoutBehaviour.StartOver, () => {
           fire();
         });
         _attackTimer.addAction(TimerDirection.Forward, 250, TimeoutBehaviour.None, () => {
           _state = State.Idle;
         }); //Reset state
         _attackTimer.Start();
+      }
+      if (_lifetime > 0) //Target has a limited lifetime
+      {
+        _lifetimeTimer = new Timer();
+        _lifetimeTimer.addAction(TimerDirection.Forward, _lifetime, TimeoutBehaviour.Stop, () => { _active = false; });
+        _lifetimeTimer.Start();
       }
     }
 
@@ -166,16 +182,19 @@ namespace Target
       if (hitColor[0].R >= 255) //Headshot
       {
         _health -= (int)(damage * 1.5);
+        GameMain.player.addScore((int)(_score * 1.5));
         hit = _hitbox.red;
       }
       else if (hitColor[0].G >= 255) //Legshot
       {
         _health -= (int)(damage * 0.75);
+        GameMain.player.addScore((int)(_score * 0.75));
         hit = _hitbox.green;
       }
       else
       {
         _health -= damage;
+        GameMain.player.addScore(_score);
         hit = _hitbox.blue; //Regular
       }
       return (hit);
@@ -190,7 +209,7 @@ namespace Target
         Resources.pain1.Play(Options.Config.SoundVolume, 0f, 0f);
       else
         Resources.pain2.Play(Options.Config.SoundVolume, 0f, 0f);
-      if (_damage > 0) GameMain._player.addHealth(-_damage);
+      if (_damage > 0) GameMain.player.addHealth(-_damage);
     }
 
     public void Update(GameTime gameTime)
@@ -198,6 +217,7 @@ namespace Target
       _position.X += _move.X;
       _position.Y += _move.Y;
       if (_damage > 0) _attackTimer.Update(gameTime);
+      if (lifetime > 0) _lifetimeTimer.Update(gameTime);
       if (!Utils.Tools.IsOnScreen(getRectangle()) || _health <= 0) _active = false; //Destroy out of screen stuff
     }
 

@@ -26,7 +26,7 @@ namespace Target
   public static class GameMain
   {
     //Handles
-    public static Player _player;
+    public static Player player;
     public static HUD hud;
     //Data
     public static List<Target> _targets;
@@ -42,11 +42,14 @@ namespace Target
     public static ProbabilityRange itemsProbability = new ProbabilityRange();
     public static ProbabilityRange targetsProbability = new ProbabilityRange();
 
+    public static PlayerStats globalStats;
+
     public static void resetGame()
     {
       gameOver = false;
-      _player = new Player();
+      globalStats = PlayerStats.Load();
       hud = new HUD();
+      player = new Player();
       _bombs = new List<Bomb>();
       _targets = new List<Target>();
       _items = new List<Item>();
@@ -65,11 +68,15 @@ namespace Target
       timerTimeout.addTimeout(timeout);
       _targetSpawnTimer.actions[_targetSpawnTimerActionIndex] = timerTimeout;
     }
+
     public static void spawnBomb()
     {
       if (_randomGenerator.Next(0, 61) > 0) return; //1 chance out of 60 per sec
-      _bombs.Add(new Bomb());
+      Bomb bomb = new Bomb();
+      bomb.randomizeSpawn();
+      _bombs.Add(bomb);
     }
+
     public static void spawnItem()
     {
       if (_randomGenerator.Next(0, 11) > 0) return; //1 chance out of 10 per sec
@@ -115,10 +122,10 @@ namespace Target
     {
       GameMain.gameOver = true;
       GameEngine.setState(GameState.Menu);
-      Menu.GameOverMenu(menuUI, "Score: " + _player.stats.score.ToString() + "\n"
-                              + "Shots fired: " + _player.stats.bulletsFired.ToString() + "\n"
-                              + "Contracts completed: " + _player.stats.contractsCompleted.ToString() + "\n"
-                              + "Accuracy: " + Math.Round((double)_player.getAccuracy(), 2).ToString() + " %\n");
+      Menu.GameOverMenu(menuUI, "Score: " + player.stats.score.ToString() + "\n"
+                              + "Shots fired: " + player.stats.bulletsFired.ToString() + "\n"
+                              + "Contracts completed: " + player.stats.contractsCompleted.ToString() + "\n"
+                              + "Accuracy: " + Math.Round((double)player.getAccuracy(), 2).ToString() + " %\n");
     }
 
     public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
@@ -138,8 +145,8 @@ namespace Target
           target.Update(gameTime);
         foreach (Item item in _items)
           item.Update(gameTime);
-        _player.Update(gameTime, menuUI, state, prevState);
-        hud.Update(gameTime, ref _player, state, prevState);
+        player.Update(gameTime, menuUI, state, prevState);
+        hud.Update(gameTime, ref player, state, prevState);
         _targetSpawnTimer.Update(gameTime);
         _secondSpawnTimer.Update(gameTime);
       }
@@ -156,7 +163,7 @@ namespace Target
           target.Draw(spriteBatch);
         foreach (Item item in _items)
           item.Draw(spriteBatch);
-        _player.Draw(spriteBatch);
+        player.Draw(spriteBatch);
         hud.Draw(graphics, spriteBatch);
       }
     }

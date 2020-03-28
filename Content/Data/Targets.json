@@ -1,9 +1,10 @@
 [
   {
     "name": "Soldier",
-    "static": true,
     "health": 70,
     "damage": 20,
+    "score": 10,
+    "fireDelay": 2000,
     "hitbox": {
       "red": "headshot",
       "blue": "hit",
@@ -11,14 +12,15 @@
     },
     "spawn": {
       "location": "any",
-      "probability": 70
+      "probability": 65
     }
   },
   {
     "name": "Juggernaut",
-    "static": true,
     "health": 210,
     "damage": 40,
+    "score": 50,
+    "fireDelay": 3000,
     "hitbox": {
       "red": "headshot",
       "blue": "hit",
@@ -31,8 +33,8 @@
   },
   {
     "name": "Zeppelin",
-    "static": false,
     "health": 150,
+    "score": 25,
     "move": {
       "x": -5,
       "y": 0
@@ -44,6 +46,20 @@
     "spawn": {
       "location": "rightBorder",
       "probability": 20
+    }
+  },
+  {
+    "name": "Hostage",
+    "health": 100,
+    "score": -250,
+    "lifetime": 6000,
+    "hitbox": {
+      "red": "headshot",
+      "blue": "hit"
+    },
+    "spawn": {
+      "location": "rightBorder",
+      "probability": 5
     }
   }
 ]

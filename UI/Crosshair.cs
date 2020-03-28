@@ -11,7 +11,11 @@ namespace Target
   public class Crosshair
   {
 
-    public Vector2 position;
+    public Point position;
+
+    //Hitmarker
+    bool _drawHitmarker;
+    private Timer _hitmarkerTimer;
 
     private Random _randomGenerator;
 
@@ -30,9 +34,12 @@ namespace Target
     public Crosshair()
     {
       _randomGenerator = new Random();
-      position = new Vector2(Options.Config.Width / 2, Options.Config.Height / 2);
+      position = new Point(Options.Config.Width / 2, Options.Config.Height / 2);
       initSway();
       initRecoil();
+      _drawHitmarker = false;
+      _hitmarkerTimer = new Timer();
+      _hitmarkerTimer.addAction(TimerDirection.Forward, 500, TimeoutBehaviour.Reset, () => { _drawHitmarker = false; });
     }
 
     public void initSway()
@@ -93,12 +100,21 @@ namespace Target
       _recoilTimer.StartOver();
       _recoilVectorTimer.StartOver();
     }
-    
+    public void triggerHitmarker()
+    {
+      _drawHitmarker = true;
+      _hitmarkerTimer.StartOver();
+    }
+
     public Texture2D getTexture()
     {
-      if (GameMain._player.getWeapon().getState() == WeaponState.Reloading)
+      if (GameMain.player.getWeapon().getStatusTimer() > 0)
       {
         return (Resources.reloadingCursor);
+      }
+      else if(GameMain.player.isDefusing())
+      {
+        return (Resources.defuseCursor);
       }
       foreach (var it in GameMain._items)
       {
@@ -109,7 +125,11 @@ namespace Target
 
     public Rectangle getRectangle()
     {
-      return (new Rectangle((int)position.X - Resources.crosshair.Width / 2, (int)position.Y - Resources.crosshair.Height / 2, Resources.crosshair.Width, Resources.crosshair.Height));
+      return (new Rectangle(position.X - 16, position.Y - 16, 32, 32));
+    }
+    public Rectangle getHitmarkerRectangle()
+    {
+      return (new Rectangle(position.X - 32, position.Y - 32, 64, 64));
     }
 
     public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
@@ -124,17 +144,23 @@ namespace Target
         Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
         _framesToSkip = 1;
       }
-      position.X += state.mouse.X - prevState.mouse.X;
-      position.Y += state.mouse.Y - prevState.mouse.Y;
+      position.X += (int)((state.mouse.X - prevState.mouse.X) * Options.Config.MouseSensivity);
+      position.Y += (int)((state.mouse.Y - prevState.mouse.Y) * Options.Config.MouseSensivity);
+      if (position.X < 0) position.X = 0;
+      else if (position.X > Options.Config.Width) position.X = Options.Config.Width;
+      else if (position.Y < 0) position.Y = 0;
+      else if (position.Y > Options.Config.Height) position.Y = Options.Config.Height;
       _swayTimer.Update(gameTime);
       _swayVectorTimer.Update(gameTime);
       _recoilTimer.Update(gameTime);
       _recoilVectorTimer.Update(gameTime);
+      _hitmarkerTimer.Update(gameTime);
     }
 
     public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(getTexture(), getRectangle(), Color.White);
+      if (_drawHitmarker) spriteBatch.Draw(Resources.hitmarker, getHitmarkerRectangle(), Color.White);
     }
   }
 }
