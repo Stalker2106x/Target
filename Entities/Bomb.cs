@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Myra;
+using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
+using Myra.Graphics2D.UI.Styles;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,10 +39,21 @@ namespace Target.Entities
       _soundTimer.Start();
     }
 
-    public void randomizeSpawn()
+    public void activate()
+    {
+      _indicator = GameMain.hud.addBombIndicator();
+      _indicator.Left = _position.X;
+      _indicator.Top = _position.Y;
+    }
+
+    public void randomizePosition()
     {
       _position = new Point(_randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), _randomGenerator.Next(0, (Options.Config.Height - getRectangle().Height)));
-      _indicator = GameMain.hud.addBombIndicator(_position, 5000);
+    }
+
+    public void setPosition(Point pos)
+    {
+      _position = pos;
     }
 
     public bool getActivity()
@@ -102,7 +116,7 @@ namespace Target.Entities
       else if (_durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //None, rearm
       _soundTimer.Update(gameTime);
       _durationTimer.Update(gameTime);
-      _indicator.Value = (float)_durationTimer.getDuration();
+      //_indicator.Value = (float)_durationTimer.getDuration();
     }
 
     public void Draw(SpriteBatch spriteBatch)

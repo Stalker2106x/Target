@@ -32,6 +32,9 @@ namespace Target
     private int _probability;
     public int probability { get { return (_probability); } set { _probability = value; } }
 
+    private Point _move;
+    public Point move { get { return (_move); } set { _move = value; } }
+
     private Point _position;
     private Texture2D _texture;
     public Texture2D texture {
@@ -45,6 +48,7 @@ namespace Target
     public Item()
     {
       _isActive = true;
+      _move = new Point(0, 5);
     }
 
     public Item Copy()
@@ -52,7 +56,12 @@ namespace Target
       return (Item)this.MemberwiseClone();
     }
 
-    public void randomizeSpawn()
+    public void setPosition(Point pos)
+    {
+      _position = pos;
+    }
+
+    public void randomizePosition()
     {
       _position = new Point(randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), 0);
     }
@@ -96,7 +105,7 @@ namespace Target
           break;
         case ItemType.Nuke:
           Resources.nuke.Play(Options.Config.SoundVolume, 0f, 0f);
-          GameMain._targets.Clear();
+          GameMain.targets.Clear();
           break;
         case ItemType.Contract:
           Resources.contract.Play(Options.Config.SoundVolume, 0f, 0f);
@@ -118,7 +127,7 @@ namespace Target
 
     public void Update(GameTime gameTime)
     {
-      _position.Y += 5;
+      _position += _move;
       if (_position.Y > Options.Config.Height) _isActive = false; //out of screen
     }
 

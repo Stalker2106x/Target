@@ -24,6 +24,8 @@ namespace Target
     public int score;
     public int bulletsFired;
     public int bulletsHit;
+    public int headshotsOrCritical;
+    public int legshots;
     public int contractsCompleted;
     public int headshotComboMax;
 
@@ -66,7 +68,6 @@ namespace Target
     private float _scoreMultiplier;
 
     private PlayerStats _stats;
-    public PlayerStats stats { get { return (_stats); } }
 
     private int _comboHeadshot;
     private Weapon _weapon;
@@ -104,6 +105,11 @@ namespace Target
         _breathState = BreathState.Breathing;
         _breathTimer.Reverse();
       });
+    }
+
+    public ref PlayerStats getStats()
+    {
+      return ref (_stats);
     }
 
     public float getMultiplier()
@@ -144,10 +150,14 @@ namespace Target
 
     public void addHealth(int hp, bool ignoreKevlar = false)
     {
-      if (hp < 0 && _kevlar > 0)
+      if (hp < 0) //Removing health
       {
-        _kevlar--;
-        return;
+        if (_kevlar > 0) //Has kevlar
+        {
+          _kevlar--;
+          return;
+        }
+        GameMain.hud.setBloodsplat();
       }
       _health += hp;
       if (_health > _healthMax) _health = _healthMax;
@@ -224,6 +234,7 @@ namespace Target
             GameMain.hud.setAction("Headshot!");
             Resources.headshot.Play(Options.Config.SoundVolume, 0f, 0f);
             GameMain.hud.crosshair.triggerHitmarker();
+            _stats.headshotsOrCritical++;
             addComboHeadshot(1);
             break;
           case HitType.Hit:
@@ -233,10 +244,12 @@ namespace Target
           case HitType.Critical:
             GameMain.hud.crosshair.triggerHitmarker();
             GameMain.hud.setAction("Critical!");
+            _stats.headshotsOrCritical++;
             break;
           case HitType.Legshot:
             GameMain.hud.crosshair.triggerHitmarker();
             GameMain.hud.setAction("Legshot...");
+            _stats.legshots++;
             resetComboHeadshot();
             break;
           case HitType.Catch:

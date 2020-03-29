@@ -100,6 +100,18 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/GUI/menuBackground.png
 
+#begin Content/GFX/GUI/splashscreen.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/GUI/splashscreen.png
+
 #begin Content/GFX/Item/contract.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -304,18 +316,6 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Player/bloodsplat.png
 
-#begin Content/GFX/Player/bloodsplat_.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Content/GFX/Player/bloodsplat_.png
-
 #begin Content/GFX/Player/crosshair.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -363,6 +363,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Player/hands.png
+
+#begin Content/GFX/Player/muzzleflash.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Content/GFX/Player/muzzleflash.png
 
 #begin Content/GFX/Player/reloading.png
 /importer:TextureImporter
@@ -532,18 +544,6 @@
 /processorParam:TextureFormat=Color
 /build:Content/GFX/Target/zeppelin/idle_hitbox.png
 
-#begin Content/GFX/Weapons/r700.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Content/GFX/Weapons/r700.png
-
 #begin Content/Sound/Combo/denied.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -669,6 +669,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Content/Sound/Target/explosion.wav
+
+#begin Content/Sound/Target/hit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Content/Sound/Target/hit.wav
 
 #begin Content/Sound/Weapons/burst.wav
 /importer:WavImporter

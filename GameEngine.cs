@@ -48,9 +48,10 @@ namespace Target
         protected override void Initialize()
         {
             MyraEnvironment.Game = this;
-            gameState = GameState.Menu;
+            gameState = GameState.Splashscreen;
             base.Initialize();
-            setState(GameState.Menu);
+            SplashScreen.Init(_menuUI);
+            setState(GameState.Splashscreen);
         }
 
         /// <summary>
@@ -61,7 +62,6 @@ namespace Target
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Resources.LoadContent(Content);
-            Menu.MainMenu(_menuUI);
         }
 
         /// <summary>
@@ -73,11 +73,27 @@ namespace Target
             Content.Unload();
         }
 
+        public static GameState getState()
+        {
+          return (gameState);
+        }
+
         public static void setState(GameState state)
         {
             gameState = state;
-            if (state == GameState.Menu) MediaPlayer.Play(Resources.menuTheme);
-            else MediaPlayer.Stop();
+            switch(state)
+            {
+              case GameState.Playing:
+              case GameState.Tutorial:
+                MediaPlayer.Stop();
+                break;
+              case GameState.Menu:
+                MediaPlayer.Play(Resources.menuTheme);
+                break;
+              case GameState.Splashscreen:
+                SplashScreen.Trigger();
+                break;
+            }
         }
         public static DeviceState getDeviceState()
         {
@@ -95,10 +111,15 @@ namespace Target
             deviceState = new DeviceState(Mouse.GetState(), Keyboard.GetState(), GamePad.GetState(PlayerIndex.One));
             switch (gameState)
             {
+                case GameState.Splashscreen:
+                    IsMouseVisible = true;
+                    SplashScreen.Update(gameTime);
+                  break;
                 case GameState.Menu:
                     IsMouseVisible = true;
                     break;
                 case GameState.Playing:
+                case GameState.Tutorial:
                     IsMouseVisible = false;
                     GameMain.Update(gameTime, _menuUI, deviceState, prevDeviceState);
                     break;
@@ -113,7 +134,7 @@ namespace Target
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.DarkSlateGray);
+            GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
             switch (gameState)
             {
@@ -121,7 +142,8 @@ namespace Target
                     _menuUI.Render();
                     break;
                 case GameState.Playing:
-                    GameMain.Draw(graphics, spriteBatch);
+                case GameState.Tutorial:
+                  GameMain.Draw(graphics, spriteBatch);
                     break;
             }
             spriteBatch.End();
@@ -132,10 +154,12 @@ namespace Target
         {
           switch (gameState)
           {
+            case GameState.Splashscreen:
             case GameState.Menu:
               _menuUI.Render();
               break;
             case GameState.Playing:
+            case GameState.Tutorial:
               GameMain.PostDraw();
               break;
           }

@@ -10,7 +10,6 @@ namespace Target
 {
   public class Crosshair
   {
-
     public Point position;
 
     //Hitmarker
@@ -19,6 +18,7 @@ namespace Target
 
     private Random _randomGenerator;
 
+    private static int _resetThreshold;
     private int _framesToSkip; //Skip frames for cursor management
 
     //Sway
@@ -103,6 +103,7 @@ namespace Target
     public void triggerHitmarker()
     {
       _drawHitmarker = true;
+      Resources.hit.Play(Options.Config.SoundVolume, 0f, 0f);
       _hitmarkerTimer.StartOver();
     }
 
@@ -116,7 +117,7 @@ namespace Target
       {
         return (Resources.defuseCursor);
       }
-      foreach (var it in GameMain._items)
+      foreach (var it in GameMain.items)
       {
         if (checkCollision(it.getRectangle())) return (Resources.grabCursor);
       }
@@ -139,7 +140,7 @@ namespace Target
         _framesToSkip--;
         return;
       }
-      if (state.mouse.X < 0 || state.mouse.X > Options.Config.Width || state.mouse.Y < 0 || state.mouse.Y > Options.Config.Height)
+      if (state.mouse.X < _resetThreshold || state.mouse.X > Options.Config.Width - _resetThreshold || state.mouse.Y < _resetThreshold || state.mouse.Y > Options.Config.Height - _resetThreshold)
       {
         Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
         _framesToSkip = 1;
@@ -157,7 +158,7 @@ namespace Target
       _hitmarkerTimer.Update(gameTime);
     }
 
-    public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch)
     {
       spriteBatch.Draw(getTexture(), getRectangle(), Color.White);
       if (_drawHitmarker) spriteBatch.Draw(Resources.hitmarker, getHitmarkerRectangle(), Color.White);

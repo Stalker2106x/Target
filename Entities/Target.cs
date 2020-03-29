@@ -112,21 +112,26 @@ namespace Target
     {
       return (Target)this.MemberwiseClone();
     }
+    
+    public void setPosition(Point pos)
+    {
+      _position = pos;
+    }
 
-    public void randomizeSpawn()
+    public void randomizePosition()
     {
       if (_spawn.location == SpawnParameters.Location.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
       else if (_spawn.location == SpawnParameters.Location.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
       _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
+    }
+
+    public void activate()
+    {
       if (_damage > 0)
       {
         _attackTimer = new Timer();
-        _attackTimer.addAction(TimerDirection.Forward, _fireDelay, TimeoutBehaviour.StartOver, () => {
-          fire();
-        });
-        _attackTimer.addAction(TimerDirection.Forward, 250, TimeoutBehaviour.None, () => {
-          _state = State.Idle;
-        }); //Reset state
+        _attackTimer.addAction(TimerDirection.Forward, _fireDelay, TimeoutBehaviour.StartOver, () => { fire(); });
+        _attackTimer.addAction(TimerDirection.Forward, 250, TimeoutBehaviour.None, () => { _state = State.Idle; }); //Reset state
         _attackTimer.Start();
       }
       if (_lifetime > 0) //Target has a limited lifetime
@@ -181,22 +186,20 @@ namespace Target
 
       if (hitColor[0].R >= 255) //Headshot
       {
-        _health -= (int)(damage * 1.5);
-        GameMain.player.addScore((int)(_score * 1.5));
+        _health -= (int)(damage * 2);
         hit = _hitbox.red;
       }
       else if (hitColor[0].G >= 255) //Legshot
       {
         _health -= (int)(damage * 0.75);
-        GameMain.player.addScore((int)(_score * 0.75));
         hit = _hitbox.green;
       }
       else
       {
         _health -= damage;
-        GameMain.player.addScore(_score);
         hit = _hitbox.blue; //Regular
       }
+      GameMain.player.addScore(_score);
       return (hit);
     }
 
@@ -204,7 +207,6 @@ namespace Target
     {
       _state = State.Firing;
       Resources.burst.Play(Options.Config.SoundVolume, 0f, 0f);
-      GameMain.hud.setBloodsplat();
       if (randomGenerator.Next(1, 3) == 1)
         Resources.pain1.Play(Options.Config.SoundVolume, 0f, 0f);
       else

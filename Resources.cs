@@ -30,8 +30,10 @@ namespace Target
     public static Texture2D crosshair;
     public static Texture2D defuseCursor;
 
+    public static Texture2D splashScreen;
     public static Texture2D menuBackground;
     public static Texture2D hands;
+    public static Texture2D muzzleflash;
     public static Texture2D hitmarker;
     public static Texture2D bloodsplat;
     public static Texture2D bullet;
@@ -65,6 +67,7 @@ namespace Target
     public static SoundEffect breath;
     public static SoundEffect outbreath;
     public static SoundEffect heartbeat;
+    public static SoundEffect hit;
     public static SoundEffect pain1;
     public static SoundEffect pain2;
 
@@ -74,6 +77,7 @@ namespace Target
       Resources.titleFont = content.Load<SpriteFont>("Font/title");
       Resources.regularFont = content.Load<SpriteFont>("Font/regular");
       Resources.alertFont = content.Load<SpriteFont>("Font/alert");
+      Resources.splashScreen = content.Load<Texture2D>("GFX/GUI/splashscreen");
       Resources.menuBackground = content.Load<Texture2D>("GFX/GUI/main");
 
       //Targets
@@ -102,6 +106,7 @@ namespace Target
       //HUD
       Resources.hitmarker = content.Load<Texture2D>("GFX/GUI/hitmarker");
       Resources.hands = content.Load<Texture2D>("GFX/Player/hands");
+      Resources.muzzleflash = content.Load<Texture2D>("GFX/Player/muzzleflash");
       Resources.bloodsplat = content.Load<Texture2D>("GFX/Player/bloodsplat");
       Resources.bullet = content.Load<Texture2D>("GFX/GUI/bullet");
       Resources.defuser = content.Load<Texture2D>("GFX/GUI/defuser");
@@ -127,6 +132,7 @@ namespace Target
       Resources.bombtick = content.Load<SoundEffect>("Sound/Target/bombtick");
       Resources.explosion = content.Load<SoundEffect>("Sound/Target/explosion");
       Resources.defusal = content.Load<SoundEffect>("Sound/Target/defusal");
+      Resources.hit = content.Load<SoundEffect>("Sound/Target/hit");
 
       Resources.unstoppable = content.Load<SoundEffect>("Sound/Combo/unstoppable");
       Resources.headhunter = content.Load<SoundEffect>("Sound/Combo/headhunter");

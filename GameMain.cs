@@ -19,44 +19,59 @@ namespace Target
 
   public enum GameState
   {
-      Menu,
-      Playing
+    Splashscreen,
+    Menu,
+    Playing,
+    Tutorial
   }
 
   public static class GameMain
   {
     //Handles
+    public static PlayerStats globalStats;
     public static Player player;
     public static HUD hud;
+    public static Tutorial tutorial;
+
     //Data
-    public static List<Target> _targets;
-    public static List<Bomb> _bombs;
-    public static List<Item> _items;
+    public static List<Target> targets;
+    public static List<Bomb> bombs;
+    public static List<Item> items;
     public static bool gameOver;
+
+    public static ProbabilityRange itemsProbability = new ProbabilityRange();
+    public static ProbabilityRange targetsProbability = new ProbabilityRange();
 
     private static int _targetSpawnTimerActionIndex;
     private static Timer _targetSpawnTimer;
     private static Timer _secondSpawnTimer;
 
     private static Random _randomGenerator = new Random();
-    public static ProbabilityRange itemsProbability = new ProbabilityRange();
-    public static ProbabilityRange targetsProbability = new ProbabilityRange();
 
-    public static PlayerStats globalStats;
+    public static void initGame()
+    {
+      globalStats = PlayerStats.Load();
 
-    public static void resetGame()
+    }
+    public static void resetGame(GameState state)
     {
       gameOver = false;
-      globalStats = PlayerStats.Load();
       hud = new HUD();
       player = new Player();
-      _bombs = new List<Bomb>();
-      _targets = new List<Target>();
-      _items = new List<Item>();
+      bombs = new List<Bomb>();
+      targets = new List<Target>();
+      items = new List<Item>();
       _targetSpawnTimer = new Timer();
+      _secondSpawnTimer = new Timer();
+      if (state == GameState.Playing) setGameTimers();
+      else if (state == GameState.Tutorial) tutorial = new Tutorial();
+      GameEngine.setState(state);
+    }
+
+    public static void setGameTimers()
+    {
       _targetSpawnTimerActionIndex = _targetSpawnTimer.addAction(TimerDirection.Forward, 3000, TimeoutBehaviour.StartOver, () => { spawnTarget(); });
       _targetSpawnTimer.Start();
-      _secondSpawnTimer = new Timer();
       _secondSpawnTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { spawnItem(); spawnBomb(); });
       _secondSpawnTimer.Start();
     }
@@ -73,47 +88,50 @@ namespace Target
     {
       if (_randomGenerator.Next(0, 61) > 0) return; //1 chance out of 60 per sec
       Bomb bomb = new Bomb();
-      bomb.randomizeSpawn();
-      _bombs.Add(bomb);
+      bomb.randomizePosition();
+      bomb.activate();
+      bombs.Add(bomb);
     }
 
     public static void spawnItem()
     {
       if (_randomGenerator.Next(0, 11) > 0) return; //1 chance out of 10 per sec
       var item = Resources.items[itemsProbability.GetIndex(_randomGenerator.Next(0, 100))].Copy();
-      item.randomizeSpawn();
-      _items.Add(item);
+      item.randomizePosition();
+      //item.activate();
+      items.Add(item);
     }
 
     public static void spawnTarget()
     {
       addTimeout(-50); //Increase spawn rate
       var target = Resources.targets[targetsProbability.GetIndex(_randomGenerator.Next(0, 100))].Copy();
-      target.randomizeSpawn();
-      _targets.Add(target);
+      target.randomizePosition();
+      target.activate();
+      targets.Add(target);
     }
 
     public static void destroyEntities()
     {
-      for (int index = 0; index < _bombs.Count; ++index)
+      for (int index = 0; index < bombs.Count; ++index)
       {
-        if (!_bombs[index].getActivity())
+        if (!bombs[index].getActivity())
         {
-          _bombs.RemoveAt(index);
+          bombs.RemoveAt(index);
         }
       }
-      for (int index = 0; index < _targets.Count; ++index)
+      for (int index = 0; index < targets.Count; ++index)
       {
-        if (!_targets[index].getActivity())
+        if (!targets[index].getActivity())
         {
-          _targets.RemoveAt(index);
+          targets.RemoveAt(index);
         }
       }
-      for (int index = 0; index < _items.Count; ++index)
+      for (int index = 0; index < items.Count; ++index)
       {
-        if (!_items[index].getActivity())
+        if (!items[index].getActivity())
         {
-          _items.RemoveAt(index);
+          items.RemoveAt(index);
         }
       }
     }
@@ -122,10 +140,18 @@ namespace Target
     {
       GameMain.gameOver = true;
       GameEngine.setState(GameState.Menu);
-      Menu.GameOverMenu(menuUI, "Score: " + player.stats.score.ToString() + "\n"
-                              + "Shots fired: " + player.stats.bulletsFired.ToString() + "\n"
-                              + "Contracts completed: " + player.stats.contractsCompleted.ToString() + "\n"
+      Menu.GameOverMenu(menuUI, "Score: " + player.getStats().score.ToString() + "\n"
+                              + "Shots fired: " + player.getStats().bulletsFired.ToString() + "\n"
+                              + "Contracts completed: " + player.getStats().contractsCompleted.ToString() + "\n"
                               + "Accuracy: " + Math.Round((double)player.getAccuracy(), 2).ToString() + " %\n");
+    }
+
+    public static void ExitToMain(Desktop menuUI)
+    {
+      GameMain.gameOver = true;
+      GameMain.tutorial = null;
+      GameEngine.setState(GameState.Menu);
+      Menu.MainMenu(menuUI);
     }
 
     public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
@@ -139,14 +165,15 @@ namespace Target
       {
         destroyEntities();
         if (state.keyboard.IsKeyDown(Keys.I) && prevState.keyboard.IsKeyUp(Keys.I)) spawnItem();
-        foreach (Bomb bomb in _bombs)
+        foreach (Bomb bomb in bombs)
           bomb.Update(gameTime, state, prevState);
-        foreach (Target target in _targets)
+        foreach (Target target in targets)
           target.Update(gameTime);
-        foreach (Item item in _items)
+        foreach (Item item in items)
           item.Update(gameTime);
         player.Update(gameTime, menuUI, state, prevState);
         hud.Update(gameTime, ref player, state, prevState);
+        if (GameEngine.getState() == GameState.Tutorial) tutorial.Update(gameTime, menuUI);
         _targetSpawnTimer.Update(gameTime);
         _secondSpawnTimer.Update(gameTime);
       }
@@ -157,20 +184,22 @@ namespace Target
       if (!gameOver)
       {
         spriteBatch.Draw(Resources.mapWoods, new Rectangle(0, 0, Options.Config.Width, Options.Config.Height), Color.White);
-        foreach (Bomb bomb in _bombs)
+        foreach (Bomb bomb in bombs)
           bomb.Draw(spriteBatch);
-        foreach (Target target in _targets)
+        foreach (Target target in targets)
           target.Draw(spriteBatch);
-        foreach (Item item in _items)
+        foreach (Item item in items)
           item.Draw(spriteBatch);
         player.Draw(spriteBatch);
-        hud.Draw(graphics, spriteBatch);
+        hud.Draw(spriteBatch);
+        if (GameEngine.getState() == GameState.Tutorial) tutorial.Draw(spriteBatch);
       }
     }
 
     public static void PostDraw()
     {
       hud.DrawUI();
+      if (GameEngine.getState() == GameState.Tutorial) tutorial.DrawUI();
     }
   }
 }

@@ -19,6 +19,8 @@ namespace Target
 {
   public class HUD
   {
+    private float _proportionsX;
+
     private HorizontalProgressBar _healthIndicator;
     private HorizontalProgressBar _kevlarIndicator;
     private HorizontalProgressBar _breathIndicator;
@@ -56,6 +58,7 @@ namespace Target
 
     public HUD()
     {
+      _proportionsX = 0.15f;
       _hitmarkerOpacity = (float) byte.MaxValue;
       _randomGenerator = new Random();
       crosshair = new Crosshair();
@@ -83,7 +86,7 @@ namespace Target
       _healthIndicator = new HorizontalProgressBar();
       _healthIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _healthIndicator.VerticalAlignment = VerticalAlignment.Top;
-      _healthIndicator.Width = 200;
+      _healthIndicator.Width = (int)(Options.Config.Width * _proportionsX);
       _healthIndicator.Height = 20;
       topPanel.Widgets.Add(_healthIndicator);
 
@@ -92,7 +95,7 @@ namespace Target
       _kevlarIndicator = new HorizontalProgressBar();
       _kevlarIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _kevlarIndicator.VerticalAlignment = VerticalAlignment.Top;
-      _kevlarIndicator.Width = 200;
+      _kevlarIndicator.Width = (int)(Options.Config.Width * _proportionsX);
       _kevlarIndicator.Height = 20;
       topPanel.Widgets.Add(_kevlarIndicator);
 
@@ -101,7 +104,7 @@ namespace Target
       _breathIndicator = new HorizontalProgressBar();
       _breathIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _breathIndicator.VerticalAlignment = VerticalAlignment.Top;
-      _breathIndicator.Width = 200;
+      _breathIndicator.Width = (int)(Options.Config.Width * _proportionsX);
       _breathIndicator.Height = 20;
       topPanel.Widgets.Add(_breathIndicator);
 
@@ -144,30 +147,27 @@ namespace Target
       _reloadIndicator = new HorizontalProgressBar();
       _reloadIndicator.HorizontalAlignment = HorizontalAlignment.Right;
       _reloadIndicator.VerticalAlignment = VerticalAlignment.Bottom;
-      _reloadIndicator.Width = 200;
-      _reloadIndicator.Height = 10;
+      _reloadIndicator.Width = (int)(Options.Config.Width * _proportionsX);
+      _reloadIndicator.Height = 20;
       _reloadIndicator.Left = -50;
       bottomPanel.Widgets.Add(_reloadIndicator);
 
       _UI.Widgets.Add(bottomPanel);
     }
 
-    public HorizontalProgressBar addBombIndicator(Point bombPos, int duration)
+    public HorizontalProgressBar addBombIndicator()
     {
-      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
+      //Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LightGray);
       Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
-      HorizontalProgressBar bombIndicator = new HorizontalProgressBar();
-      bombIndicator.Minimum = -1;
-      bombIndicator.Maximum = 10000;
-      bombIndicator.Value = 0;
-      bombIndicator.Top = bombPos.Y;
-      bombIndicator.Left = bombPos.X;
-      bombIndicator.Width = 100;
-      bombIndicator.Height = 5;
-      _UI.Widgets.Add(bombIndicator);
-      return (bombIndicator);
+      HorizontalProgressBar indicator = new HorizontalProgressBar();
+      indicator.Minimum = -1;
+      indicator.Maximum = 10000;
+      indicator.Width = 200;
+      indicator.Height = 5;
+      _UI.Widgets.Add(indicator);
+      return (indicator);
     }
-
+    
     public void removeBombIndicator(HorizontalProgressBar indicator)
     {
       _UI.Widgets.Remove(indicator);
@@ -232,7 +232,7 @@ namespace Target
 
     public void updateDefuser(bool state)
     {
-      _defuserIndicator.Opacity = 1;
+      _defuserIndicator.Opacity = (state ? 1 : 0);
     }
 
 
@@ -277,9 +277,9 @@ namespace Target
       _actionTimer.Update(gameTime);
     }
 
-    public void Draw(GraphicsDeviceManager graphics, SpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch)
     {
-      crosshair.Draw(graphics, spriteBatch);
+      crosshair.Draw(spriteBatch);
       for (int ammo = _ammo; ammo >= 1; --ammo)
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
       if (_bloodsplat)

@@ -23,13 +23,20 @@ namespace Target
     public Dictionary<GameAction, ControlPair> Bindings;
     public GameSettings()
     {
-        Fullscreen = false;
-        Width = Options.Resolutions[0].Width;
-        Height = Options.Resolutions[0].Height;
-        MouseSensivity = 1.0f;
-        MusicVolume = 1.0f;
-        SoundVolume = 1.0f;
-        DefaultBindings();
+      DisplayMode defaultRes;
+      try {
+        defaultRes = Options.Resolutions.First((it) => { return (it.Width == 1280); });
+      } catch (Exception e) {
+        defaultRes = Options.Resolutions[0];
+      }
+
+      Fullscreen = false;
+      Width = defaultRes.Width;
+      Height = defaultRes.Height;
+      MouseSensivity = 1.0f;
+      MusicVolume = 1.0f;
+      SoundVolume = 1.0f;
+      DefaultBindings();
     }
 
     public void DefaultBindings()

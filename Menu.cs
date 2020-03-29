@@ -66,10 +66,17 @@ namespace Target
       playBtn.Text = "Play";
       playBtn.Click += (s, a) =>
       {
-          GameMain.resetGame();
-          GameEngine.setState(GameState.Playing);
+          GameMain.resetGame(GameState.Playing);
       };
       grid.Widgets.Add(playBtn);
+
+      TextButton tutorialBtn = new TextButton();
+      tutorialBtn.Text = "Tutorial";
+      tutorialBtn.Click += (s, a) =>
+      {
+        GameMain.resetGame(GameState.Tutorial);
+      };
+      grid.Widgets.Add(tutorialBtn);
 
       TextButton optionsBtn = new TextButton();
       optionsBtn.Text = "Options";
@@ -423,7 +430,7 @@ namespace Target
       resumeBtn.Text = "Resume";
       resumeBtn.Click += (s, a) =>
       {
-          GameEngine.setState(GameState.Playing);
+          GameEngine.setState(GameMain.tutorial != null ? GameState.Tutorial : GameState.Playing);
       };
       grid.Widgets.Add(resumeBtn);
 
