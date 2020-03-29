@@ -12,15 +12,16 @@ namespace Target
     private static Timer _stayTimer = new Timer();
     private static Image _image;
 
-    public static void Init(Desktop menuUI)
+    public static void Init()
     {
       _splashTimer.addAction(TimerDirection.Forward, 2000, TimeoutBehaviour.Stop, () => { _splashTimer.Reverse(); _stayTimer.Start(); });
-      _splashTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop, () => { menuUI.Widgets.Remove(_image); Menu.MainMenu(menuUI); });
+      _splashTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop,
+        () => { Desktop.Widgets.Remove(_image); GameEngine.setState(GameState.Menu); Menu.MainMenu(); });
       _stayTimer.addAction(TimerDirection.Forward, 2000, TimeoutBehaviour.Stop, () => { _splashTimer.Start(); });
       _image = new Image();
       _image.Opacity = 0;
       _image.Renderable = new TextureRegion(Resources.splashScreen);
-      menuUI.Widgets.Add(_image);
+      Desktop.Widgets.Add(_image);
     }
 
     public static void Trigger()
@@ -29,8 +30,16 @@ namespace Target
       _splashTimer.Start();
     }
 
-    public static void Update(GameTime gameTime)
+    public static void Skip()
     {
+      _stayTimer.setDuration(2001);
+      if (_splashTimer.getDirection() != TimerDirection.Backward) _splashTimer.Reverse();
+      _splashTimer.Start();
+    }
+
+    public static void Update(GameTime gameTime, DeviceState state)
+    {
+      if (Control.GetAnyPressedKey(state) != null) Skip();
       _splashTimer.Update(gameTime);
       _stayTimer.Update(gameTime);
       float value = (float)(_splashTimer.getDuration() / 2000);

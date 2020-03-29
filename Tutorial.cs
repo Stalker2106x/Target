@@ -38,18 +38,18 @@ namespace Target
     private List<TutorialStep> _steps;
     private int _currentStep;
     private Timer _timer;
-    private Desktop _overlay;
     private Label _sentenceLabel;
     private bool _completed;
 
     public Tutorial()
     {
-      _overlay = new Desktop();
       InitOverlay();
       _timer = new Timer();
       _completed = false;
       sentences.Clear();
       _steps = new List<TutorialStep>();
+      _currentStep = -1;
+      /*
       sentences.Add("Welcome", "Welcome to Target, your soon to be favorite range shooter.");
       _steps.Add(new TutorialStep("Welcome", () => { }, () => { return (_timer.getDuration() > 5000); }));
       //Base Initiation
@@ -103,13 +103,14 @@ namespace Target
         () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().score == 0); }));
       _steps.Add(new TutorialStep("HostageInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Hostage", true); },
         () => { return (_timer.getDuration() > 6000); },
-        () => { return (GameMain.targets.Count == 0); }));
-      //Target Initiation
+        () => { return (GameMain.targets.Count == 0); }));*/
+      //Bomb Initiation
       sentences.Add("BombInitiation", "Quick! You see this bomb ? Hold the defuse key while looking at it with your crosshair to start the defusal.");
-      sentences.Add("Ready", "Congratulations! You're now ready for battle. Have fun on target!");
       _steps.Add(new TutorialStep("BombInitiation", () => { GameMain.player.getStats().score = 0; GameMain.player.addHealth(100); spawnBomb(); },
         () => { return (GameMain.bombs.Count == 0 && GameMain.player.getStats().score == 0); },
         () => { return (GameMain.bombs.Count == 0 && GameMain.player.getStats().score == -500); }));
+      //Finish
+      sentences.Add("Ready", "Congratulations! You're now ready for battle. Have fun on target!");
       _steps.Add(new TutorialStep("Ready", () => { }, () => { if (_timer.getDuration() > 5000) CompleteTutorial(); return (false); }));
       NextStep();
     }
@@ -148,7 +149,7 @@ namespace Target
       _sentenceLabel.Top = -200;
       _sentenceLabel.HorizontalAlignment = HorizontalAlignment.Center;
       _sentenceLabel.VerticalAlignment = VerticalAlignment.Center;
-      _overlay.Widgets.Add(_sentenceLabel);
+      GameMain.hud.addIndicator(_sentenceLabel);
     }
 
     public void NextStep()
@@ -162,13 +163,14 @@ namespace Target
     public void CompleteTutorial()
     {
       _completed = true;
+      GameMain.hud.removeIndicator(_sentenceLabel);
     }
 
-    public void Update(GameTime gameTime, Desktop menuUI)
+    public void Update(GameTime gameTime)
     {
       if (_completed)
       {
-        GameMain.ExitToMain(menuUI);
+        GameMain.ExitToMain();
       }
       if (_steps[_currentStep].objective())
       {
@@ -180,15 +182,6 @@ namespace Target
         _timer.StartOver();
       }
       _timer.Update(gameTime);
-    }
-
-    public void Draw(SpriteBatch spriteBatch)
-    {
-
-    }
-    public void DrawUI()
-    {
-      _overlay.Render();
     }
   }
 }

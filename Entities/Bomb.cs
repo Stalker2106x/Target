@@ -13,6 +13,8 @@ namespace Target.Entities
 {
   public class Bomb
   {
+    private const int _bombDuration = 5000;
+
     private static Random _randomGenerator = new Random();
 
     private bool _active;
@@ -31,19 +33,26 @@ namespace Target.Entities
 
       _durationTimer = new Timer();
       _durationTimer.addAction(TimerDirection.Backward, -1, TimeoutBehaviour.Stop, () => { CompleteDefusal(); });
-      _durationTimer.addAction(TimerDirection.Forward, 5000, TimeoutBehaviour.Stop, () => { Explode(); });
-      _durationTimer.Start();
-
+      _durationTimer.addAction(TimerDirection.Forward, _bombDuration, TimeoutBehaviour.Stop, () => { Explode(); });
       _soundTimer = new Timer();
       _soundTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { Resources.bombtick.Play(Options.Config.SoundVolume, 0f, 0f); });
-      _soundTimer.Start();
     }
 
     public void activate()
     {
-      _indicator = GameMain.hud.addBombIndicator();
-      _indicator.Left = _position.X;
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(Color.LightGray, 0));
+      Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LightGray);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filler = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
+      _indicator = new HorizontalProgressBar();
+      _indicator.Minimum = -1;
+      _indicator.Maximum = _bombDuration;
+      _indicator.Left = (int)(_position.X - (_texture.Width * 0.25));
       _indicator.Top = _position.Y;
+      _indicator.Width = (int)(_texture.Width * 1.5);
+      _indicator.Height = 10;
+      GameMain.hud.addIndicator(_indicator);
+      _soundTimer.Start();
+      _durationTimer.Start();
     }
 
     public void randomizePosition()
@@ -64,7 +73,7 @@ namespace Target.Entities
     public void Destroy()
     {
       _active = false;
-      GameMain.hud.removeBombIndicator(_indicator);
+      GameMain.hud.removeIndicator(_indicator);
       GameMain.player.defusing = false;
     }
 
@@ -116,7 +125,7 @@ namespace Target.Entities
       else if (_durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //None, rearm
       _soundTimer.Update(gameTime);
       _durationTimer.Update(gameTime);
-      //_indicator.Value = (float)_durationTimer.getDuration();
+      _indicator.Value = (float)_durationTimer.getDuration();
     }
 
     public void Draw(SpriteBatch spriteBatch)

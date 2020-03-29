@@ -54,7 +54,7 @@ namespace Target
     private Rectangle bloodsplatPos;
     private float bloodsplatDelay;
 
-    private Desktop _UI;
+    private Panel _ui;
 
     public HUD()
     {
@@ -70,9 +70,14 @@ namespace Target
       bloodsplatTimer = 0.0f;
       bloodsplatDelay = 2f;
       _ammo = 0;
-      _UI = new Desktop();
-      contractsPanel = new ContractsPanel(_UI);
+      _ui = new Panel();
+      contractsPanel = new ContractsPanel();
       addIndicators();
+    }
+
+    public void activate()
+    {
+      Desktop.Root = _ui;
     }
 
     public void addIndicators()
@@ -82,7 +87,7 @@ namespace Target
       topPanel.Spacing = 8;
 
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
-      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filler = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
       _healthIndicator = new HorizontalProgressBar();
       _healthIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _healthIndicator.VerticalAlignment = VerticalAlignment.Top;
@@ -91,7 +96,7 @@ namespace Target
       topPanel.Widgets.Add(_healthIndicator);
 
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
-      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Blue);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filler = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Blue);
       _kevlarIndicator = new HorizontalProgressBar();
       _kevlarIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _kevlarIndicator.VerticalAlignment = VerticalAlignment.Top;
@@ -100,7 +105,7 @@ namespace Target
       topPanel.Widgets.Add(_kevlarIndicator);
 
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Gray);
-      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Green);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filler = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Green);
       _breathIndicator = new HorizontalProgressBar();
       _breathIndicator.HorizontalAlignment = HorizontalAlignment.Left;
       _breathIndicator.VerticalAlignment = VerticalAlignment.Top;
@@ -138,12 +143,12 @@ namespace Target
       topPanel.Widgets.Add(_actionIndicator);
       _actionTimer.addAction(TimerDirection.Forward, 1500f, TimeoutBehaviour.Reset, () => { _actionIndicator.Text = ""; });
 
-      _UI.Widgets.Add(topPanel);
+      _ui.Widgets.Add(topPanel);
       // Bottom Panel
       Panel bottomPanel = new Panel();
 
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
-      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LimeGreen);
+      Stylesheet.Current.HorizontalProgressBarStyle.Filler = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LimeGreen);
       _reloadIndicator = new HorizontalProgressBar();
       _reloadIndicator.HorizontalAlignment = HorizontalAlignment.Right;
       _reloadIndicator.VerticalAlignment = VerticalAlignment.Bottom;
@@ -152,25 +157,17 @@ namespace Target
       _reloadIndicator.Left = -50;
       bottomPanel.Widgets.Add(_reloadIndicator);
 
-      _UI.Widgets.Add(bottomPanel);
+      _ui.Widgets.Add(bottomPanel);
     }
 
-    public HorizontalProgressBar addBombIndicator()
+    public void addIndicator(Widget indicator)
     {
-      //Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.LightGray);
-      Stylesheet.Current.HorizontalProgressBarStyle.Filled = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Red);
-      HorizontalProgressBar indicator = new HorizontalProgressBar();
-      indicator.Minimum = -1;
-      indicator.Maximum = 10000;
-      indicator.Width = 200;
-      indicator.Height = 5;
-      _UI.Widgets.Add(indicator);
-      return (indicator);
+      _ui.Widgets.Add(indicator);
     }
-    
-    public void removeBombIndicator(HorizontalProgressBar indicator)
+
+    public void removeIndicator(Widget indicator)
     {
-      _UI.Widgets.Remove(indicator);
+      _ui.Widgets.Remove(indicator);
     }
 
     public void setHitmarker()
@@ -288,7 +285,7 @@ namespace Target
 
     public void DrawUI()
     {
-      _UI.Render();
+      Desktop.Render();
     }
   }
 }

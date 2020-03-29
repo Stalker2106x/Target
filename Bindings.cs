@@ -154,7 +154,7 @@ namespace Target
            || (mouse != null && !MouseHelper.ButtonClicked(state.mouse, mouse.GetValueOrDefault())));
     }
 
-    public static Control GetAnyPressedKey(DeviceState state)
+    public static Control? GetAnyPressedKey(DeviceState state)
     {
       Control control = new Control();
       //Scan Keyboard
@@ -184,7 +184,7 @@ namespace Target
           return (control);
         }
       }
-      return (control);
+      return (null);
     }
   }
 }

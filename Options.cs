@@ -25,8 +25,8 @@ namespace Target
     {
       DisplayMode defaultRes;
       try {
-        defaultRes = Options.Resolutions.First((it) => { return (it.Width == 1280); });
-      } catch (Exception e) {
+        defaultRes = Options.Resolutions.First((it) => { return (it.Width == 1280 && it.Height == 800); });
+      } catch (Exception) {
         defaultRes = Options.Resolutions[0];
       }
 

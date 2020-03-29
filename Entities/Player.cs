@@ -264,7 +264,7 @@ namespace Target
       }
     }
 
-    public void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
+    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
       //Breath management
       if (_breathState != BreathState.ForceRecovery && Options.Config.Bindings[GameAction.HoldBreath].IsControlDown(state))
@@ -302,7 +302,7 @@ namespace Target
       {
 
         _heartbeat.Stop(); //Clean heartbeat state
-        GameMain.GameOver(menuUI);
+        GameMain.GameOver();
       }
       //HUD
       GameMain.hud.updateHealth(_healthMax, _health);

@@ -13,11 +13,11 @@ namespace Target.UI
     VerticalStackPanel _panel;
     List<Tuple<Label, Contract>> _indicators;
 
-    public ContractsPanel(Desktop UI)
+    public ContractsPanel()
     {
       _indicators = new List<Tuple<Label, Contract>>();
       _panel = new VerticalStackPanel();
-      UI.Widgets.Add(_panel);
+      Desktop.Widgets.Add(_panel);
     }
 
     public void AddIndicator(Contract contract)

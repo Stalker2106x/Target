@@ -18,7 +18,7 @@ namespace Target
 
     private Random _randomGenerator;
 
-    private static int _resetThreshold;
+    private const int _resetThreshold = 50;
     private int _framesToSkip; //Skip frames for cursor management
 
     //Sway

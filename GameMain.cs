@@ -136,29 +136,29 @@ namespace Target
       }
     }
 
-    public static void GameOver(Desktop menuUI)
+    public static void GameOver()
     {
       GameMain.gameOver = true;
       GameEngine.setState(GameState.Menu);
-      Menu.GameOverMenu(menuUI, "Score: " + player.getStats().score.ToString() + "\n"
-                              + "Shots fired: " + player.getStats().bulletsFired.ToString() + "\n"
-                              + "Contracts completed: " + player.getStats().contractsCompleted.ToString() + "\n"
-                              + "Accuracy: " + Math.Round((double)player.getAccuracy(), 2).ToString() + " %\n");
+      Menu.GameOverMenu("Score: " + player.getStats().score.ToString() + "\n"
+                      + "Shots fired: " + player.getStats().bulletsFired.ToString() + "\n"
+                      + "Contracts completed: " + player.getStats().contractsCompleted.ToString() + "\n"
+                      + "Accuracy: " + Math.Round((double)player.getAccuracy(), 2).ToString() + " %\n");
     }
 
-    public static void ExitToMain(Desktop menuUI)
+    public static void ExitToMain()
     {
       GameMain.gameOver = true;
       GameMain.tutorial = null;
       GameEngine.setState(GameState.Menu);
-      Menu.MainMenu(menuUI);
+      Menu.MainMenu();
     }
 
-    public static void Update(GameTime gameTime, Desktop menuUI, DeviceState state, DeviceState prevState)
+    public static void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
       if (Options.Config.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
       {
-        Menu.GameMenu(menuUI);
+        Menu.GameMenu();
         GameEngine.setState(GameState.Menu);
       }
       if (!gameOver)
@@ -171,9 +171,9 @@ namespace Target
           target.Update(gameTime);
         foreach (Item item in items)
           item.Update(gameTime);
-        player.Update(gameTime, menuUI, state, prevState);
+        player.Update(gameTime, state, prevState);
         hud.Update(gameTime, ref player, state, prevState);
-        if (GameEngine.getState() == GameState.Tutorial) tutorial.Update(gameTime, menuUI);
+        if (GameEngine.getState() == GameState.Tutorial) tutorial.Update(gameTime);
         _targetSpawnTimer.Update(gameTime);
         _secondSpawnTimer.Update(gameTime);
       }
@@ -192,14 +192,7 @@ namespace Target
           item.Draw(spriteBatch);
         player.Draw(spriteBatch);
         hud.Draw(spriteBatch);
-        if (GameEngine.getState() == GameState.Tutorial) tutorial.Draw(spriteBatch);
       }
-    }
-
-    public static void PostDraw()
-    {
-      hud.DrawUI();
-      if (GameEngine.getState() == GameState.Tutorial) tutorial.DrawUI();
     }
   }
 }

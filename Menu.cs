@@ -14,6 +14,8 @@ using Myra;
 using Microsoft.Xna.Framework;
 using System.Reflection;
 using System.Threading;
+using Myra.Graphics2D;
+using Myra.Graphics2D.Brushes;
 
 namespace Target
 {
@@ -27,11 +29,14 @@ namespace Target
       Stylesheet.Current.ButtonStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, Color.Transparent);
       Stylesheet.Current.ButtonStyle.OverBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.1f));
       Stylesheet.Current.ButtonStyle.PressedBackground = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(255, 0, 0, 0.2f));
-      Stylesheet.Current.ComboBoxStyle.Width = 100;
+      Stylesheet.Current.TextBoxStyle.Font = Resources.regularFont;
+      Stylesheet.Current.ComboBoxStyle.LabelStyle.Font = Resources.regularFont;
+      Stylesheet.Current.ComboBoxStyle.Width = 200;
+      Stylesheet.Current.HorizontalSliderStyle.Width = 200;
       Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
     }
 
-    public static void AddVersionFooter(Desktop menuUI)
+    public static void AddVersionFooter()
     {
 
       Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
@@ -40,26 +45,26 @@ namespace Target
       version.VerticalAlignment = VerticalAlignment.Bottom;
       version.Text = "v" + Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
-      menuUI.Widgets.Add(version);
+      Desktop.Widgets.Add(version);
     }
 
-    public static void MainMenu(Desktop menuUI)
+    public static void MainMenu()
     {
       LoadUIStylesheet();
-      menuUI.Widgets.Clear();
+      Desktop.Widgets.Clear();
+
+      Panel panel = new Panel();
+      panel.Background = new TextureRegion(Resources.menuBackground);
+
       VerticalStackPanel grid = new VerticalStackPanel();
       grid.VerticalAlignment = VerticalAlignment.Center;
       grid.HorizontalAlignment = HorizontalAlignment.Center;
 
       grid.Spacing = 8;
 
-      Image background = new Image();
-      background.Renderable = new TextureRegion(Resources.menuBackground);
-      menuUI.Widgets.Add(background);
-
       Label title = new Label();
       title.Text = "(Target)";
-      title.PaddingBottom = 100;
+      title.Padding = new Thickness(0, 0, 0, 100);
       grid.Widgets.Add(title);
 
       TextButton playBtn = new TextButton();
@@ -82,7 +87,7 @@ namespace Target
       optionsBtn.Text = "Options";
       optionsBtn.Click += (s, a) =>
       {
-          OptionsMenu(menuUI, MainMenu);
+          OptionsMenu(MainMenu);
       };
       grid.Widgets.Add(optionsBtn);
 
@@ -94,15 +99,21 @@ namespace Target
       };
       grid.Widgets.Add(quitBtn);
 
-      menuUI.Widgets.Add(grid);
-      AddVersionFooter(menuUI);
+      panel.Widgets.Add(grid);
+      Desktop.Root = panel;
+      AddVersionFooter();
     }
         
-    public static void OptionsMenu(Desktop menuUI, Action<Desktop> prevMenu)
+    public static void OptionsMenu(Action prevMenu)
     {
       LoadUIStylesheet();
-      menuUI.Widgets.Clear();
+      Desktop.Widgets.Clear();
+
+      Panel panel = new Panel();
+      panel.Background = new TextureRegion(Resources.menuBackground);
+
       Grid grid = new Grid();
+      int gridRow = 0;
       grid.VerticalAlignment = VerticalAlignment.Center;
 
       grid.RowSpacing = 8;
@@ -116,81 +127,84 @@ namespace Target
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
-      grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
+      grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 25));
+      grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
+      grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 25));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
 
-      Image background = new Image();
-      background.Renderable = new TextureRegion(Resources.menuBackground);
-      menuUI.Widgets.Add(background);
+      Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
 
-      TextBox resolutionLabel = new TextBox();
+      Label resolutionLabel = new Label();
       resolutionLabel.Text = "Resolution";
       resolutionLabel.GridColumn = 1;
+      resolutionLabel.GridRow = gridRow;
       resolutionLabel.HorizontalAlignment = HorizontalAlignment.Left;
       grid.Widgets.Add(resolutionLabel);
 
       ComboBox resolutionCombo = new ComboBox();
       resolutionCombo.GridColumn = 2;
-      resolutionCombo.GridRow = 0;
+      resolutionCombo.GridRow = gridRow;
       resolutionCombo.HorizontalAlignment = HorizontalAlignment.Right;
       List<string> resolutions = Options.getResolutions();
       resolutions.ForEach(e => { resolutionCombo.Items.Add(new ListItem(e)); });
       resolutionCombo.SelectedIndex = Options.getDisplayMode();
       grid.Widgets.Add(resolutionCombo);
+      gridRow++; //Next row
 
-      TextBox displayLabel = new TextBox();
+      Label displayLabel = new Label();
       displayLabel.Text = "Display mode";
       displayLabel.GridColumn = 1;
-      displayLabel.GridRow = 1;
+      displayLabel.GridRow = gridRow;
       displayLabel.HorizontalAlignment = HorizontalAlignment.Left;
       grid.Widgets.Add(displayLabel);
 
       ComboBox displayCombo = new ComboBox();
       displayCombo.GridColumn = 2;
-      displayCombo.GridRow = 1;
+      displayCombo.GridRow = gridRow;
       displayCombo.HorizontalAlignment = HorizontalAlignment.Right;
       displayCombo.Items.Add(new ListItem("Windowed"));
       displayCombo.Items.Add(new ListItem("Fullscreen"));
       displayCombo.SelectedIndex = Convert.ToInt32(Options.Config.Fullscreen);
       grid.Widgets.Add(displayCombo);
+      gridRow++; //Next row
 
-      TextBox sensivityLabel = new TextBox();
+
+      Label sensivityLabel = new Label();
       sensivityLabel.Text = "Mouse sensivity";
       sensivityLabel.GridColumn = 1;
-      sensivityLabel.GridRow = 2;
+      sensivityLabel.GridRow = gridRow;
       sensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
       grid.Widgets.Add(sensivityLabel);
 
       HorizontalSlider sensivitySlider = new HorizontalSlider();
       sensivitySlider.GridColumn = 2;
-      sensivitySlider.GridRow = 2;
-      sensivitySlider.Width = 100;
+      sensivitySlider.GridRow = gridRow;
       sensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
       sensivitySlider.Minimum = 0.1f;
       sensivitySlider.Maximum = 10f;
       sensivitySlider.Value = Options.Config.MouseSensivity;
       grid.Widgets.Add(sensivitySlider);
+      gridRow++; //Next row
 
-      TextBox musicLabel = new TextBox();
+      Label musicLabel = new Label();
       musicLabel.Text = "Music volume";
       musicLabel.GridColumn = 1;
-      musicLabel.GridRow = 3;
+      musicLabel.GridRow = gridRow;
       musicLabel.HorizontalAlignment = HorizontalAlignment.Left;
       grid.Widgets.Add(musicLabel);
 
       HorizontalSlider musicSlider = new HorizontalSlider();
       musicSlider.GridColumn = 2;
-      musicSlider.GridRow = 3;
-      musicSlider.Width = 100;
+      musicSlider.GridRow = gridRow;
       musicSlider.HorizontalAlignment = HorizontalAlignment.Right;
       musicSlider.Minimum = 0f;
       musicSlider.Maximum = 1f;
       musicSlider.Value = Options.Config.MusicVolume;
       grid.Widgets.Add(musicSlider);
+      gridRow++; //Next row
 
-      TextBox soundLabel = new TextBox();
+      Label soundLabel = new Label();
       soundLabel.Text = "Sounds volume";
       soundLabel.GridColumn = 1;
       soundLabel.GridRow = 4;
@@ -199,30 +213,36 @@ namespace Target
 
       HorizontalSlider soundSlider = new HorizontalSlider();
       soundSlider.GridColumn = 2;
-      soundSlider.GridRow = 4;
-      soundSlider.Width = 100;
+      soundSlider.GridRow = gridRow;
       soundSlider.HorizontalAlignment = HorizontalAlignment.Right;
       soundSlider.Minimum = 0f;
       soundSlider.Maximum = 1f;
       soundSlider.Value = Options.Config.SoundVolume;
       grid.Widgets.Add(soundSlider);
+      gridRow++; //Next row
+
+      gridRow++; //Skip row
 
       TextButton bindigsBtn = new TextButton();
       bindigsBtn.Text = "Bindings";
       bindigsBtn.GridColumn = 1;
-      bindigsBtn.GridRow = 6;
+      bindigsBtn.GridRow = gridRow;
       bindigsBtn.GridColumnSpan = 2;
       bindigsBtn.HorizontalAlignment = HorizontalAlignment.Center;
       bindigsBtn.Click += (s, a) =>
       {
-        BindingsMenu(menuUI, prevMenu);
+        BindingsMenu(prevMenu);
       };
       grid.Widgets.Add(bindigsBtn);
+      gridRow++; //Next row
+
+      gridRow++; //Skip row
+      Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
 
       TextButton applyBtn = new TextButton();
       applyBtn.Text = "Apply";
       applyBtn.GridColumn = 1;
-      applyBtn.GridRow = 7;
+      applyBtn.GridRow = gridRow;
       applyBtn.GridColumnSpan = 2;
       applyBtn.HorizontalAlignment = HorizontalAlignment.Center;
       applyBtn.Click += (s, a) =>
@@ -230,7 +250,7 @@ namespace Target
           if (displayCombo.SelectedItem == null || resolutionCombo.SelectedItem == null)
           {
               var messageBox = Dialog.CreateMessageBox("Error", "You must select a value for display/resolution!");
-              messageBox.ShowModal(menuUI);
+              messageBox.ShowModal();
               return;
           }
           Options.Config.Fullscreen = Convert.ToBoolean(displayCombo.SelectedIndex);
@@ -241,30 +261,35 @@ namespace Target
           Options.Config.SoundVolume = soundSlider.Value;
           Options.applyConfig();
           Options.Config.Save();
-          prevMenu(menuUI);
+          prevMenu();
       };
       grid.Widgets.Add(applyBtn);
+      gridRow++; //Next row
 
       TextButton backBtn = new TextButton();
       backBtn.Text = "Cancel";
       backBtn.GridColumn = 1;
-      backBtn.GridRow = 8;
+      backBtn.GridRow = gridRow;
       backBtn.GridColumnSpan = 2;
       backBtn.HorizontalAlignment = HorizontalAlignment.Center;
       backBtn.Click += (s, a) =>
       {
-          prevMenu(menuUI);
+          prevMenu();
       };
       grid.Widgets.Add(backBtn);
 
-      menuUI.Widgets.Add(grid);
-      AddVersionFooter(menuUI);
+      panel.Widgets.Add(grid);
+      Desktop.Root = panel;
     }
 
-    public static void BindingsMenu(Desktop menuUI, Action<Desktop> optionsPrevMenu)
+    public static void BindingsMenu(Action optionsPrevMenu)
     {
       LoadUIStylesheet();
-      menuUI.Widgets.Clear();
+      Desktop.Widgets.Clear();
+
+      Panel panel = new Panel();
+      panel.Background = new TextureRegion(Resources.menuBackground);
+
       Grid grid = new Grid();
       grid.VerticalAlignment = VerticalAlignment.Center;
 
@@ -281,10 +306,6 @@ namespace Target
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 75));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
       grid.RowsProportions.Add(new Proportion(ProportionType.Pixels, 60));
-
-      Image background = new Image();
-      background.Renderable = new TextureRegion(Resources.menuBackground);
-      menuUI.Widgets.Add(background);
 
       Stylesheet.Current.LabelStyle.Font = Resources.regularFont;
       //Header
@@ -328,14 +349,14 @@ namespace Target
         {
           (new Thread(() => {
             primaryBind.Text = "...";
-            Control control;
+            Control? control;
             int attempts = 30;
             do {
               control = Control.GetAnyPressedKey(GameEngine.getDeviceState());
               Thread.Sleep(100);
               attempts--;
-            } while (!control.IsBound() && attempts > 0);
-            if (control.GetInput() != "Unbound")
+            } while (control == null && attempts > 0);
+            if (control != null)
             {
               var bind = Options.Config.Bindings[entry.Key];
               bind.primary = control;
@@ -354,15 +375,15 @@ namespace Target
         {
           (new Thread(() => {
             secondaryBind.Text = "...";
-            Control control;
+            Control? control;
             int attempts = 30;
             do
             {
               control = Control.GetAnyPressedKey(GameEngine.getDeviceState());
               Thread.Sleep(100);
               attempts--;
-            } while (!control.IsBound() && attempts > 0);
-            if (control.GetInput() != "Unbound")
+            } while (control == null && attempts > 0);
+            if (control != null)
             {
               var bind = Options.Config.Bindings[entry.Key];
               bind.secondary = control;
@@ -385,7 +406,7 @@ namespace Target
       applyBtn.HorizontalAlignment = HorizontalAlignment.Center;
       applyBtn.Click += (s, a) =>
       {
-        OptionsMenu(menuUI, optionsPrevMenu);
+        OptionsMenu(optionsPrevMenu);
       };
       grid.Widgets.Add(applyBtn);
 
@@ -397,32 +418,31 @@ namespace Target
       backBtn.HorizontalAlignment = HorizontalAlignment.Center;
       backBtn.Click += (s, a) =>
       {
-        OptionsMenu(menuUI, optionsPrevMenu);
+        OptionsMenu(optionsPrevMenu);
       };
       grid.Widgets.Add(backBtn);
 
-      menuUI.Widgets.Add(grid);
-      AddVersionFooter(menuUI);
+      panel.Widgets.Add(grid);
+      Desktop.Root = panel;
     }
 
-    public static void GameMenu(Desktop menuUI)
+    public static void GameMenu()
     {
-      AddVersionFooter(menuUI);
       LoadUIStylesheet();
-      menuUI.Widgets.Clear();
+      Desktop.Widgets.Clear();
+
+      Panel panel = new Panel();
+      panel.Background = new TextureRegion(Resources.menuBackground);
+
       VerticalStackPanel grid = new VerticalStackPanel();
       grid.VerticalAlignment = VerticalAlignment.Center;
       grid.HorizontalAlignment = HorizontalAlignment.Center;
 
       grid.Spacing = 8;
 
-      Image background = new Image();
-      background.Renderable = new TextureRegion(Resources.menuBackground);
-      menuUI.Widgets.Add(background);
-
       Label title = new Label();
       title.Text = "Paused";
-      title.PaddingBottom = 100;
+      title.Padding = new Thickness(0, 0, 0, 100);
       title.HorizontalAlignment = HorizontalAlignment.Center;
       grid.Widgets.Add(title);
 
@@ -438,7 +458,7 @@ namespace Target
       optionsBtn.Text = "Options";
       optionsBtn.Click += (s, a) =>
       {
-          OptionsMenu(menuUI, GameMenu);
+          OptionsMenu(GameMenu);
       };
       grid.Widgets.Add(optionsBtn);
 
@@ -446,50 +466,51 @@ namespace Target
       quitBtn.Text = "Quit";
       quitBtn.Click += (s, a) =>
       {
-          MainMenu(menuUI);
+          MainMenu();
       };
       grid.Widgets.Add(quitBtn);
 
-      menuUI.Widgets.Add(grid);
+      panel.Widgets.Add(grid);
+      Desktop.Root = panel;
     }
 
-    public static void GameOverMenu(Desktop menuUI, string content)
+    public static void GameOverMenu(string content)
     {
-        AddVersionFooter(menuUI);
-        LoadUIStylesheet();
-        menuUI.Widgets.Clear();
-        VerticalStackPanel grid = new VerticalStackPanel();
-        grid.VerticalAlignment = VerticalAlignment.Center;
-        grid.HorizontalAlignment = HorizontalAlignment.Center;
+      AddVersionFooter();
+      LoadUIStylesheet();
+      Desktop.Widgets.Clear();
 
-        grid.Spacing = 8;
+      Panel panel = new Panel();
+      panel.Background = new TextureRegion(Resources.menuBackground);
 
-        Image background = new Image();
-        background.Renderable = new TextureRegion(Resources.menuBackground);
-        menuUI.Widgets.Add(background);
+      VerticalStackPanel grid = new VerticalStackPanel();
+      grid.VerticalAlignment = VerticalAlignment.Center;
+      grid.HorizontalAlignment = HorizontalAlignment.Center;
 
-        Label title = new Label();
-        title.Text = "(Game Over)";
-        title.PaddingBottom = 100;
-        grid.Widgets.Add(title);
+      grid.Spacing = 8;
 
-        Label detailsText = new Label();
-        detailsText.Text = content;
-        detailsText.Font = Resources.regularFont;
-        detailsText.PaddingBottom = 100;
-        grid.Widgets.Add(detailsText);
+      Label title = new Label();
+      title.Text = "(Game Over)";
+      title.Padding = new Thickness(0, 0, 0, 100);
+      grid.Widgets.Add(title);
 
-        TextButton continueBtn = new TextButton();
-        continueBtn.Text = "Continue";
-        continueBtn.HorizontalAlignment = HorizontalAlignment.Center;
-        continueBtn.Click += (s, a) =>
-        {
-            MainMenu(menuUI);
-        };
-        grid.Widgets.Add(continueBtn);
+      Label detailsText = new Label();
+      detailsText.Text = content;
+      detailsText.Font = Resources.regularFont;
+      detailsText.Padding = new Thickness(0, 0, 0, 100);
+      grid.Widgets.Add(detailsText);
 
-        menuUI.Widgets.Add(grid);
-        AddVersionFooter(menuUI);
+      TextButton continueBtn = new TextButton();
+      continueBtn.Text = "Continue";
+      continueBtn.HorizontalAlignment = HorizontalAlignment.Center;
+      continueBtn.Click += (s, a) =>
+      {
+          MainMenu();
+      };
+      grid.Widgets.Add(continueBtn);
+
+      panel.Widgets.Add(grid);
+      Desktop.Root = panel;
     }
   }
 }
