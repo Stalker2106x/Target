@@ -58,7 +58,7 @@
       "blue": "hit"
     },
     "spawn": {
-      "location": "rightBorder",
+      "location": "any",
       "probability": 5
     }
   }
