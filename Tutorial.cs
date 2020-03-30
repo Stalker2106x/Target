@@ -60,7 +60,7 @@ namespace TargetGame
       sentences.Add("HUDIntiation1", "On your top left corner, you can find your health bar.");
       sentences.Add("HUDIntiation2", "On your top left corner, you can can also find your breath bar.");
       sentences.Add("HUDIntiation3", "The score indicator that show all the points you gather during a game.");
-      sentences.Add("HUDIntiation4", "And the score multiplier.");
+      sentences.Add("HUDIntiation4", "And the score multiplier, that applies to each kill you do.");
       sentences.Add("HUDIntiation5", "Now on the bottom right corner, you can see your magazine.");
       _steps.Add(new TutorialStep("HUDIntiation1", () => { }, () => { return (_timer.getDuration() > 5000); }));
       _steps.Add(new TutorialStep("HUDIntiation2", () => { }, () => { return (_timer.getDuration() > 5000); }));
@@ -88,28 +88,44 @@ namespace TargetGame
       sentences.Add("ZeppelinInitiation", "What about this moving enemy? Can you hit it ?");
       sentences.Add("HostageInitiation", "STOP!! This is an hostage. Don't shoot him or you will lose a lot of points! It will disappear over time.");
       _steps.Add(new TutorialStep("SoldierInitiation", () => { }, () => { return (_timer.getDuration() > 5000); }));
-      _steps.Add(new TutorialStep("SoldierInitiation2", () => { spawnTarget("Soldier", true); },
+      _steps.Add(new TutorialStep("SoldierInitiation2", () => { spawnTarget("Soldier", false, true); },
         () => { return (GameMain.targets.Count == 0); }));
       _steps.Add(new TutorialStep("SoldierComplete", () => { }, () => { return (_timer.getDuration() > 5000); }));
-      _steps.Add(new TutorialStep("JuggernautInitiation", () => { spawnTarget("Juggernaut", true); },
+      _steps.Add(new TutorialStep("JuggernautInitiation", () => { spawnTarget("Juggernaut", false, true); },
         () => { return (GameMain.targets.Count == 0); }));
       _steps.Add(new TutorialStep("JuggernautInitiation2", () => { }, () => { return (_timer.getDuration() > 5000); }));
-      _steps.Add(new TutorialStep("LegshotInitiation", () => { GameMain.player.getStats().legshots = 0; spawnTarget("Juggernaut", true); },
-        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().legshots == 4); },
-        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().legshots != 4); }));
+      _steps.Add(new TutorialStep("LegshotInitiation", () => { GameMain.player.getStats().legshots = 0; spawnTarget("Juggernaut", false, true); },
+        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().legshots >= 1); },
+        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().legshots < 1); }));
       _steps.Add(new TutorialStep("LegshotComplete", () => { }, () => { return (_timer.getDuration() > 5000); }));
-      _steps.Add(new TutorialStep("HeadshotInitiation", () => { GameMain.player.getStats().headshotsOrCritical = 0; spawnTarget("Juggernaut", true); },
-        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().headshotsOrCritical == 2); },
-        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().headshotsOrCritical != 2); }));
+      _steps.Add(new TutorialStep("HeadshotInitiation", () => { GameMain.player.getStats().headshotsOrCritical = 0; spawnTarget("Juggernaut", false, true); },
+        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().headshotsOrCritical >= 1); },
+        () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().headshotsOrCritical < 1); }));
       _steps.Add(new TutorialStep("HeadshotComplete", () => { }, () => { return (_timer.getDuration() > 5000); }));
-      _steps.Add(new TutorialStep("ZeppelinInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Zeppelin", true); },
+      _steps.Add(new TutorialStep("ZeppelinInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Zeppelin", false, true); },
         () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().score > 0); },
         () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().score == 0); }));
-      _steps.Add(new TutorialStep("HostageInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Hostage", true); },
+      _steps.Add(new TutorialStep("HostageInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Hostage", false, true); },
         () => { return (_timer.getDuration() > 6000); },
         () => { return (GameMain.targets.Count == 0); }));
+      //Contract Initiation
+      sentences.Add("ContractInitiation", "As the time goes, you may need a better weapon. That's precisely why contracts can drop");
+      sentences.Add("ContractInitiation2", "Gather this contract"); 
+      sentences.Add("ContractInitiation3", "Good, now check the objective and reward on the top right corner");
+      sentences.Add("ContractInitiation4", "Complete the contract to get an upgrade!");
+      sentences.Add("ContractComplete", "Perfect! Your weapon was upgraded");
+      _steps.Add(new TutorialStep("ContractInitiation", () => { }, () => { return (_timer.getDuration() > 5000); }));
+      _steps.Add(new TutorialStep("ContractInitiation2", () => { spawnItem(ItemType.Contract); }, () => { return (GameMain.items.Count == 0); }));
+      _steps.Add(new TutorialStep("ContractInitiation3",
+        () => { GameMain.player.contracts[0].type = Contract.Type.HeadshotCombo; }, //Force headshot contract
+        () => { return (_timer.getDuration() > 5000); }));
+      _steps.Add(new TutorialStep("ContractInitiation4",
+        () => { GameMain.player.getStats().contractsCompleted = 0; assignatePlayerContract(); for (int i = 0; i < 5; i++) spawnTarget("Soldier", false, true); },
+        () => { return (GameMain.player.getStats().contractsCompleted == 1); },
+        () => { return (GameMain.player.contracts.Count == 0 && GameMain.player.getStats().contractsCompleted == 0); }));
+      _steps.Add(new TutorialStep("ContractComplete", () => { }, () => { return (_timer.getDuration() > 5000); }));
       //Bomb Initiation
-      sentences.Add("BombInitiation", "Quick! You see this bomb ? Hold the defuse key while looking at it with your crosshair to start the defusal.");
+      sentences.Add("BombInitiation", "Quick! You see this bomb ? Hold "+Options.Config.Bindings[GameAction.Defuse].ToString()+" while looking at it with your crosshair to start the defusal.");
       _steps.Add(new TutorialStep("BombInitiation", () => { GameMain.player.getStats().score = 0; GameMain.player.addHealth(100); spawnBomb(); },
         () => { return (GameMain.bombs.Count == 0 && GameMain.player.getStats().score == 0); },
         () => { return (GameMain.bombs.Count == 0 && GameMain.player.getStats().score == -500); }));
@@ -117,6 +133,16 @@ namespace TargetGame
       sentences.Add("Ready", "Congratulations! You're now ready for battle. Have fun on target!");
       _steps.Add(new TutorialStep("Ready", () => { }, () => { if (_timer.getDuration() > 5000) CompleteTutorial(); return (false); }));
       NextStep();
+    }
+
+    public void assignatePlayerContract()
+    {
+      if (GameMain.player.contracts.Count == 0)
+      {
+        Contract ctr = new Contract();
+        ctr.type = Contract.Type.HeadshotCombo;
+        GameMain.player.contracts.Add(ctr);
+      }
     }
 
     public void spawnBomb()
@@ -132,11 +158,11 @@ namespace TargetGame
       var item = Resources.items.First((it) => { return (it.type == type); }).Copy();
       item.setPosition(new Point(Options.Config.Width / 2, Options.Config.Height / 2));
       item.move = new Point(0, 0);
-      //item.activate();
+      item.activate();
       GameMain.items.Add(item);
     }
 
-    public void spawnTarget(string name, bool inoffensive)
+    public void spawnTarget(string name, bool randomPos, bool inoffensive)
     {
       var target = Resources.targets.First((it) => { return (it.name == name); }).Copy();
       if (name == "Zeppelin") target.setPosition(new Point(Options.Config.Width, Options.Config.Height / 2));

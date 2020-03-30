@@ -70,7 +70,6 @@ namespace TargetGame.Entities
     private State _state;
 
     private int _health;
-    public int health { get { return (_damage); } set { _health = value; } }
 
     private int _damage;
     public int damage { get { return (_damage); } set { _damage = value; } }
@@ -125,9 +124,12 @@ namespace TargetGame.Entities
 
     public void randomizePosition()
     {
-      if (_spawn.location == SpawnParameters.Location.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
-      else if (_spawn.location == SpawnParameters.Location.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
-      _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
+      do
+      {
+        if (_spawn.location == SpawnParameters.Location.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
+        else if (_spawn.location == SpawnParameters.Location.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
+        _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
+      } while (GameMain.player.getWeapon().getRectangle().Contains(_position) || GameMain.hud.getTopLeftRectangle().Contains(_position));
     }
 
     public void setPosition(Point pos)
@@ -188,6 +190,16 @@ namespace TargetGame.Entities
       return _resource.idle_hitbox;
     }
 
+    public void addHealth(int value)
+    {
+      _health = value;
+      if (_health <= 0)
+      {
+        _active = false;
+        GameMain.player.addScore(_score);
+      }
+    }
+
     public HitType checkCollision(int damage)
     {
       Rectangle targetRect = getRectangle();
@@ -199,20 +211,19 @@ namespace TargetGame.Entities
 
       if (hitColor[0].R >= 255) //Headshot
       {
-        _health -= (int)(damage * 2);
+        addHealth(-(damage * 2));
         hit = _hitbox.red;
       }
       else if (hitColor[0].G >= 255) //Legshot
       {
-        _health -= (int)(damage * 0.75);
+        addHealth(-(int)(damage * 0.75));
         hit = _hitbox.green;
       }
       else
       {
-        _health -= damage;
+        addHealth(-(int)(damage));
         hit = _hitbox.blue; //Regular
       }
-      GameMain.player.addScore(_score);
       return (hit);
     }
 
@@ -237,7 +248,7 @@ namespace TargetGame.Entities
       _position.Y += _move.Y;
       if (_damage > 0) _attackTimer.Update(gameTime);
       if (lifetime > 0) _lifetimeTimer.Update(gameTime);
-      if (!Utils.Tools.IsOnScreen(getRectangle()) || _health <= 0) _active = false; //Destroy out of screen stuff
+      if (!Utils.Tools.IsOnScreen(getRectangle())) _active = false; //Destroy out of screen stuff
     }
 
     public void Draw(SpriteBatch spriteBatch)

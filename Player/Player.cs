@@ -16,28 +16,6 @@ using TargetGame.Utils;
 
 namespace TargetGame
 {
-  public struct PlayerStats
-  {
-    const string SavePath = "Content/User.json";
-
-    public int score;
-    public int bulletsFired;
-    public int bulletsHit;
-    public int headshotsOrCritical;
-    public int legshots;
-    public int contractsCompleted;
-    public int headshotComboMax;
-
-    public static PlayerStats Load()
-    {
-      if (!File.Exists(SavePath)) return (new PlayerStats());
-      return (JsonConvert.DeserializeObject<PlayerStats>(File.ReadAllText(SavePath)));
-    }
-    public void Save()
-    {
-      File.WriteAllText(SavePath, JsonConvert.SerializeObject(this));
-    }
-  }
 
   public class Player
   {
@@ -66,14 +44,14 @@ namespace TargetGame
 
     private float _scoreMultiplier;
 
-    private PlayerStats _stats;
+    private SessionStats _stats;
 
     private int _comboHeadshot;
     private Weapon _weapon;
     private bool _defuser;
     private SoundEffectInstance _heartbeat;
 
-    private List<Contract> _contracts;
+    public List<Contract> contracts;
 
     public Player()
     {
@@ -85,7 +63,8 @@ namespace TargetGame
       _health = _healthMax;
       _scoreMultiplier = 1;
       _comboHeadshot = 0;
-      _contracts = new List<Contract>();
+      _stats = new SessionStats();
+      contracts = new List<Contract>();
       _weapon = new Weapon("P250", 10);
       _heartbeat = Resources.heartbeat.CreateInstance();
       _heartbeat.Volume = Options.Config.SoundVolume;
@@ -106,7 +85,7 @@ namespace TargetGame
       });
     }
 
-    public ref PlayerStats getStats()
+    public ref SessionStats getStats()
     {
       return ref (_stats);
     }
@@ -125,11 +104,6 @@ namespace TargetGame
       return (_breathTimer.getDuration());
     }
 
-    public float getAccuracy()
-    {
-      if (_stats.bulletsFired == 0) return (100); //No bullets, 100%
-      return ((float)(_stats.bulletsHit / _stats.bulletsFired) * 100.0f);
-    }
 
     public void setBulletsHit(int hit)
     {
@@ -207,11 +181,12 @@ namespace TargetGame
         GameMain.hud.setAction("HEAD HUNTER !");
         _scoreMultiplier += 0.5f;
       }
+      if (_stats.headshotComboMax < _comboHeadshot) _stats.headshotComboMax = _comboHeadshot;
     }
 
     public void addContract()
     {
-      _contracts.Add(new Contract());
+      contracts.Add(new Contract());
     }
 
     public Weapon getWeapon()
@@ -224,9 +199,9 @@ namespace TargetGame
       List<HitType> hits = _weapon.fire();
 
       if (hits == null) return; //We did not shoot
+      _stats.bulletsHit++;
       foreach (var hit in hits)
       {
-        _stats.bulletsHit++;
         switch (hit)
         {
           case HitType.Headshot:
@@ -252,14 +227,16 @@ namespace TargetGame
             resetComboHeadshot();
             break;
           case HitType.Catch:
+            _stats.bonusCatched++;
+            _stats.bulletsHit--;
             break;
           case HitType.Miss:
           default:
-            _stats.bulletsHit--; //Remove the hit
+            _stats.bulletsHit--;
             resetComboHeadshot();
             break;
         }
-        foreach (Contract contract in _contracts) contract.Update(hit);
+        foreach (Contract contract in contracts) contract.Update(hit);
       }
     }
 
@@ -296,7 +273,7 @@ namespace TargetGame
       if (Options.Config.Bindings[GameAction.Reload].IsControlPressed(state, prevState))
         _weapon.reload();
       _weapon.Update(gameTime);
-      if (_contracts.Count > 0) for (int i = _contracts.Count-1; i >= 0; i--) if (_contracts[i].inactive) _contracts.RemoveAt(i); //Clear obsolete contracts
+      if (contracts.Count > 0) for (int i = contracts.Count-1; i >= 0; i--) if (contracts[i].inactive) contracts.RemoveAt(i); //Clear obsolete contracts
       if (_health <= 0)
       {
 

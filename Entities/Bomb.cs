@@ -115,6 +115,7 @@ namespace TargetGame.Entities
       _durationTimer.Reverse();
       if (GameMain.player.hasDefuser()) _durationTimer.setTimeScale(4);
       else _durationTimer.setTimeScale(3);
+      GameMain.player.getStats().bombsDefused++;
     }
     public void Rearm()
     {

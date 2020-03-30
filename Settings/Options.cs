@@ -32,6 +32,7 @@ namespace TargetGame.Settings
     public int Width { get; set; }
     public int Height { get; set; }
     public float MouseSensivity { get; set; }
+    public float ControllerSensivity { get; set; }
     public float MusicVolume { get; set; }
     public float SoundVolume { get; set; }
 
@@ -49,6 +50,7 @@ namespace TargetGame.Settings
       Width = defaultRes.Width;
       Height = defaultRes.Height;
       MouseSensivity = 1.0f;
+      ControllerSensivity = 8.0f;
       MusicVolume = 1.0f;
       SoundVolume = 1.0f;
       DefaultBindings();

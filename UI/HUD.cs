@@ -160,6 +160,11 @@ namespace TargetGame
       _ui.Widgets.Remove(indicator);
     }
 
+    public Rectangle getTopLeftRectangle()
+    {
+      return (new Rectangle(0, 0, (int)(Options.Config.Width * _proportionsX), 100));
+    }
+
     public void triggerBloodsplat()
     {
       _bloodsplat = true;

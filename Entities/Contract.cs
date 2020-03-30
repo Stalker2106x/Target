@@ -63,7 +63,7 @@ namespace TargetGame.Entities
     //Class
     private static Random _randomGenerator = new Random();
 
-    private Type type;
+    public Type type;
     private int amount;
     private int target;
     public Reward reward;

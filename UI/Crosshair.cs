@@ -134,13 +134,8 @@ namespace TargetGame
       return (new Rectangle(position.X - 32, position.Y - 32, 64, 64));
     }
 
-    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
+    public void UpdateMouse(DeviceState state, DeviceState prevState)
     {
-      if (_framesToSkip > 0)
-      {
-        _framesToSkip--;
-        return;
-      }
       if (state.mouse.X < _resetThreshold || state.mouse.X > Options.Config.Width - _resetThreshold || state.mouse.Y < _resetThreshold || state.mouse.Y > Options.Config.Height - _resetThreshold)
       {
         Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
@@ -148,6 +143,23 @@ namespace TargetGame
       }
       position.X += (int)((state.mouse.X - prevState.mouse.X) * Options.Config.MouseSensivity);
       position.Y += (int)((state.mouse.Y - prevState.mouse.Y) * Options.Config.MouseSensivity);
+    }
+
+    public void UpdateController(DeviceState state, DeviceState prevState)
+    {
+      position.X += (int)(state.gamepad.ThumbSticks.Right.X * Options.Config.ControllerSensivity);
+      position.Y += (int)(state.gamepad.ThumbSticks.Right.Y * Options.Config.ControllerSensivity) * -1; //Revert Y axis
+    }
+
+    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
+    {
+      if (_framesToSkip > 0)
+      {
+        _framesToSkip--;
+        return;
+      }
+      UpdateMouse(state, prevState);
+      UpdateController(state, prevState);
       if (position.X < 0) position.X = 0;
       else if (position.X > Options.Config.Width) position.X = Options.Config.Width;
       else if (position.Y < 0) position.Y = 0;

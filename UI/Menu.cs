@@ -15,11 +15,15 @@ using System.Reflection;
 using System.Threading;
 using Myra.Graphics2D;
 using TargetGame.Settings;
+using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace TargetGame
 {
   public static class Menu
   {
+    private static Panel mainPanel;
+
     /// <summary>
     /// Load default styles for menus
     /// </summary>
@@ -59,8 +63,8 @@ namespace TargetGame
       LoadUIStylesheet();
       Desktop.Widgets.Clear();
 
-      Panel panel = new Panel();
-      panel.Background = new TextureRegion(Resources.menuBackground);
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
 
       VerticalStackPanel grid = new VerticalStackPanel();
       grid.VerticalAlignment = VerticalAlignment.Center;
@@ -89,6 +93,14 @@ namespace TargetGame
       };
       grid.Widgets.Add(tutorialBtn);
 
+      TextButton statsBtn = new TextButton();
+      statsBtn.Text = "Stats";
+      statsBtn.Click += (s, a) =>
+      {
+        StatsMenu();
+      };
+      grid.Widgets.Add(statsBtn);
+
       TextButton optionsBtn = new TextButton();
       optionsBtn.Text = "Options";
       optionsBtn.Click += (s, a) =>
@@ -105,8 +117,8 @@ namespace TargetGame
       };
       grid.Widgets.Add(quitBtn);
 
-      panel.Widgets.Add(grid);
-      Desktop.Root = panel;
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
       AddVersionFooter();
     }
 
@@ -118,8 +130,8 @@ namespace TargetGame
       LoadUIStylesheet();
       Desktop.Widgets.Clear();
 
-      Panel panel = new Panel();
-      panel.Background = new TextureRegion(Resources.menuBackground);
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
 
       Grid grid = new Grid();
       int gridRow = 0;
@@ -131,6 +143,7 @@ namespace TargetGame
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
       grid.ColumnsProportions.Add(new Proportion(ProportionType.Part));
+      grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
       grid.RowsProportions.Add(new Proportion(ProportionType.Part));
@@ -179,21 +192,38 @@ namespace TargetGame
       gridRow++; //Next row
 
 
-      Label sensivityLabel = new Label();
-      sensivityLabel.Text = "Mouse sensivity";
-      sensivityLabel.GridColumn = 1;
-      sensivityLabel.GridRow = gridRow;
-      sensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
-      grid.Widgets.Add(sensivityLabel);
+      Label mSensivityLabel = new Label();
+      mSensivityLabel.Text = "Mouse sensivity";
+      mSensivityLabel.GridColumn = 1;
+      mSensivityLabel.GridRow = gridRow;
+      mSensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
+      grid.Widgets.Add(mSensivityLabel);
 
-      HorizontalSlider sensivitySlider = new HorizontalSlider();
-      sensivitySlider.GridColumn = 2;
-      sensivitySlider.GridRow = gridRow;
-      sensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
-      sensivitySlider.Minimum = 0.1f;
-      sensivitySlider.Maximum = 10f;
-      sensivitySlider.Value = Options.Config.MouseSensivity;
-      grid.Widgets.Add(sensivitySlider);
+      HorizontalSlider mSensivitySlider = new HorizontalSlider();
+      mSensivitySlider.GridColumn = 2;
+      mSensivitySlider.GridRow = gridRow;
+      mSensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
+      mSensivitySlider.Minimum = 0.3f;
+      mSensivitySlider.Maximum = 6f;
+      mSensivitySlider.Value = Options.Config.MouseSensivity;
+      grid.Widgets.Add(mSensivitySlider);
+      gridRow++; //Next row
+
+      Label gSensivityLabel = new Label();
+      gSensivityLabel.Text = "Controller sensivity";
+      gSensivityLabel.GridColumn = 1;
+      gSensivityLabel.GridRow = gridRow;
+      gSensivityLabel.HorizontalAlignment = HorizontalAlignment.Left;
+      grid.Widgets.Add(gSensivityLabel);
+
+      HorizontalSlider gSensivitySlider = new HorizontalSlider();
+      gSensivitySlider.GridColumn = 2;
+      gSensivitySlider.GridRow = gridRow;
+      gSensivitySlider.HorizontalAlignment = HorizontalAlignment.Right;
+      gSensivitySlider.Minimum = 5f;
+      gSensivitySlider.Maximum = 15f;
+      gSensivitySlider.Value = Options.Config.ControllerSensivity;
+      grid.Widgets.Add(gSensivitySlider);
       gridRow++; //Next row
 
       Label musicLabel = new Label();
@@ -265,7 +295,8 @@ namespace TargetGame
           Options.Config.Fullscreen = Convert.ToBoolean(displayCombo.SelectedIndex);
           Options.Config.Width = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Width;
           Options.Config.Height = Options.Resolutions[(int)resolutionCombo.SelectedIndex].Height;
-          Options.Config.MouseSensivity = sensivitySlider.Value;
+          Options.Config.MouseSensivity = mSensivitySlider.Value;
+          Options.Config.ControllerSensivity = gSensivitySlider.Value;
           Options.Config.MusicVolume = musicSlider.Value;
           Options.Config.SoundVolume = soundSlider.Value;
           Options.applyConfig();
@@ -287,8 +318,8 @@ namespace TargetGame
       };
       grid.Widgets.Add(backBtn);
 
-      panel.Widgets.Add(grid);
-      Desktop.Root = panel;
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
     }
 
     /// <summary>
@@ -299,8 +330,8 @@ namespace TargetGame
       LoadUIStylesheet();
       Desktop.Widgets.Clear();
 
-      Panel panel = new Panel();
-      panel.Background = new TextureRegion(Resources.menuBackground);
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
 
       Grid grid = new Grid();
       grid.VerticalAlignment = VerticalAlignment.Center;
@@ -434,8 +465,8 @@ namespace TargetGame
       };
       grid.Widgets.Add(backBtn);
 
-      panel.Widgets.Add(grid);
-      Desktop.Root = panel;
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
     }
 
     /// <summary>
@@ -446,8 +477,8 @@ namespace TargetGame
       LoadUIStylesheet();
       Desktop.Widgets.Clear();
 
-      Panel panel = new Panel();
-      panel.Background = new TextureRegion(Resources.menuBackground);
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
 
       VerticalStackPanel grid = new VerticalStackPanel();
       grid.VerticalAlignment = VerticalAlignment.Center;
@@ -485,21 +516,20 @@ namespace TargetGame
       };
       grid.Widgets.Add(quitBtn);
 
-      panel.Widgets.Add(grid);
-      Desktop.Root = panel;
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
     }
 
     /// <summary>
     /// Game Over summary Menu loader
     /// </summary>
-    public static void GameOverMenu(string content)
+    public static void GameOverMenu()
     {
-      AddVersionFooter();
       LoadUIStylesheet();
       Desktop.Widgets.Clear();
 
-      Panel panel = new Panel();
-      panel.Background = new TextureRegion(Resources.menuBackground);
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
 
       VerticalStackPanel grid = new VerticalStackPanel();
       grid.VerticalAlignment = VerticalAlignment.Center;
@@ -512,8 +542,14 @@ namespace TargetGame
       title.Padding = new Thickness(0, 0, 0, 100);
       grid.Widgets.Add(title);
 
+      Label highscoreText = new Label();
+      highscoreText.Text = "High score: " + GameMain.globalStats.highScore;
+      highscoreText.Font = Resources.regularFont;
+      highscoreText.Padding = new Thickness(0, 0, 0, 100);
+      grid.Widgets.Add(highscoreText);
+
       Label detailsText = new Label();
-      detailsText.Text = content;
+      detailsText.Text = GameMain.player.getStats().AsString();
       detailsText.Font = Resources.regularFont;
       detailsText.Padding = new Thickness(0, 0, 0, 100);
       grid.Widgets.Add(detailsText);
@@ -527,8 +563,66 @@ namespace TargetGame
       };
       grid.Widgets.Add(continueBtn);
 
-      panel.Widgets.Add(grid);
-      Desktop.Root = panel;
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
+    }
+
+    /// <summary>
+    /// Lifetime stats summary Menu loader
+    /// </summary>
+    public static void StatsMenu()
+    {
+      LoadUIStylesheet();
+      Desktop.Widgets.Clear();
+
+      mainPanel = new Panel();
+      mainPanel.Background = new TextureRegion(Resources.menuBackground);
+
+      VerticalStackPanel grid = new VerticalStackPanel();
+      grid.VerticalAlignment = VerticalAlignment.Center;
+      grid.HorizontalAlignment = HorizontalAlignment.Center;
+
+      grid.Spacing = 8;
+
+      Label title = new Label();
+      title.Text = "(Stats)";
+      title.Padding = new Thickness(0, 0, 0, 100);
+      grid.Widgets.Add(title);
+
+      Label detailsText = new Label();
+      detailsText.Text = GameMain.globalStats.AsString();
+      detailsText.Font = Resources.regularFont;
+      detailsText.Padding = new Thickness(0, 0, 0, 100);
+      grid.Widgets.Add(detailsText);
+
+      TextButton continueBtn = new TextButton();
+      continueBtn.Text = "Back";
+      continueBtn.HorizontalAlignment = HorizontalAlignment.Center;
+      continueBtn.Click += (s, a) =>
+      {
+        MainMenu();
+      };
+      grid.Widgets.Add(continueBtn);
+
+      mainPanel.Widgets.Add(grid);
+      Desktop.Root = mainPanel;
+    }
+
+    public static void Update(GameTime gameTime, Point windowPos, DeviceState state)
+    {
+      /*if (Options.Config.Bindings[GameAction.Fire].IsControlDown(state))
+      {
+        try {
+          Widget widget = Desktop.GetWidget((it) => { return ((it as TextButton) != null && it.IsTouchInside); });
+          TextButton btn = (widget as TextButton);
+          if (btn != null) btn.DoClick();
+        } catch (Exception) {
+          //Mouse not in screen
+        }
+      }*/
+      if (state.gamepad.ThumbSticks.Left.X == 0 && state.gamepad.ThumbSticks.Left.Y == 0) return;
+      Mouse.SetPosition(state.mouse.X + (int)(state.gamepad.ThumbSticks.Left.X * Options.Config.ControllerSensivity),
+                        state.mouse.Y + (int)(state.gamepad.ThumbSticks.Left.Y * Options.Config.ControllerSensivity * -1)); //Revert Y axis
     }
   }
 }

@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using TargetGame.Entities;
+using TargetGame.Utils;
 
 namespace TargetGame
 {
@@ -34,7 +35,9 @@ namespace TargetGame
 
     public static Texture2D bomb;
     public static List<Target> targets;
+    public static string targetsLock = "79557fdcd722a4c898993603bb5231036e28a7867bbd996de19b7945b0bce94d";
     public static List<Item> items;
+    public static string itemsLock = "9d8f4e83125432b18494de318f30ad608ddb1f881cb236c48620596b8977e6f4";
 
     public static Texture2D grabCursor;
     public static Texture2D reloadingCursor;
@@ -93,15 +96,20 @@ namespace TargetGame
 
       //Targets
       Resources.bomb = content.Load<Texture2D>("GFX/Target/bomb");
-      Resources.targets = JsonConvert.DeserializeObject<List<Target>>(File.ReadAllText("Content/Data/targets.json"));
+      string targetsData = File.ReadAllText("Content/Data/targets.json");
+      if (Tools.Sha256(targetsData) != targetsLock) GameMain.globalStats.cheatsEnabled = true;
+      Resources.targets = JsonConvert.DeserializeObject<List<Target>>(targetsData);
       foreach (var it in Resources.targets)
       {
+
         GameMain.targetsProbability.AddRange(it.spawn.probability);
         loadTargetResource(content, it);
       }
 
       //Items
-      Resources.items = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText("Content/Data/items.json"));
+      string itemsData = File.ReadAllText("Content/Data/items.json");
+      if (Tools.Sha256(itemsData) != itemsLock) GameMain.globalStats.cheatsEnabled = true;
+      Resources.items = JsonConvert.DeserializeObject<List<Item>>(itemsData);
       foreach (var it in Resources.items)
       {
         GameMain.itemsProbability.AddRange(it.probability);

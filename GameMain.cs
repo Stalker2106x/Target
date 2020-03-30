@@ -136,10 +136,9 @@ namespace TargetGame
     {
       GameMain.gameOver = true;
       GameEngine.setState(GameState.Menu);
-      Menu.GameOverMenu("Score: " + player.getStats().score.ToString() + "\n"
-                      + "Shots fired: " + player.getStats().bulletsFired.ToString() + "\n"
-                      + "Contracts completed: " + player.getStats().contractsCompleted.ToString() + "\n"
-                      + "Accuracy: " + Math.Round((double)player.getAccuracy(), 2).ToString() + " %\n");
+      globalStats += player.getStats();
+      globalStats.Save();
+      Menu.GameOverMenu();
     }
 
     public static void ExitToMain()

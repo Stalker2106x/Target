@@ -72,7 +72,7 @@ namespace TargetGame
     {
       Content.Unload();
     }
-
+    
     public static GameState getState()
     {
       return (gameState);
@@ -119,6 +119,7 @@ namespace TargetGame
           break;
         case GameState.Menu:
           IsMouseVisible = true;
+          Menu.Update(gameTime, Window.Position, deviceState);
           break;
         case GameState.Playing:
         case GameState.Tutorial:

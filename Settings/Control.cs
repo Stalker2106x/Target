@@ -34,31 +34,31 @@ namespace TargetGame.Settings
     public bool IsControlHeld(DeviceState state, DeviceState prevState)
     {
       return ((primary != null && primary.GetValueOrDefault().IsControlHeld(state, prevState))
-           || (secondary != null && primary.GetValueOrDefault().IsControlHeld(state, prevState)));
+           || (secondary != null && secondary.GetValueOrDefault().IsControlHeld(state, prevState)));
     }
 
     public bool IsControlPressed(DeviceState state, DeviceState prevState)
     {
       return ((primary != null && primary.GetValueOrDefault().IsControlPressed(state, prevState))
-           || (secondary != null && primary.GetValueOrDefault().IsControlPressed(state, prevState)));
+           || (secondary != null && secondary.GetValueOrDefault().IsControlPressed(state, prevState)));
     }
 
     public bool IsControlReleased(DeviceState state, DeviceState prevState)
     {
       return ((primary != null && primary.GetValueOrDefault().IsControlReleased(state, prevState))
-           || (secondary != null && primary.GetValueOrDefault().IsControlReleased(state, prevState)));
+           || (secondary != null && secondary.GetValueOrDefault().IsControlReleased(state, prevState)));
     }
 
     public bool IsControlDown(DeviceState state)
     {
       return ((primary != null && primary.GetValueOrDefault().IsControlDown(state))
-           || (secondary != null && primary.GetValueOrDefault().IsControlDown(state)));
+           || (secondary != null && secondary.GetValueOrDefault().IsControlDown(state)));
     }
 
     public bool IsControlUp(DeviceState state)
     {
       return ((primary != null && primary.GetValueOrDefault().IsControlUp(state))
-           || (secondary != null && primary.GetValueOrDefault().IsControlUp(state)));
+           || (secondary != null && secondary.GetValueOrDefault().IsControlUp(state)));
     }
   }
   //Single control
