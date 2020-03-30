@@ -2,7 +2,11 @@
 
 ## About
 
-Target is a shooting range game
+Target is a C# MonoGame shooting range game
+
+## Latest release
+
+The game is hosted on [itch.io](https://stabax.itch.io/target)
 
 ## Contributors
 
@@ -11,14 +15,13 @@ Target is a shooting range game
 - Stalker2106
 
 ## Dependencies
-* Dotnet standard 2.0
 * Monogame
 * Myra UI
 * Newtonsoft.Json
 
 ## Build
 
-run the build in a terminal with dotnet core capabilities:
+run the build in a terminal with dotnet core 2.0 or newer capabilities:
 
     dotnet build
 
