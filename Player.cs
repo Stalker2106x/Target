@@ -7,15 +7,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Myra.Graphics2D.UI;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using Target.Entities;
-using Target.Utils;
+using TargetGame.Entities;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
   public struct PlayerStats
   {
@@ -157,7 +156,7 @@ namespace Target
           _kevlar--;
           return;
         }
-        GameMain.hud.setBloodsplat();
+        GameMain.hud.triggerBloodsplat();
       }
       _health += hp;
       if (_health > _healthMax) _health = _healthMax;
@@ -304,12 +303,24 @@ namespace Target
         _heartbeat.Stop(); //Clean heartbeat state
         GameMain.GameOver();
       }
+      //Bomb Management
+      foreach (var bomb in GameMain.bombs)
+      {
+        if (GameMain.hud.crosshair.checkCollision(bomb.getRectangle()))
+        {
+          if (Options.Config.Bindings[GameAction.Defuse].IsControlPressed(state, prevState)) bomb.Defuse(); //User started defusing
+          else if (!Options.Config.Bindings[GameAction.Defuse].IsControlDown(state)) bomb.Rearm(); //Not holding, rearm
+          //Fall here if holding, nothing happens, let the timer go out
+        }
+        else bomb.Rearm(); //None, rearm
+      }
       //HUD
       GameMain.hud.updateHealth(_healthMax, _health);
       GameMain.hud.updateKevlar(_kevlarMax, _kevlar);
       GameMain.hud.updateBreath(_breathTimer.getDuration());
       GameMain.hud.updateScoreMultiplier(_scoreMultiplier);
       GameMain.hud.updateScore(_stats.score);
+      GameMain.hud.updateMagazine(_weapon.getMagazine());
       GameMain.hud.updateReload(_weapon);
     }
 

@@ -2,10 +2,14 @@
 using Microsoft.Xna.Framework.Graphics;
 using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
-using Target.Utils;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
+  /// <summary>
+  /// Helper class for launch splashscreen
+  /// </summary>
   public static class SplashScreen
   {
     private static Timer _splashTimer = new Timer();

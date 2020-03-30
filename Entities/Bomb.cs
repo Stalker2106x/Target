@@ -5,13 +5,15 @@ using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Target.Utils;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target.Entities
+namespace TargetGame.Entities
 {
-  public class Bomb
+  /// <summary>
+  /// Spawnable Bomb that can be defused or explode over time
+  /// </summary>
+  public class Bomb : IEntity
   {
     private const int _bombDuration = 5000;
 
@@ -38,6 +40,20 @@ namespace Target.Entities
       _soundTimer.addAction(TimerDirection.Forward, 1000, TimeoutBehaviour.StartOver, () => { Resources.bombtick.Play(Options.Config.SoundVolume, 0f, 0f); });
     }
 
+    /**************************
+     * IEntity implementation
+     **************************/
+
+    public void randomizePosition()
+    {
+      _position = new Point(_randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), _randomGenerator.Next(0, (Options.Config.Height - getRectangle().Height)));
+    }
+
+    public void setPosition(Point pos)
+    {
+      _position = pos;
+    }
+
     public void activate()
     {
       Stylesheet.Current.HorizontalProgressBarStyle.Background = new ColoredRegion(DefaultAssets.WhiteRegion, new Color(Color.LightGray, 0));
@@ -55,20 +71,19 @@ namespace Target.Entities
       _durationTimer.Start();
     }
 
-    public void randomizePosition()
+    public Rectangle getRectangle()
     {
-      _position = new Point(_randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), _randomGenerator.Next(0, (Options.Config.Height - getRectangle().Height)));
-    }
-
-    public void setPosition(Point pos)
-    {
-      _position = pos;
+      return (new Rectangle(_position.X, _position.Y, _texture.Width, _texture.Height));
     }
 
     public bool getActivity()
     {
       return _active;
     }
+
+    /**************************
+     * Specific Methods
+     **************************/
 
     public void Destroy()
     {
@@ -105,24 +120,16 @@ namespace Target.Entities
     {
       GameMain.player.defusing = false;
       _soundTimer.Start();
-      _durationTimer.Reverse();
+      if (_durationTimer.getDirection() != TimerDirection.Forward) _durationTimer.Reverse();
       _durationTimer.setTimeScale(1);
     }
 
-    public Rectangle getRectangle()
-    {
-      return (new Rectangle(_position.X, _position.Y, _texture.Width, _texture.Height));
-    }
+    /**************************
+     * Update/Draw Methods
+     **************************/
 
-    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
+    public void Update(GameTime gameTime)
     {
-      if (GameMain.hud.crosshair.checkCollision(getRectangle()))
-      {
-        if (Options.Config.Bindings[GameAction.Defuse].IsControlPressed(state, prevState)) Defuse(); //User started defusing
-        else if (!Options.Config.Bindings[GameAction.Defuse].IsControlDown(state) && _durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //Not holding, rearm
-        //Fall here if holding, nothing happens, let the timer go out
-      }
-      else if (_durationTimer.getDirection() != TimerDirection.Forward) Rearm(); //None, rearm
       _soundTimer.Update(gameTime);
       _durationTimer.Update(gameTime);
       _indicator.Value = (float)_durationTimer.getDuration();

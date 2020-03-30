@@ -4,9 +4,10 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Target.Utils;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
   public class Crosshair
   {
@@ -143,7 +144,7 @@ namespace Target
       if (state.mouse.X < _resetThreshold || state.mouse.X > Options.Config.Width - _resetThreshold || state.mouse.Y < _resetThreshold || state.mouse.Y > Options.Config.Height - _resetThreshold)
       {
         Mouse.SetPosition(Options.Config.Width / 2, Options.Config.Height / 2);
-        _framesToSkip = 1;
+        _framesToSkip = 3;
       }
       position.X += (int)((state.mouse.X - prevState.mouse.X) * Options.Config.MouseSensivity);
       position.Y += (int)((state.mouse.Y - prevState.mouse.Y) * Options.Config.MouseSensivity);

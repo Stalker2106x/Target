@@ -11,10 +11,21 @@ using Microsoft.Xna.Framework.Media;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using Target.Utils;
+using TargetGame.Entities;
 
-namespace Target
+namespace TargetGame
 {
+  /// <summary>
+  /// Hold textures corresponding to all targets states
+  /// </summary>
+  public struct TargetResource
+  {
+    public Texture2D idle;
+    public Texture2D idle_hitbox;
+    public Texture2D firing;
+    public Texture2D firing_hitbox;
+  }
+
   class Resources
   {
     public static SpriteFont titleFont;

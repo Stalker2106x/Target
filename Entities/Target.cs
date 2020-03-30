@@ -6,13 +6,15 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json;
 using System;
-using Target.Utils;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame.Entities
 {
+  /// <summary>
+  /// Defines the Type/Location of a hit 
+  /// </summary>
   public enum HitType
   {
     Miss,
@@ -22,13 +24,10 @@ namespace Target
     Legshot,
     Critical
   }
-  public struct TargetResource
-  {
-    public Texture2D idle;
-    public Texture2D idle_hitbox;
-    public Texture2D firing;
-    public Texture2D firing_hitbox;
-  }
+
+  /// <summary>
+  /// Holds spawn location and spawn chance
+  /// </summary>
   public struct SpawnParameters
   {
     public enum Location
@@ -41,6 +40,9 @@ namespace Target
     public int probability;
   }
 
+  /// <summary>
+  /// Holds correspondance between hitbox Color/HitType
+  /// </summary>
   public struct Hitbox
   {
     public HitType red;
@@ -48,10 +50,14 @@ namespace Target
     public HitType blue;
   }
 
-  public class Target
+  /// <summary>
+  /// Target class that represents spawnable entities
+  /// </summary>
+  public class Target : IEntity
   {
-    //Target Enums
-
+    /// <summary>
+    /// Animation state of target
+    /// </summary>
     public enum State
     {
       Idle,
@@ -102,7 +108,7 @@ namespace Target
     private Timer _attackTimer;
     private bool _active;
 
-    public Target() //default ctor
+    public Target()
     {
       _state = State.Idle;
       _active = true;
@@ -112,17 +118,21 @@ namespace Target
     {
       return (Target)this.MemberwiseClone();
     }
-    
-    public void setPosition(Point pos)
-    {
-      _position = pos;
-    }
+
+    /**************************
+     * IEntity implementation
+     **************************/
 
     public void randomizePosition()
     {
       if (_spawn.location == SpawnParameters.Location.Any) _position.X = randomGenerator.Next(0, Options.Config.Width - getTexture().Width);
       else if (_spawn.location == SpawnParameters.Location.RightBorder) _position.X = randomGenerator.Next(Options.Config.Width - getTexture().Width, Options.Config.Width);
       _position.Y = randomGenerator.Next(0, Options.Config.Height - getTexture().Height);
+    }
+
+    public void setPosition(Point pos)
+    {
+      _position = pos;
     }
 
     public void activate()
@@ -141,16 +151,19 @@ namespace Target
         _lifetimeTimer.Start();
       }
     }
+    public Rectangle getRectangle()
+    {
+      return (new Rectangle(_position.X, _position.Y, getTexture().Width, getTexture().Height));
+    }
 
     public bool getActivity()
     {
       return _active;
     }
 
-    private Rectangle getRectangle()
-    {
-      return (new Rectangle(_position.X, _position.Y, getTexture().Width, getTexture().Height));
-    }
+    /**************************
+     * Specific Methods
+     **************************/
 
     private Texture2D getTexture()
     {
@@ -213,6 +226,10 @@ namespace Target
         Resources.pain2.Play(Options.Config.SoundVolume, 0f, 0f);
       if (_damage > 0) GameMain.player.addHealth(-_damage);
     }
+
+    /**************************
+     * Base Update/Draw routines
+     **************************/
 
     public void Update(GameTime gameTime)
     {

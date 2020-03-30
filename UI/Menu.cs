@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
-using Microsoft.Xna.Framework.Content;
 using System;
 using Myra.Graphics2D.TextureAtlases;
 using Myra;
@@ -15,14 +14,15 @@ using Microsoft.Xna.Framework;
 using System.Reflection;
 using System.Threading;
 using Myra.Graphics2D;
-using Myra.Graphics2D.Brushes;
+using TargetGame.Settings;
 
-namespace Target
+namespace TargetGame
 {
   public static class Menu
   {
-    public static Action<GameTime, DeviceState> Update = null; //Update method to override
-
+    /// <summary>
+    /// Load default styles for menus
+    /// </summary>
     public static void LoadUIStylesheet()
     {
       Stylesheet.Current.ButtonStyle.Width = 500;
@@ -36,6 +36,9 @@ namespace Target
       Stylesheet.Current.LabelStyle.Font = Resources.titleFont;
     }
 
+    /// <summary>
+    /// Inject version footer to current Desktop
+    /// </summary>
     public static void AddVersionFooter()
     {
 
@@ -48,6 +51,9 @@ namespace Target
       Desktop.Widgets.Add(version);
     }
 
+    /// <summary>
+    /// Main Menu loader
+    /// </summary>
     public static void MainMenu()
     {
       LoadUIStylesheet();
@@ -103,7 +109,10 @@ namespace Target
       Desktop.Root = panel;
       AddVersionFooter();
     }
-        
+
+    /// <summary>
+    /// Options loader
+    /// </summary>
     public static void OptionsMenu(Action prevMenu)
     {
       LoadUIStylesheet();
@@ -282,6 +291,9 @@ namespace Target
       Desktop.Root = panel;
     }
 
+    /// <summary>
+    /// Bindings Menu loader
+    /// </summary>
     public static void BindingsMenu(Action optionsPrevMenu)
     {
       LoadUIStylesheet();
@@ -426,6 +438,9 @@ namespace Target
       Desktop.Root = panel;
     }
 
+    /// <summary>
+    /// In Game Pause Menu loader
+    /// </summary>
     public static void GameMenu()
     {
       LoadUIStylesheet();
@@ -474,6 +489,9 @@ namespace Target
       Desktop.Root = panel;
     }
 
+    /// <summary>
+    /// Game Over summary Menu loader
+    /// </summary>
     public static void GameOverMenu(string content)
     {
       AddVersionFooter();

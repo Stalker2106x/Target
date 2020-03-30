@@ -11,10 +11,11 @@ using Myra.Graphics2D.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Target.Entities;
-using Target.Utils;
+using TargetGame.Entities;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
 
   public enum GameState
@@ -28,7 +29,7 @@ namespace Target
   public static class GameMain
   {
     //Handles
-    public static PlayerStats globalStats;
+    public static PlayerStats globalStats = PlayerStats.Load();
     public static Player player;
     public static HUD hud;
     public static Tutorial tutorial;
@@ -48,11 +49,6 @@ namespace Target
 
     private static Random _randomGenerator = new Random();
 
-    public static void initGame()
-    {
-      globalStats = PlayerStats.Load();
-
-    }
     public static void resetGame(GameState state)
     {
       gameOver = false;
@@ -154,6 +150,10 @@ namespace Target
       Menu.MainMenu();
     }
 
+    /**************************
+     * Update/Draw Methods
+     **************************/
+
     public static void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
       if (Options.Config.Bindings[GameAction.Menu].IsControlPressed(state, prevState))
@@ -166,13 +166,13 @@ namespace Target
         destroyEntities();
         if (state.keyboard.IsKeyDown(Keys.I) && prevState.keyboard.IsKeyUp(Keys.I)) spawnItem();
         foreach (Bomb bomb in bombs)
-          bomb.Update(gameTime, state, prevState);
+          bomb.Update(gameTime);
         foreach (Target target in targets)
           target.Update(gameTime);
         foreach (Item item in items)
           item.Update(gameTime);
         player.Update(gameTime, state, prevState);
-        hud.Update(gameTime, ref player, state, prevState);
+        hud.Update(gameTime, state, prevState);
         if (GameEngine.getState() == GameState.Tutorial) tutorial.Update(gameTime);
         _targetSpawnTimer.Update(gameTime);
         _secondSpawnTimer.Update(gameTime);

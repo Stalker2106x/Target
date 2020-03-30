@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Target
+namespace TargetGame
 {
     /// <summary>
     /// The main class.

@@ -7,9 +7,13 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using TargetGame.Settings;
 
-namespace Target
+namespace TargetGame.Entities
 {
+  /// <summary>
+  /// Item indentification type for bonus
+  /// </summary>
   public enum ItemType
   {
     Medikit,
@@ -22,7 +26,10 @@ namespace Target
     Defuser
   }
 
-  public class Item
+  /// <summary>
+  /// Spawnable Bonus item
+  /// </summary>
+  public class Item : IEntity
   {
     private static Random randomGenerator = new Random();
 
@@ -37,12 +44,7 @@ namespace Target
 
     private Point _position;
     private Texture2D _texture;
-    public Texture2D texture {
-      set
-      {
-        _texture = value;
-      }
-    }
+    public Texture2D texture { set { _texture = value; } }
     private bool _isActive;
 
     public Item()
@@ -56,6 +58,10 @@ namespace Target
       return (Item)this.MemberwiseClone();
     }
 
+    /**************************
+     * IEntity implementation
+     **************************/
+
     public void setPosition(Point pos)
     {
       _position = pos;
@@ -64,6 +70,11 @@ namespace Target
     public void randomizePosition()
     {
       _position = new Point(randomGenerator.Next(0, Options.Config.Width - getRectangle().Width), 0);
+    }
+
+    public void activate()
+    {
+      //Nothing to activate
     }
 
     public Rectangle getRectangle()
@@ -75,6 +86,10 @@ namespace Target
     {
       return _isActive;
     }
+
+    /**************************
+     * Specific Methods
+     **************************/
 
     public HitType checkCollision()
     {
@@ -124,6 +139,10 @@ namespace Target
           break;
       }
     }
+
+    /**************************
+     * Update/Draw Methods
+     **************************/
 
     public void Update(GameTime gameTime)
     {

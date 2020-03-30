@@ -2,16 +2,16 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <ApplicationIcon>Content/Target.ico</ApplicationIcon>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
     <Win32Resource />
-    <Version>1.5.3.0</Version>
+    <Version>1.5.3.1</Version>
     <PackageProjectUrl>http://stabax.org</PackageProjectUrl>
     <Copyright>Stabax 2012-2020 (R)</Copyright>
     <Company>Stabax</Company>
     <Authors>stalker2106</Authors>
-    <AssemblyVersion>1.5.3.0</AssemblyVersion>
-    <FileVersion>1.5.3.0</FileVersion>
+    <AssemblyVersion>1.5.3.1</AssemblyVersion>
+    <FileVersion>1.5.3.1</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +23,15 @@
     <PackageReference Include="MonoGame.Framework.DesktopGL.Core" Version="3.7.0.7" />
     <PackageReference Include="Myra" Version="0.9.9.200" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Icon.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

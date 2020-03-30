@@ -1,16 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Target.Entities;
-using Target.Utils;
+using TargetGame.Entities;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
+  /// <summary>
+  /// Represents a step in tutorial with a text, an objective, and an optional failure condition
+  /// </summary>
   public struct TutorialStep
   {
     public string sentence;
@@ -32,6 +34,9 @@ namespace Target
     }
   }
 
+  /// <summary>
+  /// Tutorial class
+  /// </summary>
   public class Tutorial
   {
     public static Dictionary<string, string> sentences = new Dictionary<string, string>();
@@ -49,7 +54,6 @@ namespace Target
       sentences.Clear();
       _steps = new List<TutorialStep>();
       _currentStep = -1;
-      /*
       sentences.Add("Welcome", "Welcome to Target, your soon to be favorite range shooter.");
       _steps.Add(new TutorialStep("Welcome", () => { }, () => { return (_timer.getDuration() > 5000); }));
       //Base Initiation
@@ -103,7 +107,7 @@ namespace Target
         () => { return (GameMain.targets.Count == 0 && GameMain.player.getStats().score == 0); }));
       _steps.Add(new TutorialStep("HostageInitiation", () => { GameMain.player.getStats().score = 0; spawnTarget("Hostage", true); },
         () => { return (_timer.getDuration() > 6000); },
-        () => { return (GameMain.targets.Count == 0); }));*/
+        () => { return (GameMain.targets.Count == 0); }));
       //Bomb Initiation
       sentences.Add("BombInitiation", "Quick! You see this bomb ? Hold the defuse key while looking at it with your crosshair to start the defusal.");
       _steps.Add(new TutorialStep("BombInitiation", () => { GameMain.player.getStats().score = 0; GameMain.player.addHealth(100); spawnBomb(); },
@@ -165,6 +169,10 @@ namespace Target
       _completed = true;
       GameMain.hud.removeIndicator(_sentenceLabel);
     }
+
+    /**************************
+     * Update/Draw Methods
+     **************************/
 
     public void Update(GameTime gameTime)
     {

@@ -12,14 +12,15 @@ using Myra.Graphics2D.TextureAtlases;
 using Myra.Graphics2D.UI;
 using Myra.Graphics2D.UI.Styles;
 using System;
-using Target.UI;
-using Target.Utils;
+using TargetGame.Settings;
+using TargetGame.UI;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
   public class HUD
   {
-    private float _proportionsX;
+    private const float _proportionsX = 0.15f; //Width of HUD elements
 
     private HorizontalProgressBar _healthIndicator;
     private HorizontalProgressBar _kevlarIndicator;
@@ -32,46 +33,35 @@ namespace Target
 
     private Image _defuserIndicator;
 
-    Label _actionIndicator;
-    Timer _actionTimer;
+    private Label _actionIndicator;
+    private Timer _actionTimer;
 
     private int _ammo;
 
-    HorizontalProgressBar _reloadIndicator;
+    private HorizontalProgressBar _reloadIndicator;
 
     private Random _randomGenerator;
 
     public Crosshair crosshair;
     public ContractsPanel contractsPanel;
 
-    private bool _hitmarker;
-    private float _hitmarkerOpacity;
-    private float _hitmarkerTimer;
-    private float _hitmarkerDelay;
-
     private bool _bloodsplat;
-    private float bloodsplatTimer;
-    private Rectangle bloodsplatPos;
-    private float bloodsplatDelay;
+    private Rectangle _bloodsplatPos;
+    private Timer _bloodsplatTimer;
 
     private Panel _ui;
 
     public HUD()
     {
-      _proportionsX = 0.15f;
-      _hitmarkerOpacity = (float) byte.MaxValue;
       _randomGenerator = new Random();
       crosshair = new Crosshair();
-      _actionTimer = new Timer();
-      _hitmarker = false;
-      _hitmarkerTimer = 0.0f;
-      _hitmarkerDelay = 750f;
-      _bloodsplat = false;
-      bloodsplatTimer = 0.0f;
-      bloodsplatDelay = 2f;
-      _ammo = 0;
-      _ui = new Panel();
       contractsPanel = new ContractsPanel();
+      _ui = new Panel();
+      _actionTimer = new Timer();
+      _bloodsplat = false;
+      _bloodsplatTimer = new Timer();
+      _bloodsplatTimer.addAction(TimerDirection.Forward, 2000, TimeoutBehaviour.Reset, () => { _bloodsplat = false; });
+      _ammo = 0;
       addIndicators();
     }
 
@@ -170,19 +160,13 @@ namespace Target
       _ui.Widgets.Remove(indicator);
     }
 
-    public void setHitmarker()
-    {
-      _hitmarker = true;
-      _hitmarkerTimer = 0.0f;
-    }
-
-    public void setBloodsplat()
+    public void triggerBloodsplat()
     {
       _bloodsplat = true;
-      bloodsplatPos = new Rectangle(_randomGenerator.Next(0, (Options.Config.Width < Resources.bloodsplat.Width ? Options.Config.Width - Resources.bloodsplat.Width : Options.Config.Width)),
-                                    _randomGenerator.Next(0, (Options.Config.Height < Resources.bloodsplat.Height ? Options.Config.Width - Resources.bloodsplat.Width: Options.Config.Width)),
-                                         Resources.bloodsplat.Width, Resources.bloodsplat.Height);
-      bloodsplatTimer = 0.0f;
+      _bloodsplatPos = new Rectangle(_randomGenerator.Next(0, Options.Config.Width - Resources.bloodsplat.Width),
+                                     _randomGenerator.Next(0, Options.Config.Height - Resources.bloodsplat.Height),
+                                     Resources.bloodsplat.Width, Resources.bloodsplat.Height);
+      _bloodsplatTimer.Start();
     }
     public void setAction(string action)
     {
@@ -233,45 +217,18 @@ namespace Target
     }
 
 
-    public void ammoIndicator(ref Player player)
+    public void updateMagazine(int ammo)
     {
-      _ammo = player.getWeapon().getMagazine();
+      _ammo = ammo;
     }
 
-    public void checkHitmarker(GameTime gameTime)
-    {
-      if (!_hitmarker)
-        return;
-      _hitmarkerOpacity = (float) byte.MaxValue;
-      if ((double) _hitmarkerOpacity >= 0.0 && (double) _hitmarkerOpacity <= (double) byte.MaxValue && (double) _hitmarkerTimer >= (double) _hitmarkerDelay * 0.150000005960464)
-        _hitmarkerOpacity -= 15f;
-      _hitmarkerTimer += (float) gameTime.ElapsedGameTime.TotalMilliseconds;
-      if ((double) _hitmarkerTimer < (double) _hitmarkerDelay)
-        return;
-      _hitmarkerTimer = 0.0f;
-      _hitmarker = false;
-    }
-
-    public void checkBloodsplat(GameTime gameTime)
-    {
-      if (!_bloodsplat)
-        return;
-      bloodsplatTimer += (float) gameTime.ElapsedGameTime.TotalSeconds;
-      if ((double) bloodsplatTimer < (double) bloodsplatDelay)
-        return;
-      bloodsplatTimer = 0.0f;
-      _bloodsplat = false;
-    }
-
-    public void Update(GameTime gameTime, ref Player player, DeviceState state, DeviceState prevState)
+    public void Update(GameTime gameTime, DeviceState state, DeviceState prevState)
     {
       crosshair.Update(gameTime, state, prevState);
       contractsPanel.Update();
 
-      ammoIndicator(ref player);
-      checkHitmarker(gameTime);
-      checkBloodsplat(gameTime);
       _actionTimer.Update(gameTime);
+      _bloodsplatTimer.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -279,8 +236,7 @@ namespace Target
       crosshair.Draw(spriteBatch);
       for (int ammo = _ammo; ammo >= 1; --ammo)
         spriteBatch.Draw(Resources.bullet, new Rectangle(Options.Config.Width - (32 + ammo * 16), Options.Config.Height - 52, 32, 32), Color.DimGray);
-      if (_bloodsplat)
-        spriteBatch.Draw(Resources.bloodsplat, bloodsplatPos, Color.Red);
+      if (_bloodsplat) spriteBatch.Draw(Resources.bloodsplat, _bloodsplatPos, Color.Red);
     }
 
     public void DrawUI()

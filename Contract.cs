@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TargetGame.Settings;
 
-namespace Target.Entities
+namespace TargetGame.Entities
 {
 
   public class Contract
@@ -16,7 +17,6 @@ namespace Target.Entities
       }
 
       //Class
-      private static Random _randomGenerator = new Random();
       public Type type;
 
       public Reward()

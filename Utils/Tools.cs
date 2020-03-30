@@ -1,9 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using TargetGame.Settings;
 
-namespace Target.Utils
+namespace TargetGame.Utils
 {
   class Tools
   {

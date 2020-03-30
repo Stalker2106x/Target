@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Target.Utils
+namespace TargetGame.Utils
 {
   public enum TimerDirection
   {

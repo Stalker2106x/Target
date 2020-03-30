@@ -5,8 +5,9 @@ using Microsoft.Xna.Framework.Media;
 using Myra;
 using Myra.Graphics2D.UI;
 using System;
+using TargetGame.Settings;
 
-namespace Target
+namespace TargetGame
 {
   /// <summary>
   /// This is the main type for your game.

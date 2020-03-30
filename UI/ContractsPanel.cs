@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Target.Entities;
+using TargetGame.Entities;
 
-namespace Target.UI
+namespace TargetGame.UI
 {
   public class ContractsPanel
   {

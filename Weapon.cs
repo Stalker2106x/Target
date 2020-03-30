@@ -6,13 +6,16 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Linq;
-using Target.Utils;
+using TargetGame.Entities;
+using TargetGame.Settings;
+using TargetGame.Utils;
 
-namespace Target
+namespace TargetGame
 {
+  /// <summary>
+  /// Weapon used to shoot at entities
+  /// </summary>
   public class Weapon
   {
     private string _name;
